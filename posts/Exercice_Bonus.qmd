@@ -1,0 +1,198 @@
+---
+title: "Exercice Bonus : Ridge vs Lasso"
+author: "Clément Poupelin"
+date: "2023-2024"
+format: 
+  html:
+    embed-resources: false
+    toc: true
+    code-fold: true
+    code-summary: "Show the code"
+    code-tools: true
+    toc-location: right
+    page-layout: article
+    code-overflow: wrap
+toc: true
+number-sections: false
+editor: visual
+categories: ["Bonus"]
+image: ""
+description: "Comparaison de la regression Ridge et Lasso "
+---
+
+
+
+Source : https://lrouviere.github.io/TUTO_GRANDE_DIM/correction/03-ridge-lasso.html
+```{r}
+
+
+# ozone <- read.csv("~/1.Workspace/Master_IS/M2/X3MS020_Statistique_en_grande_dimension/ozone.txt", sep="")
+ozone <-read.table("https://r-stat-sc-donnees.github.io/ozone.txt", header=TRUE)
+head(ozone)
+summary(ozone)
+
+library(psych)
+pairs.panels(ozone)
+
+
+ozone.X <- model.matrix(maxO3~.,data=ozone)[,-1] #  codage des variables qualitatives avec la fonction model.matrix
+ozone.Y <- ozone$maxO3
+
+library(glmnet)
+mod.R <- glmnet(ozone.X, ozone.Y, alpha=0) ## Ridge 
+
+mod.L <- glmnet(ozone.X, ozone.Y, alpha=1) ## Lasso
+
+# Par défaut standardize = TRUE, intercept = TRUE
+
+## Analyse Modèle Ridge
+mod.R$lambda |> head()
+# When alpha=0, the largest lambda reported does not quite give 
+# the zero coefficients reported (lambda=inf would in principle).
+# Instead, the largest lambda for alpha=0.001 is used, and the sequence 
+# of lambda values is derived from this.
+
+
+mod.R$beta[,1]
+# Our coefficients
+
+par(mfrow=c(1,2))
+plot(mod.R,label=TRUE)  
+# lecture du graphe : 
+#   - chaque courbe c'est lévolution d'un beta
+#   - à droite on à les valeurs de beta MCO 
+#   - à gauche c'est quand lambda augmente, on tend vers 0
+
+plot(mod.R,xvar="lambda",label=TRUE)
+par(mfrow=c(1,1))
+
+
+
+
+
+
+
+## Analyse Modèle Lasso
+mod.L$lambda |> head()
+
+mod.L$beta[,1]
+
+par(mfrow=c(1,2))
+plot(mod.L,label=TRUE)  
+plot(mod.L,xvar="lambda",label=TRUE)
+par(mfrow=c(1,1))
+
+####
+# Sélection des paramètres de régularisation ####
+
+ridgeCV <- cv.glmnet(ozone.X, ozone.Y, alpha=0)
+plot(ridgeCV)
+# abline(v=log(ridgeCV$lambda.1se), col='red')
+# abline(v=log(ridgeCV$lambda.min), col='red')
+
+# On visualise les erreurs quadratiques calculées 
+# par validation croisée 10 blocs en fonction de lambda (échelle log)
+
+# Deux traites verticaux :
+#   - celui de gauche correspond à la valeur de `lambda`
+#     qui minimise l’erreur quadratique ;
+# 
+#   - celui de droite correspond à la plus grande valeur de `lambda` 
+#     telle que l’erreur ne dépasse pas 
+#     l’erreur minimale + 1 écart-type estimé de cette erreur.
+
+
+# D’un point de vu pratique, cela signifie que l’utilisateur
+# peut choisir n’importe quelle valeur de lambda entre 
+# les deux traits verticaux. Si on veut diminuer 
+# la complexité du modèle on choisira la valeur de droite.
+# On peut obtenir ces deux valeurs 
+
+ridgeCV$lambda.min
+ridgeCV$lambda.1se
+
+
+lassoCV <- cv.glmnet(ozone.X, ozone.Y, alpha=1)
+plot(lassoCV)
+# abline(v=log(lassoCV$lambda.1se), col='red')
+# abline(v=log(lassoCV$lambda.min), col='red')
+
+lassoCV$lambda.min
+lassoCV$lambda.1se
+
+####
+# Prédiction de la variable cible pour de nouveaux individus ####
+
+# Première approche :
+# réajuster le modèle sur toutes les données pour la valeur 
+# de lambda sélectionnée.
+# Cette étape est en réalité déjà effectuée par la fonction cv.glmnet.
+# Il suffit par conséquent d’appliquer la fonction predict à l’objet 
+# obtenu avec cv.glmnet en spécifiant la valeur de lambda souhaitée.
+predict(ridgeCV, newx = ozone.X[50:51,],s="lambda.min")
+predict(ridgeCV, newx = ozone.X[50:51,],s="lambda.1se")
+
+predict(lassoCV, newx = ozone.X[50:51,],s="lambda.min")
+predict(lassoCV, newx = ozone.X[50:51,],s="lambda.1se")
+
+
+# Comparaison performances MCO, ridge et lasso ####
+
+# validation croisée pour comparer les performances des estimateurs
+# MCO, ridge et lasso.
+# On pourra utiliser les données ozone_complet.txt
+# qui contiennent plus d’individus et de variables.
+
+# ozone1 <- read.csv("~/1. Workspace/Master IS/M2/X3MS020 Statistique en grande dimension/ozone_complet.txt", sep=";") |> na.omit()
+ozone1 <-read.table("https://r-stat-sc-donnees.github.io/ozone.txt", header=TRUE) |> na.omit()
+ozone1.X <- model.matrix(maxO3~., data=ozone1)[,-1]
+ozone1.Y <- ozone1$maxO3
+
+library(tibble)
+library(dplyr)
+
+cv.ridge.lasso <- function(data,form){
+  set.seed(1234)
+  data.X <- model.matrix(form,data=data)[,-1]
+  data.Y <- data$maxO3
+  blocs <- caret::createFolds(1:nrow(data),k=10)
+  prev <- matrix(0,ncol=3,nrow=nrow(data)) |> as.data.frame()
+  names(prev) <- c("lin","ridge","lasso")
+  for (k in 1:10){
+    app <- data[-blocs[[k]],]
+    test <- data[blocs[[k]],]
+    app.X <- data.X[-blocs[[k]],]
+    app.Y <- data.Y[-blocs[[k]]]
+    test.X <- data.X[blocs[[k]],]
+    test.Y <- data.Y[blocs[[k]]]
+    ridge <- cv.glmnet(app.X,app.Y,alpha=0)
+    lasso <- cv.glmnet(app.X,app.Y,alpha=1)
+    lin <- lm(form,data=app)
+    prev[blocs[[k]],] <- tibble(lin=predict(lin,newdata=test),
+                                ridge=as.vector(predict(ridge,newx=test.X)),
+                                lasso=as.vector(predict(lasso,newx=test.X)))
+  }
+  err <- prev |> mutate(obs=data$maxO3) |> summarise_at(1:3,~mean((obs-.)^2))
+  return(err)
+}
+
+cv.ridge.lasso(ozone1, form=formula(maxO3~.))
+# On remarque que les approches régularisées 
+# n’apportent rien par rapport aux estimateurs MCO ici.
+# Ceci peut s’expliquer par le fait que le nombre de variables
+# n’est pas très important.
+
+# Considérons toutes les interactions d’ordre 2
+cv.ridge.lasso(ozone1, form=formula(maxO3~.^2))
+
+# Les méthodes régularisées permettent ici de diminuer
+# les erreurs quadratiques de manière intéressante.
+# Cela vient certainement du fait du nombre de 
+# variables explicatives qui est beaucoup plus 
+# important lorsqu’on prend en compte toutes 
+# les interactions d’ordre 2, nous en avons en effet 253 :
+ozone2.X <- model.matrix(maxO3~.^2,data=ozone1)[,-1]
+dim(ozone2.X)
+
+
+```
