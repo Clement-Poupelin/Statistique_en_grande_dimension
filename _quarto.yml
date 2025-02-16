@@ -8,10 +8,13 @@ website:
       - about.qmd
       - icon: github
         href: https://github.com/Clement-Poupelin
+
+# Assure que les fichiers générés sont dans "docs/" pour GitHub Pages
+output-dir: docs
+
 format:
   html:
     theme: cosmo
     css: styles.css
 
 editor: visual
-
