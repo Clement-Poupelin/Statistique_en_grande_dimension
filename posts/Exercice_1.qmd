@@ -53,9 +53,10 @@ library(RColorBrewer)
 
 ::: panel-tabset
 ### Critères
+
 On rappel que $SCR = \sum_i (y_i - f(x_i))^2$ et $SCT = \sum_i (y_i - \bar{y})^2$.\
 
-Ainsi, on peut aretrouver les différents critères : 
+Ainsi, on peut aretrouver les différents critères :
 
 $$ R^2 = 1 - \frac{SCR}{SCT}$$
 
@@ -80,7 +81,8 @@ r2a_fun <- function(y, SCR){
 }
 ```
 
-$$ C_p = \frac{SCR}{\sigma^2} + 2(p+1) - n$$ 
+$$ C_p = \frac{SCR}{\sigma^2} + 2(p+1) - n$$
+
 ```{r}
 cp_fun <- function(mod, SCR){
   sig <- summary(mod)$sigma
@@ -92,6 +94,7 @@ cp_fun <- function(mod, SCR){
 ```
 
 $$ AIC = n\text{log}\left(\frac{SCR}{n}\right) + 2(p+1)$$
+
 ```{r}
 aic_fun <- function(SCR){
   n <- dim(Hitters_Without_NA)[1]
@@ -102,6 +105,7 @@ aic_fun <- function(SCR){
 ```
 
 $$ BIC = n\text{log}\left(\frac{SCR}{n}\right) + \text{log}(n)(p+1)$$
+
 ```{r}
 bic_fun <- function(SCR){
   n <- dim(Hitters_Without_NA)[1]
@@ -218,7 +222,7 @@ Il s'agit d'un je de données de la Major League Baseball provenant des saisons 
 
 Le jeu de données possède `r dim(Hitters)[1]` lignes/individus pour les différents joueurs et `r dim(Hitters)[2]` variables.
 
-Parmi les variables, on trouve les informations suivantes : 
+Parmi les variables, on trouve les informations suivantes :
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -240,6 +244,7 @@ tibble(
 ```
 
 Regardons maintenant le *summary*() pour examiner les différentes variables.
+
 ```{r}
 # ?Hitters
 Hitters %>%
@@ -320,15 +325,15 @@ res_pca <- PCA(Hitters_Without_NA,
 Ici, on spécifi nos varibales qualitatives et on décide de mettre la variable *Salary* en variable supplémentaire, ce qui veut d'ire qu'elle ne sera pas considéré pour la formation de nos composantes principales (variable que l'on cherchera à estimer plus tard).
 
 ::: panel-tabset
-
 #### Barplot des variances
 
 Tout d'abord, on peut commencer par regarder le pourcentage de variance expliqué par nos différentes composantes principales.
+
 ```{r}
 draw_variance_barplot_pca(res_pca, n = 10, title = "Percentage of variance of the 10 first components")
 ```
-On voit ainsi que la majorité de la variance est expliquée par nos deux premières composantes principales avec la présence d'un fort effet de coude après celle-ci.
 
+On voit ainsi que la majorité de la variance est expliquée par nos deux premières composantes principales avec la présence d'un fort effet de coude après celle-ci.
 
 #### Individus
 
@@ -370,9 +375,7 @@ fviz_pca_var(res_pca,
 ```
 
 Dans notre cas, ce que l'on peut voir c'est que la majorité de nos variables sont bien représentées par nos deux axes (cumulant plus de 70% d'explication). Mais beaucoup semblent aussi fortement corrélées avecla formation de deux groupes et la variable *Salary* se trouvant au milieu. Cette corrélation ayant déjà pu être observé précédemment.
-
 :::
-
 ::::
 
 # Analyse inférentielle
@@ -394,20 +397,19 @@ mod1 %>% summary()
 Nous sommes sur un modèle comprenant des variables quantitatives et qualitative ce qui le rapproche d'une modélisation ANOVA.
 :::
 
-::::{.success-header}
+::: success-header
 Quelques conclusions sur le modèle :
-:::::
-::::{.success}
+:::
+
+::: success
 -   beaucoup de variables ont un effet non significatif
 
 -   le $R^2$ et le $R^2_{adjusted}$ sont autour de 0.5 ce qui témoigne d'une mauvaise qualité d'ajustament du modèle
 
 -   l'écart type résiduel est de 315.6 ce qui est assez important et témoigne d'un modèle peu précis
-:::::
-
+:::
 
 Pour tenter de trouver un meilleur ajustment, il est important d'analyser d'avantage le lien entre toutes les variables explicatives. On utilise alors comunément le VIF
-
 
 ```{r}
 vif(mod1) 
@@ -417,7 +419,7 @@ On remarque ainsi que beaucoup de valeurs sont supérieur à 10 ce qui s'interpr
 
 Cette colinéarité se constatait déjà durant les analyses descriptive via les graphes de corrélations (d'où l'importance de ne pas se lancer trop rapidement dans les analyses inférentielles).
 
----
+------------------------------------------------------------------------
 
 ## Modèles parcimonieux
 
@@ -527,8 +529,6 @@ cat("Meilleur modèle selon BIC : Modèle avec", best_model_bic, "variables\n")
 rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
 ```
 
-
-
 ### Backward
 
 Cette fois ci on va regarder en sélection backward. D'abord, on fait à nouveau avec la fonction regsubset.
@@ -539,6 +539,7 @@ selec_back <- regsubsets(Salary~.,
                          method = "backward",
                          nvmax = 19)
 ```
+
 ```{r, fig.height=10, fig.width=12}
 par(mfrow=c(2,2))
 plot(selec_back, scale = 'bic') 
@@ -620,7 +621,6 @@ Puis on peut regarder le modèle qui optimise le critère utilisé pour la selec
 modselect_back_bic %>% summary()
 ```
 
-
 La fonction step propose aussi une selection avec AIC et Cp.
 
 -   AIC
@@ -661,6 +661,7 @@ selec_forw <- regsubsets(Salary~.,
                          method = "forward",
                          nvmax = 19)
 ```
+
 ```{r, fig.height=10, fig.width=12}
 par(mfrow=c(2,2))
 plot(selec_forw, scale = 'bic') 
@@ -686,7 +687,6 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
              Criteria_plot(bic, crit_name = "BIC"),
              ncol = 3)
 ```
-
 
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
 
@@ -785,6 +785,7 @@ selec_seq <- regsubsets(Salary~.,
                          method = "seqrep",
                          nvmax = 19)
 ```
+
 ```{r, fig.height=10, fig.width=12}
 par(mfrow=c(2,2))
 plot(selec_seq, scale = 'bic') 
@@ -880,15 +881,15 @@ modselect_cp %>% summary()
 Malheuresement, même en sélection *both* nous avons encore des $R^2$ et $R^2_{adjusted}$ faibles.
 
 Mais si on veut comparer le modèle initial et le modèle final, on peut utiliser la fonction *ANOVA*. Cela permet de voir si la sélection de variables a significativement amélioré l'ajustement.
+
 ```{r}
 anova(mod0, modselect_bic, test = "Chisq")
 ```
-De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère BIC) propose un meilleur ajustement que celui sans variable.
 
+De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère BIC) propose un meilleur ajustement que celui sans variable.
 ::::
 
 # Comparaison des critères
-
 
 Avant de finir, comparons un peut les critères que nous avons calculés avec ceux que l'on peut récupérer via le summary de regsubset (pour tous sauf l'AIC qui n'est pas présent). On se contentera de faire se comparatif seulement pour le modèle *stepwise*.
 
@@ -910,7 +911,6 @@ grid.arrange(Criteria_plot(bic, crit_name = "BIC"),
 ```
 
 On voit que les valeurs sont différentes mais en fait le comportement est identique. Ce qui veut dire que la différence est seulement due à une constant multiplicative près.
-
 
 # Conclusion
 
