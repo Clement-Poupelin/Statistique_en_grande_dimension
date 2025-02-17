@@ -6,7 +6,7 @@ format:
   html:
     embed-resources: false
     toc: true
-    code-fold: true
+    code-fold: false
     code-summary: "Show the code"
     code-tools: true
     toc-location: right
@@ -16,8 +16,8 @@ toc: true
 number-sections: false
 editor: visual
 categories: ["TP"]
-image: ""
-description: ""
+image: "/img/baseball.png"
+description: "Il s'agit d'une première utilisation des méthodes de regression avec selection de variable via des approches stepwise sur des données de baseball"
 ---
 
 # Setup
@@ -26,25 +26,22 @@ description: ""
 ## packages
 
 ```{r, setup, warning=FALSE, message=FALSE}
-library(ISLR) # Hitters data 
-library(leaps) # regsubsets 
-library(MASS)
-library(GGally) # pour ggcorr
-library(car) # pour VIF
-library(dplyr)
-library(DT)
+# Données
+library(ISLR)         # Hitters data 
+library(dplyr)        # manipulation des données
 
-## Summary
-library(rstatix)
-library(tibble)
-
-## PCA
+# PCA
 library(FactoMineR)
 library(factoextra)
 
+# Inférence
+library(leaps)        # regsubsets 
+library(car)          # pour VIF
+
 # Plots
+## ggplot
 library(ggplot2)
-library(reshape2)  # Pour transformer les données en format long
+library(reshape2)     # transformer les données en format long
 library(gridExtra)
 
 ## for pairs panel
@@ -56,17 +53,24 @@ library(RColorBrewer)
 
 ::: panel-tabset
 ### Critères
+On rappel que $SCR = \sum_i (y_i - f(x_i))^2$ et $SCT = \sum_i (y_i - \bar{y})^2$.\
+
+Ainsi, on peut aretrouver les différents critères : 
+
+$$ R^2 = 1 - \frac{SCR}{SCT}$$
 
 ```{r}
-
-
 r2_fun <- function(y, SCR){
   # r2 = SSE/SST = (SST - SSR)/SST = 1 - ssr/sst
   SCT <- sum((y - mean(y) )^2)
   r2 <- 1 - SCR/SCT
   return(r2)
 }
+```
 
+$$ R^2_{adjusted} = 1 - \frac{SCR (n-1)}{SCT(n-(p+1))}$$
+
+```{r}
 r2a_fun <- function(y, SCR){
   n <- dim(Hitters_Without_NA)[1]
   p <- 1:(dim(Hitters_Without_NA)[2]-1)
@@ -74,7 +78,10 @@ r2a_fun <- function(y, SCR){
   r2a <- 1 - (SCR/(n-(p+1)))/(SCT/(n-1))
   return(r2a)
 }
+```
 
+$$ C_p = \frac{SCR}{\sigma^2} + 2(p+1) - n$$ 
+```{r}
 cp_fun <- function(mod, SCR){
   sig <- summary(mod)$sigma
   n <- dim(Hitters_Without_NA)[1]
@@ -82,14 +89,20 @@ cp_fun <- function(mod, SCR){
   cp <- SCR/sig^2 + 2*(p+1) - n
   return(cp)
 }
+```
 
+$$ AIC = n\text{log}\left(\frac{SCR}{n}\right) + 2(p+1)$$
+```{r}
 aic_fun <- function(SCR){
   n <- dim(Hitters_Without_NA)[1]
   p <- 1:(dim(Hitters_Without_NA)[2]-1)
   aic <- n * log(SCR/n) + 2*(p+1)
   return(aic)
 }
+```
 
+$$ BIC = n\text{log}\left(\frac{SCR}{n}\right) + \text{log}(n)(p+1)$$
+```{r}
 bic_fun <- function(SCR){
   n <- dim(Hitters_Without_NA)[1]
   p <- 1:(dim(Hitters_Without_NA)[2]-1)
@@ -104,8 +117,8 @@ bic_fun <- function(SCR){
 Criteria_plot <- function(Criteria, crit_name = "Critère") {
   # Création d'un data frame pour ggplot
   df_criteria <- data.frame(
-    nb_var = seq_along(Criteria),  # Nombre de variables utilisées
-    Criteria = Criteria            # Valeurs du critère (RSS, AIC, BIC, etc.)
+    nb_var = seq_along(Criteria),  # Nombre de variables du modèle
+    Criteria = Criteria            # Critère
   )
 
   # Création du plot avec ggplot2
@@ -137,10 +150,32 @@ On étudie le jeu de données [**Hitters**](https://rdrr.io/cran/ISLR/man/Hitter
 
 Il s'agit d'un je de données de la Major League Baseball provenant des saisons de 1986 et 1987.
 
+Le jeu de données possède `r dim(Hitters)[1]` lignes/individus pour les différents joueurs et `r dim(Hitters)[2]` variables.
+
+Parmi les variables, on trouve les informations suivantes : 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(kableExtra)
+identity_keys <- cell_spec(
+  x = colnames(Hitters), format = "html", bold = TRUE)
+identity_values <- c("Number of times at bat in 1986", "Number of hits in 1986", "Number of home runs in 1986", "Number of runs in 1986", "Number of runs batted in in 1986", "Number of walks in 1986", "Number of years in the major leagues", "Number of times at bat during his career", "Number of hits during his career", "Number of home runs during his career", "Number of runs during his career", "Number of runs batted in during his career", "Number of walks during his career", "A factor with levels A and N indicating player's league at the end of 1986", "A factor with levels E and W indicating player's division at the end of 1986", "Number of put outs in 1986", "Number of assists in 1986", "Number of errors in 1986", "1987 annual salary on opening day in thousands of dollars", "A factor with levels A and N indicating player's league at the beginning of 1987")
+tibble(
+  keys = identity_keys, 
+  values = identity_values, 
+) %>% 
+  kbl(
+    format = "html", 
+    booktabs = TRUE, 
+    escape = FALSE, 
+    col.names = NULL
+  ) %>% 
+  kable_styling(bootstrap_options = c("hover", "condensed"))
+```
+
+Regardons maintenant le *summary*() pour examiner les différentes variables.
 ```{r}
 # ?Hitters
-Hitters %>%
-  dim()
 Hitters %>%
   summary()
 ```
@@ -259,10 +294,14 @@ fviz_pca_var(res_pca,
 ```
 
 Dans notre cas, ce que l'on peut voir c'est que la majorité de nos variables sont bien représentées par nos deux axes (cumulant plus de 70% d'explication). Mais beaucoup semblent aussi fortement corrélées avecla formation de deux groupes et la variable *Salary* se trouvant au milieu. Cette corrélation ayant déjà pu être observé précédemment.
+
 :::
+
 ::::
 
 # Analyse inférentielle
+
+## Modèle brut
 
 On désire modéliser le salaire *Salary* en fonction des variables disponibles.
 
@@ -279,15 +318,20 @@ mod1 %>% summary()
 Nous sommes sur un modèle comprenant des variables quantitatives et qualitative ce qui le rapproche d'une modélisation ANOVA.
 :::
 
-Quelques commentaires sur le modèle :
-
+::::{.success-header}
+Quelques conclusions sur le modèle :
+:::::
+::::{.success}
 -   beaucoup de variables ont un effet non significatif
 
 -   le $R^2$ et le $R^2_{adjusted}$ sont autour de 0.5 ce qui témoigne d'une mauvaise qualité d'ajustament du modèle
 
 -   l'écart type résiduel est de 315.6 ce qui est assez important et témoigne d'un modèle peu précis
+:::::
+
 
 Pour tenter de trouver un meilleur ajustment, il est important d'analyser d'avantage le lien entre toutes les variables explicatives. On utilise alors comunément le VIF
+
 
 ```{r}
 vif(mod1) 
@@ -296,6 +340,10 @@ vif(mod1)
 On remarque ainsi que beaucoup de valeurs sont supérieur à 10 ce qui s'interprète communément comme la précence d'une forte colinéarité sur nos variables explicatives.
 
 Cette colinéarité se constatait déjà durant les analyses descriptive via les graphes de corrélations (d'où l'importance de ne pas se lancer trop rapidement dans les analyses inférentielles).
+
+---
+
+## Modèles parcimonieux
 
 Maintenant, on va donc tenter de trouver le meilleur sous-modèle possible. Pour cela on va suivre la procédure suivante :
 
@@ -306,11 +354,11 @@ Maintenant, on va donc tenter de trouver le meilleur sous-modèle possible. Pour
 Puis reproduire la même procédure avec des séléctions *backward*, *forward* et *stepwise*
 
 ::: callout-note
-Un rappel sur nos critère se trouve dans la partie *Setup*, onglet fonction, de ce document avec la création de fonction pour les calculés.
+Un rappel sur nos critère se trouve dans la partie *Setup*, onglet fonction, de ce document avec la création de fonction pour les calculer.
 :::
 
 :::: panel-tabset
-## Sélection automatique
+### Exhaustive
 
 ```{r}
 selec_auto <- regsubsets(Salary~.,
@@ -378,14 +426,14 @@ rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE,
 ```{r}
 best_model_r2a <- which.max(r2a)
 selected_vars <- summary(selec_auto)$which[best_model_r2a,]
-cat("Meilleur modèle selon AIC : Modèle avec", best_model_r2a, "variables\n")
+cat("Meilleur modèle selon R2a : Modèle avec", best_model_r2a, "variables\n")
 rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
 ```
 
 ```{r}
 best_model_cp <- which.min(cp)
 selected_vars <- summary(selec_auto)$which[best_model_cp,]
-cat("Meilleur modèle selon AIC : Modèle avec", best_model_cp, "variables\n")
+cat("Meilleur modèle selon Cp : Modèle avec", best_model_cp, "variables\n")
 rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
 ```
 
@@ -424,7 +472,7 @@ grid.arrange(Criteria_plot(bic, crit_name = "BIC"),
 
 On voit que les valeurs sont différentes mais en fait le comportement est identique. Ce qui veut dire que la différence est seulement due à une constant multiplicative près.
 
-## backward
+### Backward
 
 Cette fois ci on va regarder en sélection backward. D'abord, on fait à nouveau avec la fonction regsubset.
 
@@ -452,10 +500,10 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
              ncol = 3)
 ```
 
-On peut également utiliser la fonction *step* de la library { *stats* }. Pour cela, on part du plus gros modèle défini précédemment par mod1.
+On peut également utiliser la fonction *step* de la library { *stats* }. Pour cela, on part du plus gros modèle défini précédemment par *mod1.*
 
 ```{r}
-n <- dim(Hitters_Without_NA)[1]
+n <- nrow(Hitters_Without_NA)
 modselect_back_bic <- step(mod1,
                        scope = formula(mod1),
                        trace = FALSE, # trace = TRUE permet de voir le détail des étapes
@@ -469,6 +517,7 @@ Puis on peut regarder le modèle qui optimise le critère utilisé pour la selec
 ```{r}
 modselect_back_bic %>% summary()
 ```
+
 
 La fonction step propose aussi une selection avec AIC et Cp.
 
@@ -500,7 +549,7 @@ modselect_back_cp %>% summary()
 
 On voit que parmi nos modèles, le BIC semble le plus parcimonieux mais de manière général on constate encore des valeurs de $R^2$ et $R^2_{adjusted}$ assez faibles.
 
-## forward
+### Forward
 
 Cette fois ci on va regarder en sélection *forward*. D'abord, on fait à nouveau avec la fonction regsubset.
 
@@ -578,7 +627,7 @@ modselect_forw_cp %>% summary()
 
 On voit que parmi nos modèles, le BIC semble le plus parcimonieux mais de manière général on constate encore des valeurs de $R^2$ et $R^2_{adjusted}$ assez faibles.
 
-## both
+### Both
 
 Maintenant on va regarder en sélection *both*. On va alors utiliser la fonction *step* directement.
 
@@ -610,6 +659,13 @@ modselect_cp %>% summary()
 ```
 
 Malheuresement, même en sélection *both* nous avons encore des $R^2$ et $R^2_{adjusted}$ faibles.
+
+Mais si on veut comparer le modèle initial et le modèle final, on peut utiliser la fonction *ANOVA*. Cela permet de voir si la sélection de variables a significativement amélioré l'ajustement.
+```{r}
+anova(mod0, modselect_bic, test = "Chisq")
+```
+De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère BIC) propose un meilleur ajustement que celui sans variable.
+
 ::::
 
 # Conclusion

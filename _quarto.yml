@@ -2,10 +2,7 @@ project:
   type: website
   output-dir: docs
 
-theme:
-  dark: darkly
-  light: zephir
-  
+
 website:
   title: Statistique en grande dimension
   site-url: https://clement-poupelin.github.io/Statistique_en_grande_dimension/
@@ -31,7 +28,13 @@ website:
 
 
 format:
+
   html:
+    theme: 
+      dark: darkly
+      light: zephir
+    css: custom.scss
     toc: true
+
     
 editor: visual

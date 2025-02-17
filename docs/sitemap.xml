@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_Bonus.html</loc>
-    <lastmod>2025-02-17T00:21:44.840Z</lastmod>
-  </url>
-  <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_1.html</loc>
-    <lastmod>2025-02-17T00:28:12.962Z</lastmod>
-  </url>
-  <url>
     <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/about.html</loc>
-    <lastmod>2025-02-17T00:21:34.106Z</lastmod>
-  </url>
-  <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/index.html</loc>
-    <lastmod>2025-02-17T00:28:15.134Z</lastmod>
+    <lastmod>2025-02-17T08:19:32.982Z</lastmod>
   </url>
   <url>
     <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_9.html</loc>
-    <lastmod>2025-02-17T00:21:43.355Z</lastmod>
+    <lastmod>2025-02-17T08:19:32.996Z</lastmod>
+  </url>
+  <url>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_1.html</loc>
+    <lastmod>2025-02-17T14:27:18.571Z</lastmod>
+  </url>
+  <url>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_Bonus.html</loc>
+    <lastmod>2025-02-17T08:19:32.996Z</lastmod>
+  </url>
+  <url>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/index.html</loc>
+    <lastmod>2025-02-17T08:19:32.996Z</lastmod>
   </url>
 </urlset>
