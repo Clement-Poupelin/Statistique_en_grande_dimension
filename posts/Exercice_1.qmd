@@ -111,6 +111,72 @@ bic_fun <- function(SCR){
 }
 ```
 
+### plot pour PCA
+
+```{r}
+as_df_for_ggplot = function(x,
+                            y = NULL,
+                            size = NULL,
+                            color = NULL,
+                            fill = NULL,
+                            pattern = NULL,
+                            shape = NULL, 
+                            rownames = NULL,
+                            label = NULL,
+                            group = NULL,
+                            order = NULL,
+                            decr = FALSE) {
+  df = data.frame(x = x)
+  if (!is.null(y)) {
+    df = cbind(df, data.frame(y = y))
+  }
+  if (!is.null(size)) {
+    df = cbind(df, data.frame(size = size))
+  }
+  if (!is.null(color)) {
+    df = cbind(df, data.frame(color = color))
+  }
+  if (!is.null(fill)) {
+    df = cbind(df, data.frame(fill = fill))
+  }
+  if (!is.null(shape)) {
+    df = cbind(df, data.frame(shape = shape))
+  }
+  if (!is.null(pattern)) {
+    df = cbind(df, data.frame(pattern = pattern))
+  }
+  if (!is.null(rownames)) {
+    rownames(df) = rownames
+  } else {
+    rownames(df) = 1:nrow(df)
+  }
+  if (!is.null(group)) {
+    df = cbind(df, data.frame(group = group))
+  }
+  if (!is.null(label)) {
+    df = cbind(df, data.frame(label = label))
+  }
+  if (!is.null(order)){
+    df = cbind(df,data.frame(order = order))
+    df = df[order(df[,"order"], decreasing = decr),]
+  }
+  
+  return(df)
+}
+
+
+draw_variance_barplot_pca = function(res_pca, n = 10,title = "", ...) {
+  df = as_df_for_ggplot(x = factor(rownames(res_pca[["eig"]])[1:n], levels = rownames(res_pca[["eig"]])[1:n]),
+                        y = res_pca[["eig"]][1:n, 2])
+  fig = ggplot(df, aes(x = x, y = y, fill = "deeppink3")) +
+    geom_bar(stat = "identity") +
+    labs(x = "Component",y= "Percentage of explained variance", title = title)+
+    guides(fill = "none")+
+    theme_bw()
+  return(fig)
+}
+```
+
 ### plot pour nos critères
 
 ```{r}
@@ -254,6 +320,16 @@ res_pca <- PCA(Hitters_Without_NA,
 Ici, on spécifi nos varibales qualitatives et on décide de mettre la variable *Salary* en variable supplémentaire, ce qui veut d'ire qu'elle ne sera pas considéré pour la formation de nos composantes principales (variable que l'on cherchera à estimer plus tard).
 
 ::: panel-tabset
+
+#### Barplot des variances
+
+Tout d'abord, on peut commencer par regarder le pourcentage de variance expliqué par nos différentes composantes principales.
+```{r}
+draw_variance_barplot_pca(res_pca, n = 10, title = "Percentage of variance of the 10 first components")
+```
+On voit ainsi que la majorité de la variance est expliquée par nos deux premières composantes principales avec la présence d'un fort effet de coude après celle-ci.
+
+
 #### Individus
 
 Le plan des individus est une projection des observations (dans notre cas, les joueurs de baseball) sur les axes principaux de la PCA. Cette visualisation permet d’identifier des regroupements, tendances et anomalies au sein des données.
@@ -377,7 +453,7 @@ plot(selec_auto, scale = 'bic')
 plot(selec_auto, scale = 'Cp') 
 plot(selec_auto, scale = 'r2') 
 plot(selec_auto, scale = 'adjr2') 
-par(mfrow=c(1,1))
+
 ```
 
 Ici on remarque clairement que toutes nos variables ne sont pas gardés lorsque l'on cherche à optimiser nos critères.
@@ -451,26 +527,7 @@ cat("Meilleur modèle selon BIC : Modèle avec", best_model_bic, "variables\n")
 rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
 ```
 
-Pour finir, comparons un peut les critères que nous avons calculés avec ceux que l'on peut récupérer via le summary de regsubset (pour tous sauf l'AIC qui n'est pas présent).
 
-Pour cela regardons si nous avons régulièrement la valeur 0 (ou valeur proche) :
-
-```{r}
-round(r2-summary(selec_auto)$rsq) %>% mean()
-round(r2a-summary(selec_auto)$adjr2) %>% mean()
-round(cp-summary(selec_auto)$cp) %>% mean()
-round(bic-summary(selec_auto)$bic) %>% mean()
-```
-
-on voit une grosse différence seulement pour le BIC donc regardons plus en détail.
-
-```{r, fig.height=14, fig.width=26}
-grid.arrange(Criteria_plot(bic, crit_name = "BIC"),
-             Criteria_plot(summary(selec_auto)$bic, crit_name = "BIC regsubstet ajusté"),
-             ncol = 2)
-```
-
-On voit que les valeurs sont différentes mais en fait le comportement est identique. Ce qui veut dire que la différence est seulement due à une constant multiplicative près.
 
 ### Backward
 
@@ -481,6 +538,14 @@ selec_back <- regsubsets(Salary~.,
                          Hitters_Without_NA,
                          method = "backward",
                          nvmax = 19)
+```
+```{r, fig.height=10, fig.width=12}
+par(mfrow=c(2,2))
+plot(selec_back, scale = 'bic') 
+plot(selec_back, scale = 'Cp') 
+plot(selec_back, scale = 'r2') 
+plot(selec_back, scale = 'adjr2') 
+
 ```
 
 ```{r, fig.height=18, fig.width=30}
@@ -498,6 +563,43 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
              Criteria_plot(aic, crit_name = "AIC"),
              Criteria_plot(bic, crit_name = "BIC"),
              ncol = 3)
+```
+
+Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
+
+```{r}
+best_model_r2 <- which.max(r2)
+selected_vars <- summary(selec_back)$which[best_model_r2,]
+cat("Meilleur modèle selon R2 : Modèle avec", best_model_r2, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_r2a <- which.max(r2a)
+selected_vars <- summary(selec_back)$which[best_model_r2a,]
+cat("Meilleur modèle selon R2a : Modèle avec", best_model_r2a, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_cp <- which.min(cp)
+selected_vars <- summary(selec_back)$which[best_model_cp,]
+cat("Meilleur modèle selon Cp : Modèle avec", best_model_cp, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_aic <- which.min(aic)
+selected_vars <- summary(selec_back)$which[best_model_aic,]
+cat("Meilleur modèle selon AIC : Modèle avec", best_model_aic, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_bic <- which.min(bic)
+selected_vars <- summary(selec_back)$which[best_model_bic,]
+cat("Meilleur modèle selon BIC : Modèle avec", best_model_bic, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
 ```
 
 On peut également utiliser la fonction *step* de la library { *stats* }. Pour cela, on part du plus gros modèle défini précédemment par *mod1.*
@@ -559,6 +661,14 @@ selec_forw <- regsubsets(Salary~.,
                          method = "forward",
                          nvmax = 19)
 ```
+```{r, fig.height=10, fig.width=12}
+par(mfrow=c(2,2))
+plot(selec_forw, scale = 'bic') 
+plot(selec_forw, scale = 'Cp') 
+plot(selec_forw, scale = 'r2') 
+plot(selec_forw, scale = 'adjr2') 
+
+```
 
 ```{r, fig.height=18, fig.width=30}
 SCR <- summary(selec_forw)$rss
@@ -575,6 +685,44 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
              Criteria_plot(aic, crit_name = "AIC"),
              Criteria_plot(bic, crit_name = "BIC"),
              ncol = 3)
+```
+
+
+Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
+
+```{r}
+best_model_r2 <- which.max(r2)
+selected_vars <- summary(selec_forw)$which[best_model_r2,]
+cat("Meilleur modèle selon R2 : Modèle avec", best_model_r2, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_r2a <- which.max(r2a)
+selected_vars <- summary(selec_forw)$which[best_model_r2a,]
+cat("Meilleur modèle selon R2a : Modèle avec", best_model_r2a, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_cp <- which.min(cp)
+selected_vars <- summary(selec_forw)$which[best_model_cp,]
+cat("Meilleur modèle selon Cp : Modèle avec", best_model_cp, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_aic <- which.min(aic)
+selected_vars <- summary(selec_forw)$which[best_model_aic,]
+cat("Meilleur modèle selon AIC : Modèle avec", best_model_aic, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_bic <- which.min(bic)
+selected_vars <- summary(selec_forw)$which[best_model_bic,]
+cat("Meilleur modèle selon BIC : Modèle avec", best_model_bic, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
 ```
 
 On peut également utiliser la fonction *step* de la library { *stats* }. Cette fois ci il faut définir en modèle de départ le plus petit modèle (celui composé seulement de l'intercept).
@@ -627,9 +775,80 @@ modselect_forw_cp %>% summary()
 
 On voit que parmi nos modèles, le BIC semble le plus parcimonieux mais de manière général on constate encore des valeurs de $R^2$ et $R^2_{adjusted}$ assez faibles.
 
-### Both
+### Stepwise
 
-Maintenant on va regarder en sélection *both*. On va alors utiliser la fonction *step* directement.
+Maintenant on va regarder en sélection *stepwise*. D'abord, on fait à nouveau avec la fonction regsubset.
+
+```{r}
+selec_seq <- regsubsets(Salary~.,
+                         Hitters_Without_NA,
+                         method = "seqrep",
+                         nvmax = 19)
+```
+```{r, fig.height=10, fig.width=12}
+par(mfrow=c(2,2))
+plot(selec_seq, scale = 'bic') 
+plot(selec_seq, scale = 'Cp') 
+plot(selec_seq, scale = 'r2') 
+plot(selec_seq, scale = 'adjr2') 
+
+```
+
+```{r, fig.height=18, fig.width=30}
+SCR <- summary(selec_seq)$rss
+r2 <- r2_fun(Hitters_Without_NA$Salary, SCR)
+r2a <- r2a_fun(Hitters_Without_NA$Salary, SCR)
+cp <- cp_fun(mod1, SCR)
+aic <- aic_fun(SCR)
+bic <- bic_fun(SCR)
+
+grid.arrange(Criteria_plot(r2, crit_name = "R2"),
+             Criteria_plot(r2a, crit_name = "R2 ajusté"),
+             Criteria_plot(cp, crit_name = "Cp"),
+             Criteria_plot(SCR, crit_name = "Somme des Carrés Résiduels"),
+             Criteria_plot(aic, crit_name = "AIC"),
+             Criteria_plot(bic, crit_name = "BIC"),
+             ncol = 3)
+```
+
+Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
+
+```{r}
+best_model_r2 <- which.max(r2)
+selected_vars <- summary(selec_seq)$which[best_model_r2,]
+cat("Meilleur modèle selon R2 : Modèle avec", best_model_r2, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_r2a <- which.max(r2a)
+selected_vars <- summary(selec_seq)$which[best_model_r2a,]
+cat("Meilleur modèle selon R2a : Modèle avec", best_model_r2a, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_cp <- which.min(cp)
+selected_vars <- summary(selec_seq)$which[best_model_cp,]
+cat("Meilleur modèle selon Cp : Modèle avec", best_model_cp, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_aic <- which.min(aic)
+selected_vars <- summary(selec_seq)$which[best_model_aic,]
+cat("Meilleur modèle selon AIC : Modèle avec", best_model_aic, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_bic <- which.min(bic)
+selected_vars <- summary(selec_seq)$which[best_model_bic,]
+cat("Meilleur modèle selon BIC : Modèle avec", best_model_bic, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+On peut également utiliser la fonction *step* de la library { *stats* }.
 
 ```{r}
 modselect_bic <- step(mod0,
@@ -667,6 +886,31 @@ anova(mod0, modselect_bic, test = "Chisq")
 De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère BIC) propose un meilleur ajustement que celui sans variable.
 
 ::::
+
+# Comparaison des critères
+
+
+Avant de finir, comparons un peut les critères que nous avons calculés avec ceux que l'on peut récupérer via le summary de regsubset (pour tous sauf l'AIC qui n'est pas présent). On se contentera de faire se comparatif seulement pour le modèle *stepwise*.
+
+Pour cela regardons si nous avons régulièrement la valeur 0 (ou valeur proche) :
+
+```{r}
+round(r2-summary(selec_seq)$rsq) %>% mean()
+round(r2a-summary(selec_seq)$adjr2) %>% mean()
+round(cp-summary(selec_seq)$cp) %>% mean()
+round(bic-summary(selec_seq)$bic) %>% mean()
+```
+
+on voit une grosse différence seulement pour le BIC donc regardons plus en détail.
+
+```{r, fig.height=14, fig.width=26}
+grid.arrange(Criteria_plot(bic, crit_name = "BIC"),
+             Criteria_plot(summary(selec_seq)$bic, crit_name = "BIC regsubstet ajusté"),
+             ncol = 2)
+```
+
+On voit que les valeurs sont différentes mais en fait le comportement est identique. Ce qui veut dire que la différence est seulement due à une constant multiplicative près.
+
 
 # Conclusion
 
