@@ -1,0 +1,629 @@
+---
+title: "Exercice 1"
+author: "Clément Poupelin"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    embed-resources: false
+    toc: true
+    code-fold: true
+    code-summary: "Show the code"
+    code-tools: true
+    toc-location: right
+    page-layout: article
+    code-overflow: wrap
+toc: true
+number-sections: false
+editor: visual
+categories: ["TP"]
+image: ""
+description: ""
+---
+
+# Setup
+
+:::: panel-tabset
+## packages
+
+```{r, setup, warning=FALSE, message=FALSE}
+library(ISLR) # Hitters data 
+library(leaps) # regsubsets 
+library(MASS)
+library(GGally) # pour ggcorr
+library(car) # pour VIF
+library(dplyr)
+library(DT)
+
+## Summary
+library(rstatix)
+library(tibble)
+
+## PCA
+library(FactoMineR)
+library(factoextra)
+
+# Plots
+library(ggplot2)
+library(reshape2)  # Pour transformer les données en format long
+library(gridExtra)
+
+## for pairs panel
+library(psych)
+library(RColorBrewer)
+```
+
+## Fonctions
+
+::: panel-tabset
+### Critères
+
+```{r}
+
+
+r2_fun <- function(y, SCR){
+  # r2 = SSE/SST = (SST - SSR)/SST = 1 - ssr/sst
+  SCT <- sum((y - mean(y) )^2)
+  r2 <- 1 - SCR/SCT
+  return(r2)
+}
+
+r2a_fun <- function(y, SCR){
+  n <- dim(Hitters_Without_NA)[1]
+  p <- 1:(dim(Hitters_Without_NA)[2]-1)
+  SCT <- sum((y - mean(y) )^2)
+  r2a <- 1 - (SCR/(n-(p+1)))/(SCT/(n-1))
+  return(r2a)
+}
+
+cp_fun <- function(mod, SCR){
+  sig <- summary(mod)$sigma
+  n <- dim(Hitters_Without_NA)[1]
+  p <- 1:(dim(Hitters_Without_NA)[2]-1)
+  cp <- SCR/sig^2 + 2*(p+1) - n
+  return(cp)
+}
+
+aic_fun <- function(SCR){
+  n <- dim(Hitters_Without_NA)[1]
+  p <- 1:(dim(Hitters_Without_NA)[2]-1)
+  aic <- n * log(SCR/n) + 2*(p+1)
+  return(aic)
+}
+
+bic_fun <- function(SCR){
+  n <- dim(Hitters_Without_NA)[1]
+  p <- 1:(dim(Hitters_Without_NA)[2]-1)
+  bic <- n * log(SCR/n) + log(n)*(p+1)
+  return(bic)
+}
+```
+
+### plot pour nos critères
+
+```{r}
+Criteria_plot <- function(Criteria, crit_name = "Critère") {
+  # Création d'un data frame pour ggplot
+  df_criteria <- data.frame(
+    nb_var = seq_along(Criteria),  # Nombre de variables utilisées
+    Criteria = Criteria            # Valeurs du critère (RSS, AIC, BIC, etc.)
+  )
+
+  # Création du plot avec ggplot2
+  g <- ggplot(df_criteria, aes(x = nb_var, y = Criteria)) +
+    geom_line(color = "#0072B2", linewidth = 1) +  
+    geom_point(color = "#D55E00", size = 4) + 
+    labs(
+      title = paste("Évolution de", crit_name, "en fonction du nombre de variables"),
+      x = "Nombre de variables sélectionnées",
+      y = crit_name
+    ) +
+    theme_minimal() + 
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 26),  # Titre centré et agrandi
+      axis.title.x = element_text(face = "bold", size = 22),
+      axis.title.y = element_text(face = "bold", size = 22),
+      axis.text = element_text(size = 20)
+    )
+
+  return(g)
+}
+```
+:::
+::::
+
+# Données
+
+On étudie le jeu de données [**Hitters**](https://rdrr.io/cran/ISLR/man/Hitters.html) disponible dans la libraire { *ISLR* } de *R*.
+
+Il s'agit d'un je de données de la Major League Baseball provenant des saisons de 1986 et 1987.
+
+```{r}
+# ?Hitters
+Hitters %>%
+  dim()
+Hitters %>%
+  summary()
+```
+
+::: callout-warning
+On peut déjà remarquer la présence de 59 valeurs manquantes pour la variable *Salary*.
+:::
+
+On va donc commencer par s'en débarasser (il ne s'agit que de 59 lignes sur 322). Puis on va également se concentrer sur les variables quantitatives .
+
+```{r}
+Hitters_Without_NA <- Hitters %>% na.omit()
+Hitters_Without_NA_quant <- Hitters_Without_NA %>% subset(, select = -c(League, Division, NewLeague))
+
+Hitters_Without_NA_quant %>% dim()
+```
+
+# Analyse descriptive
+
+:::: panel-tabset
+## Boxplot
+
+On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.
+
+```{r, message=FALSE, fig.height=6, fig.width=8}
+# Transformer les données en format long pour ggplot
+Hitters_long <- melt(Hitters_Without_NA_quant)
+
+ggplot(Hitters_long, aes(x = variable, y = value, fill = variable)) +
+  geom_boxplot() +
+  scale_fill_viridis_d() +  # Palette de couleurs harmonieuse
+  labs(title = "Distribution des Variables (Boxplot)",
+       x = "Variables",
+       y = "Valeurs") +
+  theme_minimal() +  # Thème épuré
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotation des étiquettes
+
+```
+
+On peut remarquer que nos variables ont en général peut de valeurs outliers.
+
+## Correlation panel
+
+On regarde ici la corrélation calculée entre chacune de nos variables.
+
+```{r, fig.height=22, fig.width=28}
+pairs.panels(
+  Hitters_Without_NA_quant,
+  method = "pearson",      # Méthode de corrélation 
+  hist.col = brewer.pal(9, "Set3"), # Couleurs des histogrammes
+  density = TRUE,          # Ajout des courbes de densité
+  ellipses = TRUE,         # Ajout d'ellipses 
+  smooth = TRUE,           # Ajout de régressions lissées
+  lm = TRUE,               # Ajout des droites de régression
+  col = "#69b3a2",         # Couleur des points
+  alpha = 0.5              # Transparence 
+)
+```
+
+On voit la présence de plusieurs fortes corrélations qui peut déjà nous alerter si l'on veut faire des modèles de regressions linéaires car on risque d'avoir un problème de colinéarité entre les varibales explicatives.
+
+## PCA
+
+Avec une Analyse en Composantes Principales (PCA) on peut regarder un peu le comportement de nos données.
+
+En effet, Cette méthode respose sur la transformation des variables d'origine en nouvelles variables non corrélées, appelées composantes principales, qui capturent successivement la plus grande variance possible des données.
+
+```{r}
+res_pca <- PCA(Hitters_Without_NA, 
+               quali.sup = c(which(colnames(Hitters_Without_NA) %in% c("League", "Division", "NewLeague"))),
+               quanti.sup = which(colnames(Hitters_Without_NA) == "Salary"),
+               graph = FALSE)
+
+```
+
+Ici, on spécifi nos varibales qualitatives et on décide de mettre la variable *Salary* en variable supplémentaire, ce qui veut d'ire qu'elle ne sera pas considéré pour la formation de nos composantes principales (variable que l'on cherchera à estimer plus tard).
+
+::: panel-tabset
+#### Individus
+
+Le plan des individus est une projection des observations (dans notre cas, les joueurs de baseball) sur les axes principaux de la PCA. Cette visualisation permet d’identifier des regroupements, tendances et anomalies au sein des données.
+
+Ainsi, des individus proches sur le graphique ont des caractéristiques similaires par rapport aux variables utilisées.
+
+Puis, le placement d'un individu en fonction des axes peut permettre de savoir comment le jouer se caractérise par rapport aux variables qui contribuent le plus à ces axes.
+
+```{r, fig.height=6, fig.width=8}
+fviz_pca_ind(res_pca, 
+             label = "none",  # Supprime les noms des individus
+             pointsize = 2,    # Taille des points
+             col.ind = "cyan3")
+
+```
+
+Ici, on voit que les joueurs se répartissent bien sur le plan ce qui témoignent de la présence d'une grande variété de type de joueurs.
+
+#### Variables
+
+Le cercle des variables est une représentation graphique qui permet d’analyser les relations entre les variables initiales et les composantes principales qui forment nos axes. Il est basé sur les corrélations entre les variables et les axes principaux.
+
+Ainsi, plus une variable est proche du bord du cercle, plus elle est bien représentée sur le plan factoriel et contribue fortement à la formation des axes.
+
+De plus, selon l'angle entre deux varibles, on peut faire des suppositions sur leur corrélation :
+
+-   Si deux variables ont des vecteurs proches (petit angle), elles sont fortement corrélées positivement
+
+-   Si deux variables ont des vecteurs opposés (angle proche de 180°), elles sont corrélées négativement
+
+-   Si l’angle est proche de 90°, alors les variables ne sont pas corrélées
+
+```{r, fig.height=6, fig.width=8}
+fviz_pca_var(res_pca, 
+             col.var = "purple",
+             repel = TRUE)
+
+```
+
+Dans notre cas, ce que l'on peut voir c'est que la majorité de nos variables sont bien représentées par nos deux axes (cumulant plus de 70% d'explication). Mais beaucoup semblent aussi fortement corrélées avecla formation de deux groupes et la variable *Salary* se trouvant au milieu. Cette corrélation ayant déjà pu être observé précédemment.
+:::
+::::
+
+# Analyse inférentielle
+
+On désire modéliser le salaire *Salary* en fonction des variables disponibles.
+
+On va donc ajuster un modèle de régression linéaire en utilisant toutes les variables à disposition et analyser la qualité de cet ajustement.
+
+```{r}
+mod1 <- lm(formula = Salary ~ .,
+           Hitters_Without_NA) 
+mod1 %>% summary()
+
+```
+
+::: callout-note
+Nous sommes sur un modèle comprenant des variables quantitatives et qualitative ce qui le rapproche d'une modélisation ANOVA.
+:::
+
+Quelques commentaires sur le modèle :
+
+-   beaucoup de variables ont un effet non significatif
+
+-   le $R^2$ et le $R^2_{adjusted}$ sont autour de 0.5 ce qui témoigne d'une mauvaise qualité d'ajustament du modèle
+
+-   l'écart type résiduel est de 315.6 ce qui est assez important et témoigne d'un modèle peu précis
+
+Pour tenter de trouver un meilleur ajustment, il est important d'analyser d'avantage le lien entre toutes les variables explicatives. On utilise alors comunément le VIF
+
+```{r}
+vif(mod1) 
+```
+
+On remarque ainsi que beaucoup de valeurs sont supérieur à 10 ce qui s'interprète communément comme la précence d'une forte colinéarité sur nos variables explicatives.
+
+Cette colinéarité se constatait déjà durant les analyses descriptive via les graphes de corrélations (d'où l'importance de ne pas se lancer trop rapidement dans les analyses inférentielles).
+
+Maintenant, on va donc tenter de trouver le meilleur sous-modèle possible. Pour cela on va suivre la procédure suivante :
+
+-   mettre en oeuvre une méthode de sélection automatique exhaustive et observer l’évolution des SCR (Sommes de Carrés Résiduels) pour les modèles retenus en fonction de leur taille.
+
+-   déduire de ces SCR le $R^2$, $R^2_{adjusted}$, AIC, BIC et $C_p$ correspondants. Les comparer avec les valeurs fournies dans le summary de regsubsets et tracer leur évolution en fonction de la taille du modèle.
+
+Puis reproduire la même procédure avec des séléctions *backward*, *forward* et *stepwise*
+
+::: callout-note
+Un rappel sur nos critère se trouve dans la partie *Setup*, onglet fonction, de ce document avec la création de fonction pour les calculés.
+:::
+
+:::: panel-tabset
+## Sélection automatique
+
+```{r}
+selec_auto <- regsubsets(Salary~.,
+                         Hitters_Without_NA,
+                         method = "exhaustive",
+                         nvmax = 19 # maximum size of subsets to examine
+                         )
+# selec_auto %>% summary()
+```
+
+On va déjà commencer par regarder la valeur du critère en fonction des variables des différents modèles testés.
+
+```{r, fig.height=10, fig.width=12}
+par(mfrow=c(2,2))
+plot(selec_auto, scale = 'bic') 
+plot(selec_auto, scale = 'Cp') 
+plot(selec_auto, scale = 'r2') 
+plot(selec_auto, scale = 'adjr2') 
+par(mfrow=c(1,1))
+```
+
+Ici on remarque clairement que toutes nos variables ne sont pas gardés lorsque l'on cherche à optimiser nos critères.
+
+Aussi, on peut voir encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoignés d'un mauvais ajustement de modèle.
+
+::: callout-note
+plot.regsubsets() de leaps ne prend pas directement "aic" comme option de scale. Pour une sélection basée sur AIC, une approche alternative consiste à utiliser la fonction stepAIC() du package MASS, qui permet une sélection pas à pas basée sur AIC.
+:::
+
+Regardons un peut l'évolution de la Somme des Carrés Résiduels (SCR).
+
+```{r, fig.height=12, fig.width=16}
+SCR <- summary(selec_auto)$rss
+Criteria_plot(SCR, crit_name = "Somme des Carrés Résiduels")
+```
+
+Maintenant regardons les autres critères mentionné précédemment
+
+```{r, fig.height=18, fig.width=30}
+r2 <- r2_fun(Hitters_Without_NA$Salary, SCR)
+r2a <- r2a_fun(Hitters_Without_NA$Salary, SCR)
+cp <- cp_fun(mod1, SCR)
+aic <- aic_fun(SCR)
+bic <- bic_fun(SCR)
+
+grid.arrange(Criteria_plot(r2, crit_name = "R2"),
+             Criteria_plot(r2a, crit_name = "R2 ajusté"),
+             Criteria_plot(cp, crit_name = "Cp"),
+             Criteria_plot(aic, crit_name = "AIC"),
+             Criteria_plot(bic, crit_name = "BIC"),
+             ncol = 3)
+```
+
+On peut ainsi voir que ce sont plutot des modèles entre 5 et 10 variables qui optimisent nos critères (donc pas un modèle avec toutes nos variables).
+
+Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
+
+```{r}
+best_model_r2 <- which.max(r2)
+selected_vars <- summary(selec_auto)$which[best_model_r2,]
+cat("Meilleur modèle selon R2 : Modèle avec", best_model_r2, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_r2a <- which.max(r2a)
+selected_vars <- summary(selec_auto)$which[best_model_r2a,]
+cat("Meilleur modèle selon AIC : Modèle avec", best_model_r2a, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_cp <- which.min(cp)
+selected_vars <- summary(selec_auto)$which[best_model_cp,]
+cat("Meilleur modèle selon AIC : Modèle avec", best_model_cp, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_aic <- which.min(aic)
+selected_vars <- summary(selec_auto)$which[best_model_aic,]
+cat("Meilleur modèle selon AIC : Modèle avec", best_model_aic, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+```{r}
+best_model_bic <- which.min(bic)
+selected_vars <- summary(selec_auto)$which[best_model_bic,]
+cat("Meilleur modèle selon BIC : Modèle avec", best_model_bic, "variables\n")
+rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+```
+
+Pour finir, comparons un peut les critères que nous avons calculés avec ceux que l'on peut récupérer via le summary de regsubset (pour tous sauf l'AIC qui n'est pas présent).
+
+Pour cela regardons si nous avons régulièrement la valeur 0 (ou valeur proche) :
+
+```{r}
+round(r2-summary(selec_auto)$rsq) %>% mean()
+round(r2a-summary(selec_auto)$adjr2) %>% mean()
+round(cp-summary(selec_auto)$cp) %>% mean()
+round(bic-summary(selec_auto)$bic) %>% mean()
+```
+
+on voit une grosse différence seulement pour le BIC donc regardons plus en détail.
+
+```{r, fig.height=14, fig.width=26}
+grid.arrange(Criteria_plot(bic, crit_name = "BIC"),
+             Criteria_plot(summary(selec_auto)$bic, crit_name = "BIC regsubstet ajusté"),
+             ncol = 2)
+```
+
+On voit que les valeurs sont différentes mais en fait le comportement est identique. Ce qui veut dire que la différence est seulement due à une constant multiplicative près.
+
+## backward
+
+Cette fois ci on va regarder en sélection backward. D'abord, on fait à nouveau avec la fonction regsubset.
+
+```{r}
+selec_back <- regsubsets(Salary~.,
+                         Hitters_Without_NA,
+                         method = "backward",
+                         nvmax = 19)
+```
+
+```{r, fig.height=18, fig.width=30}
+SCR <- summary(selec_back)$rss
+r2 <- r2_fun(Hitters_Without_NA$Salary, SCR)
+r2a <- r2a_fun(Hitters_Without_NA$Salary, SCR)
+cp <- cp_fun(mod1, SCR)
+aic <- aic_fun(SCR)
+bic <- bic_fun(SCR)
+
+grid.arrange(Criteria_plot(r2, crit_name = "R2"),
+             Criteria_plot(r2a, crit_name = "R2 ajusté"),
+             Criteria_plot(cp, crit_name = "Cp"),
+             Criteria_plot(SCR, crit_name = "Somme des Carrés Résiduels"),
+             Criteria_plot(aic, crit_name = "AIC"),
+             Criteria_plot(bic, crit_name = "BIC"),
+             ncol = 3)
+```
+
+On peut également utiliser la fonction *step* de la library { *stats* }. Pour cela, on part du plus gros modèle défini précédemment par mod1.
+
+```{r}
+n <- dim(Hitters_Without_NA)[1]
+modselect_back_bic <- step(mod1,
+                       scope = formula(mod1),
+                       trace = FALSE, # trace = TRUE permet de voir le détail des étapes
+                       direction = c("backward"),
+                       k = log(n) # BIC selection
+                       )
+```
+
+Puis on peut regarder le modèle qui optimise le critère utilisé pour la selection.
+
+```{r}
+modselect_back_bic %>% summary()
+```
+
+La fonction step propose aussi une selection avec AIC et Cp.
+
+-   AIC
+
+```{r}
+modselect_back_aic <- step(mod1,
+                       scope = formula(mod1),
+                       trace = FALSE, 
+                       direction = c("backward"),
+                       k = 2 # AIC selection
+                       )
+
+modselect_back_aic %>% summary()
+```
+
+-   $C_p$
+
+```{r}
+modselect_back_cp <- step(mod1,
+                       scope = formula(mod1),
+                       trace = FALSE, 
+                       direction = c("backward"),
+                       k = 1 # Cp selection
+                       )
+
+modselect_back_cp %>% summary()
+```
+
+On voit que parmi nos modèles, le BIC semble le plus parcimonieux mais de manière général on constate encore des valeurs de $R^2$ et $R^2_{adjusted}$ assez faibles.
+
+## forward
+
+Cette fois ci on va regarder en sélection *forward*. D'abord, on fait à nouveau avec la fonction regsubset.
+
+```{r}
+selec_forw <- regsubsets(Salary~.,
+                         Hitters_Without_NA,
+                         method = "forward",
+                         nvmax = 19)
+```
+
+```{r, fig.height=18, fig.width=30}
+SCR <- summary(selec_forw)$rss
+r2 <- r2_fun(Hitters_Without_NA$Salary, SCR)
+r2a <- r2a_fun(Hitters_Without_NA$Salary, SCR)
+cp <- cp_fun(mod1, SCR)
+aic <- aic_fun(SCR)
+bic <- bic_fun(SCR)
+
+grid.arrange(Criteria_plot(r2, crit_name = "R2"),
+             Criteria_plot(r2a, crit_name = "R2 ajusté"),
+             Criteria_plot(cp, crit_name = "Cp"),
+             Criteria_plot(SCR, crit_name = "Somme des Carrés Résiduels"),
+             Criteria_plot(aic, crit_name = "AIC"),
+             Criteria_plot(bic, crit_name = "BIC"),
+             ncol = 3)
+```
+
+On peut également utiliser la fonction *step* de la library { *stats* }. Cette fois ci il faut définir en modèle de départ le plus petit modèle (celui composé seulement de l'intercept).
+
+```{r}
+mod0 <- lm(Salary~1,
+           Hitters_Without_NA)
+
+modselect_forw_bic <- step(mod0,
+                       scope = formula(mod1),
+                       trace = FALSE, # trace = TRUE permet de voir le détail des étapes
+                       direction = c("forward"),
+                       k = log(n) # BIC selection
+                       )
+```
+
+Puis on peut regarder le modèle qui optimise le critère utilisé pour la selection.
+
+```{r}
+modselect_forw_bic %>% summary()
+```
+
+La fonction step propose aussi une selection avec AIC et Cp.
+
+-   AIC
+
+```{r}
+modselect_forw_aic <- step(mod0,
+                       scope = formula(mod1),
+                       trace = FALSE, 
+                       direction = c("forward"),
+                       k = 2 # AIC selection
+                       )
+
+modselect_forw_aic %>% summary()
+```
+
+-   $C_p$
+
+```{r}
+modselect_forw_cp <- step(mod0,
+                       scope = formula(mod1),
+                       trace = FALSE, 
+                       direction = c("forward"),
+                       k = 1 # Cp selection
+                       )
+
+modselect_forw_cp %>% summary()
+```
+
+On voit que parmi nos modèles, le BIC semble le plus parcimonieux mais de manière général on constate encore des valeurs de $R^2$ et $R^2_{adjusted}$ assez faibles.
+
+## both
+
+Maintenant on va regarder en sélection *both*. On va alors utiliser la fonction *step* directement.
+
+```{r}
+modselect_bic <- step(mod0,
+                  scope = formula(mod1),
+                  trace = FALSE,
+                  direction = c("both"),
+                  k = log(n))
+modselect_bic %>% summary()
+```
+
+```{r}
+modselect_aic <- step(mod0,
+                  scope = formula(mod1),
+                  trace = FALSE,
+                  direction = c("both"),
+                  k = 2)
+modselect_aic %>% summary()
+```
+
+```{r}
+modselect_cp <- step(mod0,
+                  scope = formula(mod1),
+                  trace = FALSE,
+                  direction = c("both"),
+                  k = 1)
+modselect_cp %>% summary()
+```
+
+Malheuresement, même en sélection *both* nous avons encore des $R^2$ et $R^2_{adjusted}$ faibles.
+::::
+
+# Conclusion
+
+À la lumière des résultats de notre analyse, on peut envisager le modèle *both* car bien qu'il n'ait pas montré de grandes améliorations en termes de $R^2$ et $R^2_{adjusted}$, il permet de réduire le nombre de variables tout en maintenant celles qui sont significatives. Ce modèle est donc plus parcimonieux tout en conservant des variables importantes. Cependant, une réflexion supplémentaire pourrait être menée sur l'éventuelle suppression de l'*intercept*, ce qui nécessiterait une validation supplémentaire.
+
+En ce qui concerne le choix final du modèle, on peut opté pour celui qui maximise le critère BIC, ce qui nous mène à un modèle avec 6 variables. Le BIC est particulièrement utile pour privilégier un modèle plus simple et plus parcimonieux, ce qui est un atout lorsqu'on cherche à éviter un surajustement. Toutefois, il est important de noter que la qualité de l'ajustement n'est pas optimale, ce qui suggère qu'il pourrait manquer certaines informations pour expliquer pleinement la variable cible (le salaire).
+
+Enfin, la validité interne est un aspect crucial qui n'a pas été suffisamment exploré dans cette analyse. Il aurait été pertinent de vérifier que toutes les hypothèses sous-jacentes des modèles étaient satisfaites. Cela aurait permis de renforcer la robustesse de nos résultats et de garantir que les conclusions qu'on sont fiables.
+
+Donc, il serait pertinent d'examiner plus en profondeur la validité interne, notamment en testant les hypothèses de normalité, d'homoscédasticité, et d'indépendance des résidus.
+
+# Session info
+
+```{r}
+sessioninfo::session_info(pkgs = "attached")
+```
