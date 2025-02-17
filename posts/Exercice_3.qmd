@@ -1,0 +1,330 @@
+---
+title: "Exercice 3"
+author: "Clément Poupelin"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    embed-resources: false
+    toc: true
+    code-fold: false
+    code-summary: "Show the code"
+    code-tools: true
+    toc-location: right
+    page-layout: article
+    code-overflow: wrap
+toc: true
+number-sections: false
+editor: visual
+categories: ["TP"]
+image: "/img/validation.png"
+description: "Première essais de techniques de validations croisées sur des données générées manuellement"
+---
+
+
+
+
+```{r}
+set.seed(123)
+```
+
+
+# Question 1 --------------------------------------------------------------
+
+```{r}
+x = rnorm(1000)
+y = x - 2*(x^2) + rnorm(1000)
+# modele avec n = 1000 et p = 2. beta = t(1, -2 )
+```
+
+Nous allons généré un modèle de régression linéaire classique : 
+$$Y = X\beta + \mathcal{E}$$
+- $Y \in \mathbb{R}^{n}$ la variable réponse ou variable à expliquer
+
+- $X \in \mathbb{R}^{n\times p}$ la matrice contenant nos variables explicatives 
+
+- $\beta \in \mathbb{R}^{n}$ le vecteur composée des coefficients de régression
+
+- $\mathcal{E} \in \mathbb{R}^{n}$ le vecteur d'erreur suivant une loi $\mathcal{N}(0, 1)$
+
+Pour la génération de nos données, nous allons alors poser que $\beta = (1, 2)'$ et $X = [x_1, x_1^2]$, $x_1 \in \mathbb{R}^n$ suivant une loi $\mathcal{N}(0,1)$.
+
+
+
+# Question 2 --------------------------------------------------------------
+
+```{r}
+plot(x,y)
+cor(x,y)
+# correlation faible, pourtant le nuage de point montre bien un effet de x sur y 
+```
+
+
+
+
+
+# Question 3 --------------------------------------------------------------
+
+
+```{r}
+df = as.data.frame(cbind(y, x, x^2, x^3, x^4))
+mod1 = lm(y~x, data = df)
+mod2 = lm(y~ x + V3, data=df)
+mod3 = lm(y~ x + V3 + V4, data=df)
+mod4 = lm(y~ x + V3 + V4 + V5, data=df)
+
+summary(mod1)
+cor(x,y)^2
+#le r2 du mod1 doit correspondre à la corr^2 : ok
+```
+
+
+# Question 4 --------------------------------------------------------------
+
+
+```{r}
+
+summary(mod1)$r.squared
+BIC(mod1)
+AIC(mod1)
+
+BIC(mod2)
+AIC(mod2)
+
+BIC(mod3)
+AIC(mod3)
+
+BIC(mod4)
+AIC(mod4)
+
+# mod2 est le meilleur modèle 
+
+## FAIRE UN TABLEAU POUR LES RESULTATS
+# R2, R2aj, Cp, AIC, BIC, coeff, etc...
+```
+
+
+# Question 5 --------------------------------------------------------------
+
+
+```{r}
+fmla2 = y~ x + V3
+fmla3 = y~ x + V3 + V4
+fmla1 = y~ x
+fmla4 = y~ x + V3 + V4 + V5
+####
+
+# ##### TRASH ####
+# 
+# FMLA = c(fmla1, fmla2, fmla3, fmla4)
+# 
+# LOO_1 = function(y, x, fmla, j){
+#   y_res = rep(NA, 1000)
+#   for (i in 1:1000){
+#     
+#     df[i] = as.data.frame(cbind(y[-i], x[-i], x[-i]^2, x[-i]^3, x[-i]^4))
+#     mod = lm(fmla[[j]], data = df[i])
+#     
+#     
+#     df2[i] = as.data.frame(cbind(x[-i], x[-i]^2, x[-i]^3, x[-i]^4))
+#     yi_hat = predict(mod, df2[i])
+#     yi = y[i]
+#     y_res[i] = yi - yi_hat 
+#   }
+#   loo = mean(y_res^2)
+#     return(loo)
+# }
+# LOO_1(y,x,FMLA, 2)
+# 
+# 
+# 
+# LOO_2 =function(y, x, fmla, i){
+#   r = lm(fmla[[i]], data = df)$residuals
+#   h = hatvalues(lm(fmla[[i]], data = df)) #diag de hatmatrix
+#   loo = mean((r/(1-h))^2)
+#   return(loo)
+# }
+# LOO_2(y,x,FMLA, 1)
+# LOO_2(y,x,FMLA, 2)
+# LOO_2(y,x,FMLA, 3)
+# LOO_2(y,x,FMLA, 4)
+# 
+# #####
+
+# Fonction loo qui utilise en entree le modele (ne fonctionne pas si la formule utilise la fonction poly)
+loo=function(mod){
+  n = nrow(mod$model)
+  Call = mod$call # mod1$call --> lm(formula = y ~ x, data = df)
+  erreur=1:n
+  for(i in 1:n){
+    Call$data = mod$model[-i, ] # mod1$call$data = df
+    fit = eval.parent(Call)
+    pred = predict(fit, mod$model[i,])
+    erreur[i] = (pred - mod$model[i,1])^2
+  }
+  return(mean(erreur))
+}
+
+
+
+#Fonction loo qui utilise la formule du cours
+loo2=function(mod){
+  mean((residuals(mod)/(1-hatvalues(mod)))^2)
+}
+
+
+```
+
+
+
+
+# Question 6 --------------------------------------------------------------
+
+```{r}
+loo(mod1)
+loo(mod2)
+loo(mod3)
+loo(mod4)
+
+loo2(mod1)
+loo2(mod2)
+loo2(mod3)
+loo2(mod4)
+
+# les resultats coincident
+# loo2 est plus rapide pour calculer 
+# le plus haut loo est pour mod1 et le plus bas pour mod4 
+# (même si resultats prochent entre mod2, mod3 et mod4)
+
+# modèle le plus parcimonieux est le mod2
+```
+
+
+
+
+# Question 7 --------------------------------------------------------------
+
+```{r}
+library(boot)
+# Loo c'est K=1
+
+mod1_glm = glm(formula = fmla1 , family = gaussian, data = df)
+mod2_glm = glm(formula = fmla2 , family = gaussian, data = df)
+mod3_glm = glm(formula = fmla3 , family = gaussian, data = df)
+mod4_glm = glm(formula = fmla4 , family = gaussian, data = df)
+
+
+cvmod1 = cv.glm(data = df, glmfit = mod1_glm, K = 10) 
+cvmod2 = cv.glm(data = df, glmfit = mod2_glm, K = 10) 
+cvmod3 = cv.glm(data = df, glmfit = mod3_glm, K = 10) 
+cvmod4 = cv.glm(data = df, glmfit = mod4_glm, K = 10) 
+
+summary(cvmod1$delta)
+loo2(mod1)
+
+summary(cvmod2$delta)
+loo2(mod2)
+
+summary(cvmod3$delta)
+loo2(mod3)
+
+summary(cvmod4$delta)
+loo2(mod4)
+
+# les valeurs ont la même ordre de grandeur
+
+```
+
+
+
+# Question 8 --------------------------------------------------------------
+
+
+```{r}
+# on regarde les 3 mod où loo faible 
+summary(mod2)
+summary(mod3)
+summary(mod4)
+# les r2 sont tous bon mais le mod2 à toutes ses variables significatives (sauf intercept)
+# on va donc préférer le mod2
+
+# On enlève la cst non significative 
+mod_final = lm(y ~ x + V3-1, data=df)
+mod_final_glm = glm(y ~ x + V3-1, data=df) # par defaut family = gaussian
+summary(mod2)
+summary(mod_final)
+summary(mod_final_glm)
+
+# x = rnorm(1000)
+# y = x - 2*(x^2) + rnorm(1000)
+ 
+# REMARQUE :
+# quand on enlève l'intercept, les valeurs des coeffs bougent légèrement 
+# alors que théoriquement identique 
+# pareil, on a une différence sur le r2
+# Pourquoi ??
+
+# regardons le modèle plus simple
+mod1_sansIntercept = lm(y ~ x -1, data=df)
+summary(mod1)
+summary(mod1_sansIntercept)
+# on constante le même soucis
+
+mean(x) # x n'est pas parfaitement centré
+var(x) # var pas = 1
+# Don même si on a demandé à r de générer un x centré reduit,
+# enfait les données ne le sont pas parfaitement !!!!
+
+# on test en juste centrer le jeu de données
+df_center = as.data.frame(scale(df, center=TRUE, scale=FALSE))
+
+mod2_center= lm(y ~ x + V3, data=df_center)
+mod_final_center = lm(y ~ x + V3-1, data=df_center)
+summary(mod2_center)
+summary(mod_final_center)
+# quasi plus de différence pour coeffs et r2
+
+
+# on test en scale le jeu de données
+df_scale = as.data.frame(scale(df))
+
+mod2_scale= lm(y ~ x + V3, data=df_scale)
+mod_final_scale = lm(y ~ x + V3-1, data=df_scale)
+summary(mod2_scale)
+summary(mod_final_scale)
+# quasi plus de différence pour coeffs et r2
+
+
+## remarque : 
+# le r2 et r2aj est le meilleur pour mod_final qui correspond
+# au mod 2 sans intercept mais où l'on a pas scale le df
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
