@@ -115,72 +115,6 @@ bic_fun <- function(SCR){
 }
 ```
 
-### plot pour PCA
-
-```{r}
-as_df_for_ggplot = function(x,
-                            y = NULL,
-                            size = NULL,
-                            color = NULL,
-                            fill = NULL,
-                            pattern = NULL,
-                            shape = NULL, 
-                            rownames = NULL,
-                            label = NULL,
-                            group = NULL,
-                            order = NULL,
-                            decr = FALSE) {
-  df = data.frame(x = x)
-  if (!is.null(y)) {
-    df = cbind(df, data.frame(y = y))
-  }
-  if (!is.null(size)) {
-    df = cbind(df, data.frame(size = size))
-  }
-  if (!is.null(color)) {
-    df = cbind(df, data.frame(color = color))
-  }
-  if (!is.null(fill)) {
-    df = cbind(df, data.frame(fill = fill))
-  }
-  if (!is.null(shape)) {
-    df = cbind(df, data.frame(shape = shape))
-  }
-  if (!is.null(pattern)) {
-    df = cbind(df, data.frame(pattern = pattern))
-  }
-  if (!is.null(rownames)) {
-    rownames(df) = rownames
-  } else {
-    rownames(df) = 1:nrow(df)
-  }
-  if (!is.null(group)) {
-    df = cbind(df, data.frame(group = group))
-  }
-  if (!is.null(label)) {
-    df = cbind(df, data.frame(label = label))
-  }
-  if (!is.null(order)){
-    df = cbind(df,data.frame(order = order))
-    df = df[order(df[,"order"], decreasing = decr),]
-  }
-  
-  return(df)
-}
-
-
-draw_variance_barplot_pca = function(res_pca, n = 10,title = "", ...) {
-  df = as_df_for_ggplot(x = factor(rownames(res_pca[["eig"]])[1:n], levels = rownames(res_pca[["eig"]])[1:n]),
-                        y = res_pca[["eig"]][1:n, 2])
-  fig = ggplot(df, aes(x = x, y = y, fill = "deeppink3")) +
-    geom_bar(stat = "identity") +
-    labs(x = "Component",y= "Percentage of explained variance", title = title)+
-    guides(fill = "none")+
-    theme_bw()
-  return(fig)
-}
-```
-
 ### plot pour nos critères
 
 ```{r}
@@ -211,6 +145,37 @@ Criteria_plot <- function(Criteria, crit_name = "Critère") {
   return(g)
 }
 ```
+
+### Meilleur modèle après regsubset
+
+```{r}
+Best_model <- function(model, criteria_df){
+  ## On a d'abord les critères à maximiser
+  for(i in 1:2){
+    criteria_name <- colnames(criteria_df)[i]
+    criteria <- criteria_df[,i]
+    
+    best_model_criteria <- which.max(criteria)
+    selected_vars <- summary(model)$which[best_model_criteria,]
+    
+    cat("Meilleur modèle selon", criteria_name," : Modèle avec", best_model_criteria, "variables\n", 
+        rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE]), "\n", "\n")
+  }
+  ## On a ensuite les critères à minimiser
+  for(i in 3:5){
+    criteria_name <- colnames(criteria_df)[i]
+    criteria <- criteria_df[,i]
+    
+    best_model_criteria <- which.min(criteria)
+    selected_vars <- summary(model)$which[best_model_criteria,]
+    
+    cat("Meilleur modèle selon", criteria_name," : Modèle avec", best_model_criteria, "variables\n", 
+        rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE]), "\n", "\n")
+  }
+}
+```
+
+
 :::
 ::::
 
@@ -255,13 +220,11 @@ Hitters %>%
 On peut déjà remarquer la présence de 59 valeurs manquantes pour la variable *Salary*.
 :::
 
-On va donc commencer par s'en débarasser (il ne s'agit que de 59 lignes sur 322). Puis on va également se concentrer sur les variables quantitatives .
+On va donc commencer par s'en débarasser (il ne s'agit que de 59 lignes sur 322). Puis on va également créé un sous jeu de données ne conservant que les variables quantitatives .
 
 ```{r}
 Hitters_Without_NA <- Hitters %>% na.omit()
 Hitters_Without_NA_quant <- Hitters_Without_NA %>% subset(, select = -c(League, Division, NewLeague))
-
-Hitters_Without_NA_quant %>% dim()
 ```
 
 # Analyse descriptive
@@ -308,6 +271,9 @@ pairs.panels(
 
 On voit la présence de plusieurs fortes corrélations qui peut déjà nous alerter si l'on veut faire des modèles de regressions linéaires car on risque d'avoir un problème de colinéarité entre les varibales explicatives.
 
+Par contre, il n'y a aucune forte corrélation entre la variable *Salary* et les autres variables du jeu de données. Ce qui peut nous indiquer qu'il n'y aura pas une variable avec très forte influence sur *Salary*.
+
+
 ## PCA
 
 Avec une Analyse en Composantes Principales (PCA) on peut regarder un peu le comportement de nos données.
@@ -330,7 +296,13 @@ Ici, on spécifi nos varibales qualitatives et on décide de mettre la variable 
 Tout d'abord, on peut commencer par regarder le pourcentage de variance expliqué par nos différentes composantes principales.
 
 ```{r}
-draw_variance_barplot_pca(res_pca, n = 10, title = "Percentage of variance of the 10 first components")
+fviz_eig(res_pca, 
+         ncp = 10,
+         addlabels = TRUE, 
+         barfill = "coral",
+         barcolor = "coral",
+         ylim = c(0, 50),
+         main = "Percentage of variance of the 10 first components")
 ```
 
 On voit ainsi que la majorité de la variance est expliquée par nos deux premières composantes principales avec la présence d'un fort effet de coude après celle-ci.
@@ -357,7 +329,7 @@ Ici, on voit que les joueurs se répartissent bien sur le plan ce qui témoignen
 
 Le cercle des variables est une représentation graphique qui permet d’analyser les relations entre les variables initiales et les composantes principales qui forment nos axes. Il est basé sur les corrélations entre les variables et les axes principaux.
 
-Ainsi, plus une variable est proche du bord du cercle, plus elle est bien représentée sur le plan factoriel et contribue fortement à la formation des axes.
+Ainsi, plus une variable est proche du bord du cercle, plus elle est bien représentée sur le plan factoriel et contribue fortement à la formation des axes. Ici, on utilise le cos2 pour le gradient de couleur qui va aider à l'indentifictation de ces différentes qualitées de représentation.
 
 De plus, selon l'angle entre deux varibles, on peut faire des suppositions sur leur corrélation :
 
@@ -369,12 +341,16 @@ De plus, selon l'angle entre deux varibles, on peut faire des suppositions sur l
 
 ```{r, fig.height=6, fig.width=8}
 fviz_pca_var(res_pca, 
-             col.var = "purple",
+             col.var = "cos2",
+             gradient.cols = rainbow(n = 8, start = .6, end = .9),
              repel = TRUE)
 
 ```
 
 Dans notre cas, ce que l'on peut voir c'est que la majorité de nos variables sont bien représentées par nos deux axes (cumulant plus de 70% d'explication). Mais beaucoup semblent aussi fortement corrélées avecla formation de deux groupes et la variable *Salary* se trouvant au milieu. Cette corrélation ayant déjà pu être observé précédemment.
+
+
+
 :::
 ::::
 
@@ -398,10 +374,12 @@ Nous sommes sur un modèle comprenant des variables quantitatives et qualitative
 :::
 
 ::: success-header
-Quelques conclusions sur le modèle :
+Résultats 
 :::
 
 ::: success
+Quelques conclusions sur le modèle :
+
 -   beaucoup de variables ont un effet non significatif
 
 -   le $R^2$ et le $R^2_{adjusted}$ sont autour de 0.5 ce qui témoigne d'une mauvaise qualité d'ajustament du modèle
@@ -419,7 +397,7 @@ On remarque ainsi que beaucoup de valeurs sont supérieur à 10 ce qui s'interpr
 
 Cette colinéarité se constatait déjà durant les analyses descriptive via les graphes de corrélations (d'où l'importance de ne pas se lancer trop rapidement dans les analyses inférentielles).
 
-------------------------------------------------------------------------
+
 
 ## Modèles parcimonieux
 
@@ -438,6 +416,8 @@ Un rappel sur nos critère se trouve dans la partie *Setup*, onglet fonction, de
 :::: panel-tabset
 ### Exhaustive
 
+:::: panel-tabset
+#### Modèle
 ```{r}
 selec_auto <- regsubsets(Salary~.,
                          Hitters_Without_NA,
@@ -466,6 +446,8 @@ Aussi, on peut voir encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$
 plot.regsubsets() de leaps ne prend pas directement "aic" comme option de scale. Pour une sélection basée sur AIC, une approche alternative consiste à utiliser la fonction stepAIC() du package MASS, qui permet une sélection pas à pas basée sur AIC.
 :::
 
+#### Evolution des critères
+
 Regardons un peut l'évolution de la Somme des Carrés Résiduels (SCR).
 
 ```{r, fig.height=12, fig.width=16}
@@ -492,46 +474,22 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
 
 On peut ainsi voir que ce sont plutot des modèles entre 5 et 10 variables qui optimisent nos critères (donc pas un modèle avec toutes nos variables).
 
+#### Meilleur modèle
+
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
-
 ```{r}
-best_model_r2 <- which.max(r2)
-selected_vars <- summary(selec_auto)$which[best_model_r2,]
-cat("Meilleur modèle selon R2 : Modèle avec", best_model_r2, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+criteria_df <- data.frame(r2, r2a, cp, aic, bic)
+Best_model(selec_auto, criteria_df)
 ```
 
-```{r}
-best_model_r2a <- which.max(r2a)
-selected_vars <- summary(selec_auto)$which[best_model_r2a,]
-cat("Meilleur modèle selon R2a : Modèle avec", best_model_r2a, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
-
-```{r}
-best_model_cp <- which.min(cp)
-selected_vars <- summary(selec_auto)$which[best_model_cp,]
-cat("Meilleur modèle selon Cp : Modèle avec", best_model_cp, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
-
-```{r}
-best_model_aic <- which.min(aic)
-selected_vars <- summary(selec_auto)$which[best_model_aic,]
-cat("Meilleur modèle selon AIC : Modèle avec", best_model_aic, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
-
-```{r}
-best_model_bic <- which.min(bic)
-selected_vars <- summary(selec_auto)$which[best_model_bic,]
-cat("Meilleur modèle selon BIC : Modèle avec", best_model_bic, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
+:::: 
 
 ### Backward
 
 Cette fois ci on va regarder en sélection backward. D'abord, on fait à nouveau avec la fonction regsubset.
+
+:::: panel-tabset
+#### Modèle
 
 ```{r}
 selec_back <- regsubsets(Salary~.,
@@ -549,6 +507,8 @@ plot(selec_back, scale = 'adjr2')
 
 ```
 
+
+#### Evolution des critères
 ```{r, fig.height=18, fig.width=30}
 SCR <- summary(selec_back)$rss
 r2 <- r2_fun(Hitters_Without_NA$Salary, SCR)
@@ -566,44 +526,24 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
              ncol = 3)
 ```
 
+#### Meilleur modèle
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
 
 ```{r}
-best_model_r2 <- which.max(r2)
-selected_vars <- summary(selec_back)$which[best_model_r2,]
-cat("Meilleur modèle selon R2 : Modèle avec", best_model_r2, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+criteria_df <- data.frame(r2, r2a, cp, aic, bic)
+Best_model(selec_back, criteria_df)
 ```
 
-```{r}
-best_model_r2a <- which.max(r2a)
-selected_vars <- summary(selec_back)$which[best_model_r2a,]
-cat("Meilleur modèle selon R2a : Modèle avec", best_model_r2a, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
+:::: 
 
-```{r}
-best_model_cp <- which.min(cp)
-selected_vars <- summary(selec_back)$which[best_model_cp,]
-cat("Meilleur modèle selon Cp : Modèle avec", best_model_cp, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
-
-```{r}
-best_model_aic <- which.min(aic)
-selected_vars <- summary(selec_back)$which[best_model_aic,]
-cat("Meilleur modèle selon AIC : Modèle avec", best_model_aic, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
-
-```{r}
-best_model_bic <- which.min(bic)
-selected_vars <- summary(selec_back)$which[best_model_bic,]
-cat("Meilleur modèle selon BIC : Modèle avec", best_model_bic, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
 
 On peut également utiliser la fonction *step* de la library { *stats* }. Pour cela, on part du plus gros modèle défini précédemment par *mod1.*
+
+La fonction *step* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
+
+:::: panel-tabset
+
+#### BIC 
 
 ```{r}
 n <- nrow(Hitters_Without_NA)
@@ -623,7 +563,7 @@ modselect_back_bic %>% summary()
 
 La fonction step propose aussi une selection avec AIC et Cp.
 
--   AIC
+#### AIC
 
 ```{r}
 modselect_back_aic <- step(mod1,
@@ -636,7 +576,7 @@ modselect_back_aic <- step(mod1,
 modselect_back_aic %>% summary()
 ```
 
--   $C_p$
+#### $C_p$
 
 ```{r}
 modselect_back_cp <- step(mod1,
@@ -651,9 +591,15 @@ modselect_back_cp %>% summary()
 
 On voit que parmi nos modèles, le BIC semble le plus parcimonieux mais de manière général on constate encore des valeurs de $R^2$ et $R^2_{adjusted}$ assez faibles.
 
+:::: 
+
+
 ### Forward
 
 Cette fois ci on va regarder en sélection *forward*. D'abord, on fait à nouveau avec la fonction regsubset.
+
+:::: panel-tabset
+#### Modèle
 
 ```{r}
 selec_forw <- regsubsets(Salary~.,
@@ -670,6 +616,8 @@ plot(selec_forw, scale = 'r2')
 plot(selec_forw, scale = 'adjr2') 
 
 ```
+
+#### Evolution des critères 
 
 ```{r, fig.height=18, fig.width=30}
 SCR <- summary(selec_forw)$rss
@@ -688,45 +636,25 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
              ncol = 3)
 ```
 
+#### Meilleur modèle 
+
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
 
 ```{r}
-best_model_r2 <- which.max(r2)
-selected_vars <- summary(selec_forw)$which[best_model_r2,]
-cat("Meilleur modèle selon R2 : Modèle avec", best_model_r2, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+criteria_df <- data.frame(r2, r2a, cp, aic, bic)
+Best_model(selec_forw, criteria_df)
 ```
 
-```{r}
-best_model_r2a <- which.max(r2a)
-selected_vars <- summary(selec_forw)$which[best_model_r2a,]
-cat("Meilleur modèle selon R2a : Modèle avec", best_model_r2a, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
 
-```{r}
-best_model_cp <- which.min(cp)
-selected_vars <- summary(selec_forw)$which[best_model_cp,]
-cat("Meilleur modèle selon Cp : Modèle avec", best_model_cp, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
-
-```{r}
-best_model_aic <- which.min(aic)
-selected_vars <- summary(selec_forw)$which[best_model_aic,]
-cat("Meilleur modèle selon AIC : Modèle avec", best_model_aic, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
-
-```{r}
-best_model_bic <- which.min(bic)
-selected_vars <- summary(selec_forw)$which[best_model_bic,]
-cat("Meilleur modèle selon BIC : Modèle avec", best_model_bic, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
+:::: 
 
 On peut également utiliser la fonction *step* de la library { *stats* }. Cette fois ci il faut définir en modèle de départ le plus petit modèle (celui composé seulement de l'intercept).
 
+La fonction *step* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
+
+:::: panel-tabset
+
+#### BIC
 ```{r}
 mod0 <- lm(Salary~1,
            Hitters_Without_NA)
@@ -747,7 +675,7 @@ modselect_forw_bic %>% summary()
 
 La fonction step propose aussi une selection avec AIC et Cp.
 
--   AIC
+#### AIC
 
 ```{r}
 modselect_forw_aic <- step(mod0,
@@ -760,7 +688,7 @@ modselect_forw_aic <- step(mod0,
 modselect_forw_aic %>% summary()
 ```
 
--   $C_p$
+#### $C_p$
 
 ```{r}
 modselect_forw_cp <- step(mod0,
@@ -775,9 +703,14 @@ modselect_forw_cp %>% summary()
 
 On voit que parmi nos modèles, le BIC semble le plus parcimonieux mais de manière général on constate encore des valeurs de $R^2$ et $R^2_{adjusted}$ assez faibles.
 
+:::: 
+
 ### Stepwise
 
 Maintenant on va regarder en sélection *stepwise*. D'abord, on fait à nouveau avec la fonction regsubset.
+
+:::: panel-tabset
+#### Modèle
 
 ```{r}
 selec_seq <- regsubsets(Salary~.,
@@ -794,6 +727,8 @@ plot(selec_seq, scale = 'r2')
 plot(selec_seq, scale = 'adjr2') 
 
 ```
+
+#### Evolution des critères 
 
 ```{r, fig.height=18, fig.width=30}
 SCR <- summary(selec_seq)$rss
@@ -812,44 +747,26 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
              ncol = 3)
 ```
 
+#### Meilleur modèle 
+
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
 
 ```{r}
-best_model_r2 <- which.max(r2)
-selected_vars <- summary(selec_seq)$which[best_model_r2,]
-cat("Meilleur modèle selon R2 : Modèle avec", best_model_r2, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
+criteria_df <- data.frame(r2, r2a, cp, aic, bic)
+Best_model(selec_seq, criteria_df)
 ```
 
-```{r}
-best_model_r2a <- which.max(r2a)
-selected_vars <- summary(selec_seq)$which[best_model_r2a,]
-cat("Meilleur modèle selon R2a : Modèle avec", best_model_r2a, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
 
-```{r}
-best_model_cp <- which.min(cp)
-selected_vars <- summary(selec_seq)$which[best_model_cp,]
-cat("Meilleur modèle selon Cp : Modèle avec", best_model_cp, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
+:::: 
 
-```{r}
-best_model_aic <- which.min(aic)
-selected_vars <- summary(selec_seq)$which[best_model_aic,]
-cat("Meilleur modèle selon AIC : Modèle avec", best_model_aic, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
-
-```{r}
-best_model_bic <- which.min(bic)
-selected_vars <- summary(selec_seq)$which[best_model_bic,]
-cat("Meilleur modèle selon BIC : Modèle avec", best_model_bic, "variables\n")
-rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE])
-```
 
 On peut également utiliser la fonction *step* de la library { *stats* }.
+
+La fonction *step* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
+
+:::: panel-tabset
+
+#### BIC
 
 ```{r}
 modselect_bic <- step(mod0,
@@ -860,6 +777,9 @@ modselect_bic <- step(mod0,
 modselect_bic %>% summary()
 ```
 
+
+#### AIC
+
 ```{r}
 modselect_aic <- step(mod0,
                   scope = formula(mod1),
@@ -868,6 +788,8 @@ modselect_aic <- step(mod0,
                   k = 2)
 modselect_aic %>% summary()
 ```
+
+#### $C_p$
 
 ```{r}
 modselect_cp <- step(mod0,
@@ -880,13 +802,16 @@ modselect_cp %>% summary()
 
 Malheuresement, même en sélection *both* nous avons encore des $R^2$ et $R^2_{adjusted}$ faibles.
 
-Mais si on veut comparer le modèle initial et le modèle final, on peut utiliser la fonction *ANOVA*. Cela permet de voir si la sélection de variables a significativement amélioré l'ajustement.
+:::: 
+
+Aussi, si on veut comparer le modèle initial et le modèle final, on peut utiliser la fonction *ANOVA*. Cela permet de voir si la sélection de variables a significativement amélioré l'ajustement.
 
 ```{r}
 anova(mod0, modselect_bic, test = "Chisq")
 ```
 
 De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère BIC) propose un meilleur ajustement que celui sans variable.
+
 ::::
 
 # Comparaison des critères

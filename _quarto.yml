@@ -34,8 +34,8 @@ format:
 
   html:
     theme: 
-      dark: darkly
       light: flatly
+      dark: darkly
     css: custom.scss
     toc: true
 

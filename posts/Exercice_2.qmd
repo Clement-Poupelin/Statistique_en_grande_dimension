@@ -22,7 +22,7 @@ description: "Ici, on commence à utilser des méthodes de regression avec selec
 
 # Setup
 
-:::: panel-tabset
+::: panel-tabset
 ## packages
 
 ```{r, setup, warning=FALSE, message=FALSE}
@@ -32,9 +32,7 @@ library(dplyr)        # manipulation des données
 ```
 
 ## Fonctions
-
-
-::::
+:::
 
 # Données
 
@@ -42,7 +40,7 @@ On étudie à nouveau le jeu de données [**Hitters**](https://rdrr.io/cran/ISLR
 
 Il s'agit d'un je de données de la Major League Baseball provenant des saisons de 1986 et 1987.
 
-Le jeu de données possède `r dim(Hitters)[1]` lignes/individus pour les différents joueurs et `r dim(Hitters)[2]` variables. 
+Le jeu de données possède `r dim(Hitters)[1]` lignes/individus pour les différents joueurs et `r dim(Hitters)[2]` variables.
 
 Parmi les variables, on trouve les informations suivantes :
 
@@ -86,7 +84,6 @@ Hitters_Without_NA_quant <- Hitters_Without_NA %>% subset(, select = -c(League, 
 Hitters_Without_NA_quant %>% dim()
 ```
 
-
 Puis cette fois ci nous allons simplement nous concentrer sur un sous jeu de données composé des 18 premières lignes sans valeurs manquantes.
 
 ```{r}
@@ -99,7 +96,6 @@ Attention, on peut remarquer ici que le nombre de variable est supérieur au nom
 :::
 
 Maintenant, il conviendrait dans ce genre de situation d'effectuer de premières analyses descritptives. Mais celle ci ayant déjà été faite pendant l'[Exercice 1](../posts/Exercice_1.qmd), on se permettra de ne pas les refaires.
-
 
 # Analyse inférentielle
 
@@ -116,8 +112,6 @@ mod1 %>% summary()
 
 ```
 
-
-
 ::: success-header
 Quelques conclusions sur le modèle :
 :::
@@ -127,6 +121,7 @@ On peut clairement constater que ce modèle brut ne fonctionne pas avec pourtant
 :::
 
 On peut aussi s'amuser à regarder les critères AIC et BIC de ce modèles qui se retrouve à tendre vers l'infini.
+
 ```{r}
 AIC(mod1)
 BIC(mod1)
@@ -137,13 +132,16 @@ BIC(mod1)
 On va maintenant tenter de prédire la variable *Salary* pour les autres joueurs.
 
 Déjà on peut regarder sur les 18 joueurs si la prédiction via le modèle nous donne des bonnes valeur. Et ce que l'on constate c'est qu'effectivement nous sommes vers ce qui pourrait nous faire penser que le modèle est bien ajusté.
+
 ```{r, warning=FALSE, message=FALSE}
 Salary_hat <- predict(mod1, Hitters_Without_NA_18)
 Salary <- Hitters_Without_NA_18$Salary
 
 round(mean(Salary_hat - Salary ), 2)
 ```
+
 Pourtant si nous regardons la prédiction obtenue par le modèle pour les autres joueurs et que nous effctuons la comparaison, nous voyons bien l'inéfficacité du modèle.
+
 ```{r, warning=FALSE, message=FALSE}
 Hitters_Without_NA_No18 <- Hitters_Without_NA[19:nrow(Hitters_Without_NA),]
 Salary_hat_No18 <- predict(mod1, Hitters_Without_NA_No18)
@@ -151,13 +149,14 @@ Salary_No18 <- Hitters_Without_NA_No18$Salary
 summary(Salary_hat_No18 - Salary_No18 )
 ```
 
----
+------------------------------------------------------------------------
 
 ## Modèles parcimonieux
 
 On va maintenant mettre un oeuvre une méthode de sélection automatique classique pour réduire le nombre de variable explicative et tenter d'éviter les problèmes de grande dimension.
 
 Pour cela nous allons donc partir du plus petit modèle (celui avec seulement l'*intercept*) puis faire grandir le nombre de variable. Il av donc s'agir d'une méthode de sélection automatique *forward*.
+
 ```{r}
 mod0 <- lm(Salary~1, Hitters_Without_NA_18)
 mod_forw <- step(mod0,
@@ -170,13 +169,14 @@ mod_forw %>% summary()
 Nous obtenons maintenant un modèle avec 2 variable dont une significative. Puis nous pouvons constater des valeurs assez élevés pour le $R^2$ et $R^2_{adjusted}$.
 
 Regardons aussi les critères AIC et BIC.
+
 ```{r}
 AIC(mod_forw)
 BIC(mod_forw)
 ```
 
-
 Maintenant, nous allons permuter de façon aléatoire les salaires des 18 joueurs et refaire la même analyse inférentielle. Ainsi, le lien linéaire devrait disparaitre et nous donner de mauvais résultats.
+
 ```{r}
 Salary_permute <- sample(Salary)
 
@@ -187,6 +187,7 @@ mod1_permute %>% summary()
 A nouveau on peut constater l'inéfficacité d'un modèle avec toutes les variables du fait d'avoir $p>n$.
 
 Utilisons maintenant la sélection automatique.
+
 ```{r}
 mod0_permute <- lm(Salary_permute~1, Hitters_Without_NA_18)
 mod_forw_permute <- step(mod0_permute, 
@@ -195,12 +196,10 @@ mod_forw_permute <- step(mod0_permute,
                          direction = c("forward"))
 mod_forw_permute %>% summary()
 ```
+
 On retrouve ici un modèle très différent concernant les variables sélectionnés avec de très mauvais résultats de $R^2$ et $R^2_{adjusted}$.
 
-
-
 Pour finir, on va maintenant reprendre le jeu de données **Hitters** complet et permuter tous les salaires de façon aléatoire. Ensuite, on va ajuster le meilleur modèle de régression possible pour expliquer les salaires en fonction des autres variables.
-
 
 ```{r}
 Salary_permute <- sample(Hitters_Without_NA$Salary)
@@ -236,85 +235,12 @@ On constate de très mauvais résultats de $R^2$ et $R^2_{adjusted}$ et au final
 
 # Conclusion
 
+On a donc pu voir l'importance du lien linéaire dans la construction d'un modèle de regression linéaire. Cela renforce par l'exemple la véracité du modèle de régression linéaire (au cas où l'on en doutais encore).
+
+
 
 # Session info
 
 ```{r}
 sessioninfo::session_info(pkgs = "attached")
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
