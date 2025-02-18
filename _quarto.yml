@@ -36,7 +36,7 @@ format:
     theme: 
       light: flatly
       dark: darkly
-    css: custom.scss
+    css: custom.css
     toc: true
 
     
