@@ -1,5 +1,5 @@
 ---
-title: "Exercice Bonus : Ridge vs Lasso"
+title: "Exercice 6 Bonus : Ridge vs Lasso"
 author: "Clément Poupelin"
 date: "2023-2024"
 format: 
@@ -17,11 +17,363 @@ number-sections: false
 editor: visual
 categories: ["Bonus"]
 image: ""
-description: "Comparaison de la regression Ridge et Lasso "
+description: "Comparaison de la regression Ridge et Lasso via le github de Laurent Rouvière"
 ---
 
-Source : https://lrouviere.github.io/TUTO_GRANDE_DIM/correction/03-ridge-lasso.html
+Dans cette partie et avant de passer à l'exercice 7, nous allons faire la section 3.1 sur la gression Ridge et
+Lasso avec glmnet sous R du [tutoriel de Laurent Rouvière](https://lrouviere.github.io/TUTO_GRANDE_DIM/correction/03-ridge-lasso.html)
 
+# Rappels sur Ridge et Lasso
+
+On se base encore ici sur notre modèle classique de régression linéaire :
+
+$$y = X\beta + \mathcal{E} \quad \text{ou} \quad y = \beta_0 + \beta_1X^1 + ... + \beta_pX^p + \mathcal{E}$$ 
+
+- $y \in \mathbb{R}^{n}$ la variable réponse ou variable à expliquer
+
+- $X \in \mathbb{R}^{n\times (p+1)}$ la matrice déterministe contenant nos $p$ variables explicatives
+
+- $\beta \in \mathbb{R}^{p+1}$ le vecteur qui contient les coefficients de régression $\beta_0, ..., \beta_p$ que nous cherchons à estimer
+
+- $\mathcal{E} \in \mathbb{R}^{n}$ le vecteur d'erreur qui n'est pas corrélé à nos variables explicatives. C'est la part d'aléa que nous n'arrivons pas à déterminer
+
+
+Pour l'estimation des coefficients de regression de ce type de modèle, nous utilisons souvent la méthodes des moindres carrées ordinaire (MCO) qui nous donne  
+
+$$\hat{\beta} = \underset{\beta}{argmin}||y-X\beta||^2$$
+Malheureusement, lorsque $p$ est grand ou que les variables sont linéairement dépendantes, les estimateurs des moindres carrées peuvent être mis en défaut. Les méthodes pénalisées ou sous contraintes consistent alors à restreindre l’espace sur lequel on minimise ce critère.\
+
+L'idée principale de ces méthodes est de contraindre la valeur des estimateurs MCO pour réduire la variance, quitte à augmenter un peu le biais (d’où la terminologie de "régression biaisée"). Nous obtenons donc, pour un certain $t>0$, des estimations de la forme suivante : 
+$$ \hat{\beta}^{pen} = \underset{\beta}{argmin}||y-X\beta||^2 \quad \text{sous la contrainte} \quad ||\beta||? \leq t$$
+
+::: panel-tabset
+
+## Ridge 
+
+La régression Ridge contraint la **norme $\ell^2$** des coefficients $\beta$ à ne pas exploser, i.e $||\beta||_2 = \sum_{j=0}^{p} \beta_j^2 \leq t$. Cela conduit à la solution d'optimisation suivante :
+
+$$
+\hat{\beta}_{Ridge} = \underset{\beta}{\operatorname{argmin}} \ ||y - X\beta||^2 \quad \text{sous la contrainte} \quad \sum_{j=0}^{p} \beta_j^2 \leq t
+$$
+
+où $\hat{\beta}_{Ridge}$ est **unique**, contrairement à Lasso qui peut produire plusieurs solutions.  
+
+Contrairement à Lasso, Ridge ne met pas exactement à zéro certains coefficients, mais réduit leur valeur. Il n'y a donc pas de sélection de variable effectué.\
+Cette méthode est tout de même robuste en grande dimension et particulièrement utile lorsque les variables sont fortement corrélées. Il empêche les coefficients de devenir trop grands, ce qui réduit la variance du modèle. \
+
+
+## Lasso 
+
+La régression Lasso (pour Least Absolute Shrinkage and Selection Operator) contraint la norme $\ell^1$ de $\beta$ à ne pas exploser, i.e $||\beta||_1 = \sum_{j=0}^{p} |\beta_j| \leq t$. Nous obtenons donc
+
+$$\hat{\beta}_{Lasso} = \underset{\beta}{argmin}||y-X\beta||^2 \quad \text{sous la contrainte} \quad \sum_{j=0}^{p} |\beta_j| \leq t  $$
+
+
+Où $\hat{\beta}_{Lasso}$ n’est pas nécessairement unique mais la prévision $\hat{y} = X\hat{\beta}_{Lasso}$  est unique.\
+
+Cette méthode est principalement caractérisée par le fait qu'elle est robuste à la grande dimension en sélectionnant les variables les plus pertinentes. En effet, elle nous permet de réduire les coefficients MCO des variables sélectionnées en rapprochant leur valeur de 0, ce qui est appelé la propriété de "seuillage doux" du Lasso.
+
+::: 
+
+Ici, il sera donc présenté les étapes principales qui permettent de faire ce type de régression avec *R*. Le package le plus souvent utilisé est *glmnet*.
+
+# Setup
+
+::: panel-tabset
+
+## packages
+
+```{r}
+
+
+
+
+
+# PCA
+library(FactoMineR)
+library(factoextra)
+
+
+# Plots
+## ggplot
+library(ggplot2)
+library(reshape2)     # transformer les données en format long
+library(gridExtra)
+
+## for pairs panel
+library(psych)
+library(RColorBrewer)
+```
+
+## fonctions 
+
+::: panel-tabset
+
+### boxplot 
+
+```{r}
+my_boxplot <- function(data) {
+  # Transformer les données en format long pour ggplot
+  data_long <- melt(data)
+  
+  ggplot(data_long, aes(x = variable, y = value, fill = variable)) +
+    geom_boxplot() +
+    scale_fill_viridis_d() +  # Palette de couleurs harmonieuse
+    labs(title = "Distribution des Variables (Boxplot)", x = "Variables", y = "Valeurs") +
+    theme_minimal() +  # Thème épuré
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotation des étiquettes
+}
+```
+
+### pairs.panels 
+```{r}
+my_pairs.panels <- function(data){
+  pairs.panels(
+    data,
+    method = "pearson",      # Méthode de corrélation 
+    hist.col = brewer.pal(9, "Set3"), # Couleurs des histogrammes
+    density = TRUE,          # Ajout des courbes de densité
+    ellipses = TRUE,         # Ajout d'ellipses 
+    smooth = TRUE,           # Ajout de régressions lissées
+    lm = TRUE,               # Ajout des droites de régression
+    col = "#69b3a2",         # Couleur des points
+    alpha = 0.5              # Transparence 
+    )
+}
+```
+
+:::
+
+:::
+
+
+# Données
+
+On considère le jeu de données ozone.txt où on cherche à expliquer la concentration maximale en ozone relevée sur une journée (variable maxO3) par d’autres variables essentiellement météorologiques.
+
+La base de données d'origine *ozone.txt* répertorie 112 données météorologiques mesurées durant l'été 2001 à Rennes. Celles-ci sont caractérisées par les 13 variables suivantes : 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+ozone <-read.table("https://r-stat-sc-donnees.github.io/ozone.txt", header=TRUE)
+
+library(tidyverse)
+library(kableExtra)
+identity_keys <- cell_spec(
+  x = colnames(ozone), format = "html", bold = TRUE)
+identity_values <- c("concentration maximale d'ozone (en DU)", "température à 9H (en °C)", "température à 12H (en °C)", "température à 15H (en °C)", "nébulosité à 9H (en octa)", "nébulosité à 12H (en octa)", "nébulosité à 15H (en octa)", "vitesse du vent à 9H", "vitesse du vent à 12H", "vitesse du vent à 15H", "concentration maximale d'ozone de la veille (en DU)", "direction principale du vent (Nord / Ouest / Sud / Est)", "présence ou non de pluie (Sec / Pluie)")
+tibble(
+  keys = identity_keys, 
+  values = identity_values, 
+) %>% 
+  kbl(
+    format = "html", 
+    booktabs = TRUE, 
+    escape = FALSE, 
+    col.names = NULL
+  ) %>% 
+  kable_styling(bootstrap_options = c("hover", "condensed"))
+```
+
+On identifie le regroupement de toutes les données météorologiques récoltées en une journée par la date à laquelle les relevés ont été effectués.
+
+```{r}
+ozone <-read.table("https://r-stat-sc-donnees.github.io/ozone.txt", header=TRUE)
+ozone %>% DT::datatable()
+```
+
+
+
+```{r}
+ozone %>% summary()
+```
+
+# Analyse descriptive
+
+::: panel-tabset
+
+## Boxplot
+
+On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.
+
+```{r, message=FALSE, fig.height=6, fig.width=8}
+my_boxplot(ozone)
+```
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+On remarque bien que les variabeles qui sont de même nature mais à des points de temps différents sont d'avantages similaires.
+:::
+
+Pour confirmer cela, on peut faire des boxplot pour uniquement une varibale et ses différents points de temps.
+
+::: panel-tabset
+
+### Température
+```{r, message=FALSE, fig.height=6, fig.width=8}
+subset(ozone, select = c("T9", "T12", "T15"))  %>% my_boxplot()
+```
+### Nébulosité
+```{r, message=FALSE, fig.height=6, fig.width=8}
+subset(ozone, select = c("Ne9", "Ne12", "Ne15"))  %>% my_boxplot()
+```
+### Vitesse du vent 
+```{r, message=FALSE, fig.height=6, fig.width=8}
+subset(ozone, select = c("Vx9", "Vx12", "Vx15"))  %>% my_boxplot()
+```
+:::
+
+## Correlation panel
+
+
+On regarde ici la corrélation calculée entre chacune de nos variables.
+
+```{r, fig.height=22, fig.width=28}
+my_pairs.panels(ozone)
+```
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+On voit la présence de plusieurs fortes corrélations qui peut déjà nous alerter si l'on veut faire des modèles de regressions linéaires car on risque d'avoir un problème de colinéarité entre les varibales explicatives.
+
+Cependant ces corrélation fortes sont surtout présentes pour les variables qui sont à différents points de temps ce qui est logique.
+:::
+
+
+## PCA
+
+Avec une Analyse en Composantes Principales (PCA) on peut regarder un peu le comportement de nos données.
+
+En effet, Cette méthode respose sur la transformation des variables d'origine en nouvelles variables non corrélées, appelées composantes principales, qui capturent successivement la plus grande variance possible des données.
+
+```{r}
+res_pca <- PCA(ozone, 
+               quali.sup = c(which(colnames(ozone) %in% c("vent", "pluie"))),
+               quanti.sup = c(which(colnames(ozone) %in% c("max03", "max03v"))),
+               graph = FALSE)
+
+```
+
+Ici, on spécifi nos varibales qualitatives et on décide de mettre la variable *max03* et *max03v* en variable supplémentaire, ce qui veut d'ire qu'elles ne seront pas considérés pour la formation de nos composantes principales (variable que l'on cherchera à estimer plus tard).
+
+::: panel-tabset
+#### Barplot des variances
+
+Tout d'abord, on peut commencer par regarder le pourcentage de variance expliqué par nos différentes composantes principales.
+
+```{r}
+fviz_eig(res_pca, 
+         ncp = 10,
+         addlabels = TRUE, 
+         barfill = "coral",
+         barcolor = "coral",
+         ylim = c(0, 60),
+         main = "Percentage of variance of the 10 first components")
+```
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+On voit ainsi que la majorité de la variance est expliquée par nos deux premières composantes principales.
+:::
+
+#### Individus
+
+Le plan des individus est une projection des observations sur les axes principaux de la PCA. Cette visualisation permet d’identifier des regroupements, tendances et anomalies au sein des données.
+
+Ainsi, des individus proches sur le graphique ont des caractéristiques similaires par rapport aux variables utilisées.
+
+Puis, le placement d'un individu en fonction des axes peut permettre de savoir comment le jouer se caractérise par rapport aux variables qui contribuent le plus à ces axes.
+
+::: panel-tabset
+##### Pluie 
+```{r, fig.height=6, fig.width=8}
+fviz_pca_ind(res_pca,
+             label="none", 
+             pointsize = 2,
+             habillage=as.factor(ozone$pluie),
+             addEllipses=TRUE,
+             ellipse.level=0.95)
+```
+
+##### vent 
+```{r, fig.height=6, fig.width=8}
+fviz_pca_ind(res_pca,
+             label="none",
+             pointsize = 2,
+             habillage=as.factor(ozone$vent),
+             addEllipses=TRUE,
+             ellipse.level=0.95)
+```
+:::
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+Ici on voit une repartition plutot uniforme sur le plan qui ne semble pas permettre de distinguer une séparation forte correspodant à nos variables qualitatives.
+:::
+
+#### Variables
+
+Le cercle des variables est une représentation graphique qui permet d’analyser les relations entre les variables initiales et les composantes principales qui forment nos axes. Il est basé sur les corrélations entre les variables et les axes principaux.
+
+Ainsi, plus une variable est proche du bord du cercle, plus elle est bien représentée sur le plan factoriel et contribue fortement à la formation des axes. Ici, on utilise le cos2 pour le gradient de couleur qui va aider à l'indentifictation de ces différentes qualitées de représentation.
+
+De plus, selon l'angle entre deux varibles, on peut faire des suppositions sur leur corrélation :
+
+-   Si deux variables ont des vecteurs proches (petit angle), elles sont fortement corrélées positivement
+
+-   Si deux variables ont des vecteurs opposés (angle proche de 180°), elles sont corrélées négativement
+
+-   Si l’angle est proche de 90°, alors les variables ne sont pas corrélées
+
+```{r, fig.height=6, fig.width=8}
+fviz_pca_var(res_pca, 
+             col.var = "cos2",
+             gradient.cols = rainbow(n = 8, start = .6, end = .9),
+             repel = TRUE)
+
+```
+
+
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+Dans notre cas, ce que l'on peut voir c'est que la majorité de nos variables sont bien représentées par nos deux axes (cumulant plus de 70% d'explication). Mais beaucoup semblent aussi fortement corrélées avecla formation de trois groupes. Cette corrélation ayant déjà pu être observé précédemment et touours logique du fait du côté longitudinale de nos données.
+
+Ce que l'on peut tout de même ajouté c'est que les variables max03 et surtout max03v semblent plutot corrélées aux variables température. Constat qui peut se confirmer avec le pairs.panels précédent.
+:::
+
+:::
+
+:::
+
+
+
+
+# Analyse inférentielle
 ```{r}
 
 
