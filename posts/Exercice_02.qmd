@@ -17,7 +17,7 @@ number-sections: false
 editor: visual
 categories: ["TP"]
 image: "/img/baseball.png"
-description: "Ici, on commence à utilser des méthodes de regression avec selection de variable et tester le lien linéaire existant sur des données de baseball"
+description: "Ici, on continu sur des données de baseball à utilser des méthodes de regression avec selection de variable en testant le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"
 ---
 
 # Setup
