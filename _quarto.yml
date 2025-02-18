@@ -11,6 +11,11 @@ website:
     background: light
     title: X3MS020
     logo: img/logo_univ_nantes_complet.png
+    left:
+      - icon: file-earmark-font-fill
+        text: Feuille de TP
+        href: TP_StatGdeDim.pdf
+        
     right:
       - about.qmd
       - icon: github
