@@ -37,6 +37,20 @@
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
 }
+
+.success-icon {
+  height: 1.2rem;
+  width: 1.2rem;
+  display: inline-block;
+  content: "";
+  background-repeat: no-repeat;
+  background-size: 1.2rem 1.2rem;
+  margin-top: .2rem;
+  padding-right: 1.25rem;
+  background-image: url('img/education.png');
+}
+
+
 .success {
   padding: .5em .5em .5em .5em;
   margin-bottom: 10px;
@@ -53,5 +67,4 @@
   border-top-left-radius: 1px;
   border-top-right-radius: 1px;
 }
-
 

@@ -6,7 +6,7 @@ format:
   html:
     embed-resources: false
     toc: true
-    code-fold: false
+    code-fold: true
     code-summary: "Show the code"
     code-tools: true
     toc-location: right
@@ -174,8 +174,6 @@ Best_model <- function(model, criteria_df){
   }
 }
 ```
-
-
 :::
 ::::
 
@@ -249,7 +247,19 @@ ggplot(Hitters_long, aes(x = variable, y = value, fill = variable)) +
 
 ```
 
-On peut remarquer que nos variables ont en général peut de valeurs outliers.
+
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+Comme on pouvait s'y attendre, on retrouve des distributions assez variées selon les différentes statistques des joueurs.
+
+On peut tout de même remarquer que nos variables ont en général peu de valeurs outliers.
+:::
 
 ## Correlation panel
 
@@ -269,9 +279,18 @@ pairs.panels(
 )
 ```
 
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
 On voit la présence de plusieurs fortes corrélations qui peut déjà nous alerter si l'on veut faire des modèles de regressions linéaires car on risque d'avoir un problème de colinéarité entre les varibales explicatives.
 
 Par contre, il n'y a aucune forte corrélation entre la variable *Salary* et les autres variables du jeu de données. Ce qui peut nous indiquer qu'il n'y aura pas une variable avec très forte influence sur *Salary*.
+:::
 
 
 ## PCA
@@ -305,7 +324,15 @@ fviz_eig(res_pca,
          main = "Percentage of variance of the 10 first components")
 ```
 
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
 On voit ainsi que la majorité de la variance est expliquée par nos deux premières composantes principales avec la présence d'un fort effet de coude après celle-ci.
+:::
 
 #### Individus
 
@@ -323,7 +350,15 @@ fviz_pca_ind(res_pca,
 
 ```
 
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
 Ici, on voit que les joueurs se répartissent bien sur le plan ce qui témoignent de la présence d'une grande variété de type de joueurs.
+:::
 
 #### Variables
 
@@ -347,9 +382,17 @@ fviz_pca_var(res_pca,
 
 ```
 
+
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
 Dans notre cas, ce que l'on peut voir c'est que la majorité de nos variables sont bien représentées par nos deux axes (cumulant plus de 70% d'explication). Mais beaucoup semblent aussi fortement corrélées avecla formation de deux groupes et la variable *Salary* se trouvant au milieu. Cette corrélation ayant déjà pu être observé précédemment.
-
-
+:::
 
 :::
 ::::
@@ -374,7 +417,9 @@ Nous sommes sur un modèle comprenant des variables quantitatives et qualitative
 :::
 
 ::: success-header
-Résultats 
+::: success-icon
+::: 
+Résultats
 :::
 
 ::: success
@@ -387,7 +432,9 @@ Quelques conclusions sur le modèle :
 -   l'écart type résiduel est de 315.6 ce qui est assez important et témoigne d'un modèle peu précis
 :::
 
-Pour tenter de trouver un meilleur ajustment, il est important d'analyser d'avantage le lien entre toutes les variables explicatives. On utilise alors comunément le VIF
+Pour tenter de trouver un meilleur ajustment, il est important d'analyser d'avantage le lien entre toutes les variables explicatives. On utilise alors comunément le VIF (*variance inflation factor*). 
+
+On obtient alors pour chacune de nos variable une valeur qui, plus elle est élevé, témoigne de la multicolinéarité entre nos variables explicatives.
 
 ```{r}
 vif(mod1) 
@@ -395,9 +442,9 @@ vif(mod1)
 
 On remarque ainsi que beaucoup de valeurs sont supérieur à 10 ce qui s'interprète communément comme la précence d'une forte colinéarité sur nos variables explicatives.
 
+::: callout-note
 Cette colinéarité se constatait déjà durant les analyses descriptive via les graphes de corrélations (d'où l'importance de ne pas se lancer trop rapidement dans les analyses inférentielles).
-
-
+::: 
 
 ## Modèles parcimonieux
 
@@ -413,11 +460,12 @@ Puis reproduire la même procédure avec des séléctions *backward*, *forward* 
 Un rappel sur nos critère se trouve dans la partie *Setup*, onglet fonction, de ce document avec la création de fonction pour les calculer.
 :::
 
-:::: panel-tabset
+::::::::::: panel-tabset
 ### Exhaustive
 
 :::: panel-tabset
 #### Modèle
+
 ```{r}
 selec_auto <- regsubsets(Salary~.,
                          Hitters_Without_NA,
@@ -438,9 +486,18 @@ plot(selec_auto, scale = 'adjr2')
 
 ```
 
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
 Ici on remarque clairement que toutes nos variables ne sont pas gardés lorsque l'on cherche à optimiser nos critères.
 
 Aussi, on peut voir encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoignés d'un mauvais ajustement de modèle.
+:::
+
 
 ::: callout-note
 plot.regsubsets() de leaps ne prend pas directement "aic" comme option de scale. Pour une sélection basée sur AIC, une approche alternative consiste à utiliser la fonction stepAIC() du package MASS, qui permet une sélection pas à pas basée sur AIC.
@@ -477,18 +534,18 @@ On peut ainsi voir que ce sont plutot des modèles entre 5 et 10 variables qui o
 #### Meilleur modèle
 
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
+
 ```{r}
 criteria_df <- data.frame(r2, r2a, cp, aic, bic)
 Best_model(selec_auto, criteria_df)
 ```
-
-:::: 
+::::
 
 ### Backward
 
 Cette fois ci on va regarder en sélection backward. D'abord, on fait à nouveau avec la fonction regsubset.
 
-:::: panel-tabset
+::: panel-tabset
 #### Modèle
 
 ```{r}
@@ -508,7 +565,21 @@ plot(selec_back, scale = 'adjr2')
 ```
 
 
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+On remarque à nouveau une importante sélection de variables.
+
+Mais ici aussi on a encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoignés d'un mauvais ajustement de modèle.
+:::
+
+
 #### Evolution des critères
+
 ```{r, fig.height=18, fig.width=30}
 SCR <- summary(selec_back)$rss
 r2 <- r2_fun(Hitters_Without_NA$Salary, SCR)
@@ -527,23 +598,25 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
 ```
 
 #### Meilleur modèle
+
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
 
 ```{r}
 criteria_df <- data.frame(r2, r2a, cp, aic, bic)
 Best_model(selec_back, criteria_df)
 ```
+:::
 
-:::: 
+#### **Utilisation de la fonction step**
 
+---
 
 On peut également utiliser la fonction *step* de la library { *stats* }. Pour cela, on part du plus gros modèle défini précédemment par *mod1.*
 
 La fonction *step* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
 
-:::: panel-tabset
-
-#### BIC 
+::: panel-tabset
+#### BIC
 
 ```{r}
 n <- nrow(Hitters_Without_NA)
@@ -590,15 +663,13 @@ modselect_back_cp %>% summary()
 ```
 
 On voit que parmi nos modèles, le BIC semble le plus parcimonieux mais de manière général on constate encore des valeurs de $R^2$ et $R^2_{adjusted}$ assez faibles.
-
-:::: 
-
+:::
 
 ### Forward
 
 Cette fois ci on va regarder en sélection *forward*. D'abord, on fait à nouveau avec la fonction regsubset.
 
-:::: panel-tabset
+::: panel-tabset
 #### Modèle
 
 ```{r}
@@ -617,7 +688,21 @@ plot(selec_forw, scale = 'adjr2')
 
 ```
 
-#### Evolution des critères 
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+On remarque à nouveau une importante sélection de variables.
+
+Mais ici aussi on a encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoignés d'un mauvais ajustement de modèle.
+:::
+
+
+#### Evolution des critères
 
 ```{r, fig.height=18, fig.width=30}
 SCR <- summary(selec_forw)$rss
@@ -636,7 +721,7 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
              ncol = 3)
 ```
 
-#### Meilleur modèle 
+#### Meilleur modèle
 
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
 
@@ -644,17 +729,19 @@ Regardons donc pour chaque critère quel est le modèle qui resort comme le meil
 criteria_df <- data.frame(r2, r2a, cp, aic, bic)
 Best_model(selec_forw, criteria_df)
 ```
+:::
 
+#### **Utilisation de la fonction step**
 
-:::: 
+---
 
 On peut également utiliser la fonction *step* de la library { *stats* }. Cette fois ci il faut définir en modèle de départ le plus petit modèle (celui composé seulement de l'intercept).
 
 La fonction *step* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
 
-:::: panel-tabset
-
+::: panel-tabset
 #### BIC
+
 ```{r}
 mod0 <- lm(Salary~1,
            Hitters_Without_NA)
@@ -702,14 +789,13 @@ modselect_forw_cp %>% summary()
 ```
 
 On voit que parmi nos modèles, le BIC semble le plus parcimonieux mais de manière général on constate encore des valeurs de $R^2$ et $R^2_{adjusted}$ assez faibles.
-
-:::: 
+:::
 
 ### Stepwise
 
 Maintenant on va regarder en sélection *stepwise*. D'abord, on fait à nouveau avec la fonction regsubset.
 
-:::: panel-tabset
+::: panel-tabset
 #### Modèle
 
 ```{r}
@@ -728,7 +814,19 @@ plot(selec_seq, scale = 'adjr2')
 
 ```
 
-#### Evolution des critères 
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+On remarque à nouveau une importante sélection de variables.
+
+Mais ici aussi on a encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoignés d'un mauvais ajustement de modèle.
+:::
+
+#### Evolution des critères
 
 ```{r, fig.height=18, fig.width=30}
 SCR <- summary(selec_seq)$rss
@@ -747,7 +845,7 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
              ncol = 3)
 ```
 
-#### Meilleur modèle 
+#### Meilleur modèle
 
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
 
@@ -755,17 +853,17 @@ Regardons donc pour chaque critère quel est le modèle qui resort comme le meil
 criteria_df <- data.frame(r2, r2a, cp, aic, bic)
 Best_model(selec_seq, criteria_df)
 ```
+:::
 
+#### **Utilisation de la fonction step**
 
-:::: 
-
+---
 
 On peut également utiliser la fonction *step* de la library { *stats* }.
 
 La fonction *step* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
 
-:::: panel-tabset
-
+::: panel-tabset
 #### BIC
 
 ```{r}
@@ -776,7 +874,6 @@ modselect_bic <- step(mod0,
                   k = log(n))
 modselect_bic %>% summary()
 ```
-
 
 #### AIC
 
@@ -801,9 +898,9 @@ modselect_cp %>% summary()
 ```
 
 Malheuresement, même en sélection *both* nous avons encore des $R^2$ et $R^2_{adjusted}$ faibles.
+:::
 
-:::: 
-
+::: callout-note
 Aussi, si on veut comparer le modèle initial et le modèle final, on peut utiliser la fonction *ANOVA*. Cela permet de voir si la sélection de variables a significativement amélioré l'ajustement.
 
 ```{r}
@@ -811,23 +908,24 @@ anova(mod0, modselect_bic, test = "Chisq")
 ```
 
 De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère BIC) propose un meilleur ajustement que celui sans variable.
+::: 
 
-::::
+:::::::::::
 
 # Comparaison des critères
 
 Avant de finir, comparons un peut les critères que nous avons calculés avec ceux que l'on peut récupérer via le summary de regsubset (pour tous sauf l'AIC qui n'est pas présent). On se contentera de faire se comparatif seulement pour le modèle *stepwise*.
 
-Pour cela regardons si nous avons régulièrement la valeur 0 (ou valeur proche) :
+Pour cela regardons si nous avons régulièrement la valeur 0 (ou valeur proche) lorsque l'on fait la soustraction du critère calculé et du critère donné par regsubset :
 
 ```{r}
-round(r2-summary(selec_seq)$rsq) %>% mean()
-round(r2a-summary(selec_seq)$adjr2) %>% mean()
-round(cp-summary(selec_seq)$cp) %>% mean()
-round(bic-summary(selec_seq)$bic) %>% mean()
+cat(round(r2-summary(selec_seq)$rsq) %>% mean(), 
+    round(r2a-summary(selec_seq)$adjr2) %>% mean(), 
+    round(cp-summary(selec_seq)$cp) %>% mean(), 
+    round(bic-summary(selec_seq)$bic) %>% mean())
 ```
 
-on voit une grosse différence seulement pour le BIC donc regardons plus en détail.
+on voit une grosse différence seulement pour le BIC donc regardons plus en détail via les représentations visuelles de l'évolution du critère.
 
 ```{r, fig.height=14, fig.width=26}
 grid.arrange(Criteria_plot(bic, crit_name = "BIC"),
