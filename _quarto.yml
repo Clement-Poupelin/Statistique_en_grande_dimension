@@ -19,9 +19,17 @@ website:
     right:
       - about.qmd
       - icon: github
-        href: https://github.com/Clement-Poupelin
+        menu: 
+          - href: https://github.com/Clement-Poupelin
+            text: Clément Poupelin
+          - href: https://github.com/nonomtrt
+            text: Noémie Matrat
       - icon: linkedin
-        href: http://www.linkedin.com/in/cl%C3%A9ment-poupelin-7675311a7/
+        menu: 
+          - href: http://www.linkedin.com/in/cl%C3%A9ment-poupelin-7675311a7/
+            text: Clément Poupelin
+          - href: https://www.linkedin.com/in/no%C3%A9mie-matrat-86a34a200/
+            text: Noémie Matrat
       - icon: envelope
         href: mailto:clementjc.poupelin@gmail.com
       - icon: person-circle
