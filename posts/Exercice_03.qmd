@@ -6,7 +6,7 @@ format:
   html:
     embed-resources: false
     toc: true
-    code-fold: false
+    code-fold: true
     code-summary: "Show the code"
     code-tools: true
     toc-location: right
@@ -21,305 +21,467 @@ description: "Première essais de techniques de validations croisées sur des do
 ---
 
 
+# Setup
 
 
-```{r}
-set.seed(123)
+::: panel-tabset
+
+## Packages
+```{r, message=FALSE, warning=FALSE}
+# Données
+library(dplyr)        # manipulation des données
+
+library(boot) ## CV
+
+
+# Plots
+## ggplot
+library(ggplot2)
+library(gridExtra)
+
 ```
 
 
-# Question 1 --------------------------------------------------------------
+
+
+## fonctions 
+
+::: panel-tabset
+
+### boxplot 
 
 ```{r}
-x = rnorm(1000)
-y = x - 2*(x^2) + rnorm(1000)
-# modele avec n = 1000 et p = 2. beta = t(1, -2 )
+my_boxplot <- function(data) {
+  # Transformer les données en format long pour ggplot
+  data_long <- reshape2::melt(data)
+  
+  ggplot(data_long, aes(x = variable, y = value, fill = variable)) +
+    geom_boxplot() +
+    scale_fill_viridis_d() +  # Palette de couleurs harmonieuse
+    labs(title = "Distribution des Variables (Boxplot)", x = "Variables", y = "Valeurs") +
+    theme_minimal() +  # Thème épuré
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotation des étiquettes
+}
 ```
 
-Nous allons généré un modèle de régression linéaire classique : 
-$$Y = X\beta + \mathcal{E}$$
-- $Y \in \mathbb{R}^{n}$ la variable réponse ou variable à expliquer
+### pairs.panels 
+```{r}
+my_pairs.panels <- function(data) {
+  psych::pairs.panels(
+    data,
+    method = "pearson",
+    # Méthode de corrélation
+    hist.col = RColorBrewer::brewer.pal(9, "Set3"),
+    # Couleurs des histogrammes
+    density = TRUE,
+    # Ajout des courbes de densité
+    ellipses = TRUE,
+    # Ajout d'ellipses
+    smooth = TRUE,
+    # Ajout de régressions lissées
+    lm = TRUE,
+    # Ajout des droites de régression
+    col = "#69b3a2",
+    # Couleur des points
+    alpha = 0.5              # Transparence
+  )
+}
+```
 
-- $X \in \mathbb{R}^{n\times p}$ la matrice contenant nos variables explicatives 
 
-- $\beta \in \mathbb{R}^{n}$ le vecteur composée des coefficients de régression
+### LOO
+
+Première fonction LOO
+
+```{r}
+loo <- function(mod) {
+  n <- nrow(mod$model)
+  Call <- mod$call
+  erreur <- 1:n
+  for (i in 1:n) {
+    Call$data <- mod$model[-i, ] # mod$call$data transforme en data.frame
+    fit <- eval.parent(Call)
+    pred = predict(fit, mod$model[i, ])
+    erreur[i] <- (pred - mod$model[i, 1])^2
+  }
+  return(round(mean(erreur), 3))
+}
+```
+
+Deuxième fonction LOO
+
+```{r}
+loo2 <- function(mod) {
+  round(mean((residuals(mod) / (1 - hatvalues(mod)))^2), 3)
+}
+```
+
+Fonction pour obtenir les résultats
+```{r}
+get_loo_results <- function(model, func) {
+  start_time <- Sys.time()        
+  result <- func(model)          
+  end_time <- Sys.time()         
+  time_taken <- round(end_time - start_time, 3)  
+  
+  return(list(result = result, time = time_taken))
+}
+```
+
+
+
+:::
+
+
+
+## Seed
+
+```{r}
+set.seed(140400)
+```
+
+:::
+
+# Données 
+
+Pour cette exercice, on va générer un modèle de régression linéaire classique : 
+
+$$y = X\beta + \mathcal{E}$$ 
+
+- $y \in \mathbb{R}^{n}$ la variable réponse ou variable à expliquer
+
+- $X \in \mathbb{R}^{n\times p}$ la matrice contenant nos variables explicatives
+
+- $\beta \in \mathbb{R}^{p}$ le vecteur composée des coefficients de régression
 
 - $\mathcal{E} \in \mathbb{R}^{n}$ le vecteur d'erreur suivant une loi $\mathcal{N}(0, 1)$
 
-Pour la génération de nos données, nous allons alors poser que $\beta = (1, 2)'$ et $X = [x_1, x_1^2]$, $x_1 \in \mathbb{R}^n$ suivant une loi $\mathcal{N}(0,1)$.
+Pour la génération de nos données, nous allons alors poser que $\beta = (1, -2)'$ et $X = [x, x^2]$, $x \in \mathbb{R}^n$ suivant une loi $\mathcal{N}(0,1)$.
 
+On aura alors que $y = x - 2x^2 + \mathcal{E}$.
 
-
-# Question 2 --------------------------------------------------------------
 
 ```{r}
-plot(x,y)
-cor(x,y)
-# correlation faible, pourtant le nuage de point montre bien un effet de x sur y 
+x <- rnorm(1000)
+y <- x - 2*(x^2) + rnorm(1000)
+Simu_data <- data.frame(y = y, x = x)
+```
+
+::: callout-note
+pour des raisons de repouctibilité, une graine ou seed a été défini dans le setup afin que la génération aléatoire reste identique.
+:::
+
+
+On va ainsi supposer avoir observé les deux vecteurs $x$ et $y$ précédents, sans connaître le lien théorique précédent qui lie $x$ et $y$. Et on cherchera donc à l'estimer.
+
+
+# Ananlyse descriptive
+
+::: panel-tabset
+
+## Boxplot
+
+On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.
+
+```{r, message=FALSE, fig.height=6, fig.width=8}
+my_boxplot(Simu_data)
+```
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+On voit bien que notre variable $x$ a une distribution normale centré réduite et que $y$, de manière logique avec le modèle simulé, a d'avantages de valeurs négatives.
+:::
+
+
+## Correlation panel
+
+
+On regarde ici la corrélation calculée entre chacune de nos variables.
+
+```{r, fig.height=22, fig.width=28}
+my_pairs.panels(Simu_data)
+```
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+On voit que la corrélation est faible. Pourtant le nuage de point semble quand à lui témoigner d'une influence de $x$ sur $y$
+
+Puis on retrouve un belle histogramme de distibution $\mathcal{N}(0, 1)$ pour notre variable $x$.
+:::
+
+:::
+
+
+
+
+# Analyse inférentielle
+
+Maintenant, on va ajuster différents modèles à tester :
+
+- mod1 : $y = \beta_0 + \beta_1x + \mathcal{E}$
+
+- mod2 : $y = \beta_0 + \beta_1x + \beta_2x^2 + \mathcal{E}$
+
+- mod3 : $y = \beta_0 + \beta_1x + \beta_2x^2 + \beta_3x^3 + \mathcal{E}$
+
+- mod4 : $y = \beta_0 + \beta_1x + \beta_2x^2 + \beta_3x^3 + \beta_4x^4 + \mathcal{E}$
+
+
+On va donc commencer par compléter notre data frame avec des variables correspondant à $x^2$, $x^3$ et $x^4$. Puis nous pourrons ajuster les différents modèles.
+```{r}
+Simu_data_complete <- cbind(Simu_data, x^2, x^3, x^4)
+colnames(Simu_data_complete) <- c("y", "x1", "x2", "x3", "x4")
 ```
 
 
+```{r}
+mod1 <- lm(y ~ x1, Simu_data_complete)
+mod2 <- lm(y ~ x1 + x2, Simu_data_complete)
+mod3 <- lm(y ~ x1 + x2 + x3, Simu_data_complete)
+mod4 <- lm(y ~ x1 + x2 + x3 + x4, Simu_data_complete)
+```
+::: callout-note
+Théoriquement, on est dans une situation où le $R^2$ pour le modèle 1 est égale à la corrélation de pearson au carré de $x$ et $y$.
 
+- $R^2 =$ `r round(summary(mod1)$r.squared, 3)`
 
+- $\rho^2 =$ `r round(cor(x,y)^2, 3)`
+:::
 
-# Question 3 --------------------------------------------------------------
-
+A partir du *summary()* de ces différents modèles et de différentes fonctions *R*, on est capable ensuite capable d'obtenir différents critères de sélection.
 
 ```{r}
-df = as.data.frame(cbind(y, x, x^2, x^3, x^4))
-mod1 = lm(y~x, data = df)
-mod2 = lm(y~ x + V3, data=df)
-mod3 = lm(y~ x + V3 + V4, data=df)
-mod4 = lm(y~ x + V3 + V4 + V5, data=df)
+models <- list(mod1, mod2, mod3, mod4)
+model_names <- c("mod1", "mod2", "mod3", "mod4")
 
-summary(mod1)
-cor(x,y)^2
-#le r2 du mod1 doit correspondre à la corr^2 : ok
+results <- data.frame(
+  Model = model_names,
+  R2 = unlist(lapply(models, function(m) round(summary(m)$r.squared, 3))),
+  R2adj = unlist(lapply(models, function(m) round(summary(m)$adj.r.squared, 3))),
+  AIC = unlist(lapply(models, function(m) round(AIC(m), 1))),
+  BIC = unlist(lapply(models, function(m) round(BIC(m), 1)))
+)
+
+
+results %>% DT::datatable()
 ```
 
-
-# Question 4 --------------------------------------------------------------
-
+Ainsi, on peut voir que c'est *mod2* qui ressort comme étant le meilleur modèle avec de forte valeur de $R^2$ et $R^2_{adjusted}$ puis des critères AIC et BIC minimisé.
 
 ```{r}
-
-summary(mod1)$r.squared
-BIC(mod1)
-AIC(mod1)
-
-BIC(mod2)
-AIC(mod2)
-
-BIC(mod3)
-AIC(mod3)
-
-BIC(mod4)
-AIC(mod4)
-
-# mod2 est le meilleur modèle 
-
-## FAIRE UN TABLEAU POUR LES RESULTATS
-# R2, R2aj, Cp, AIC, BIC, coeff, etc...
+mod2 %>% summary()
 ```
+On constate en plus avec le *summary()* que toutes nos variables sont significatives sauf l'*intercept*.
 
 
-# Question 5 --------------------------------------------------------------
+# Validation croisée
+
+::: panel-tabset 
+
+## Rappels validation croisée 
+
+texte avec dedans le principe du LOO !!!!
+
+## Validation "manuelle"
+
+Dans un premier temps et pour bien comprendre la méthode, on va utiliser deux fonctions permettant d’estimer l’erreur test par une validation
+croisée *LOO* (*Leave-one-out*) pour un modèle ajusté par la fonction *lm* :
+
+- la première, *loo* (qui se trouve dans les fonctions du setup), en utilisant le principe général de cette méthode qui nécessite donc l’estimation de n modèles différents 
 
 
+- a seconde, *loo2* (qui se trouve dans les fonctions du setup), en utilisant la formule adaptée à la régression linéaire donnant directement le risque LOO à partir de la seule estimation du modèle complet (on pourra utiliser la fonction *hatvalues*)
+
+
+AInsi, en testant sur nos quatre modèle, on obtient les résultats suivants : 
 ```{r}
-fmla2 = y~ x + V3
-fmla3 = y~ x + V3 + V4
-fmla1 = y~ x
-fmla4 = y~ x + V3 + V4 + V5
-####
+loo_results <- lapply(models, function(m) get_loo_results(m, loo))
+loo2_results <- lapply(models, function(m) get_loo_results(m, loo2))
 
-# ##### TRASH ####
-# 
-# FMLA = c(fmla1, fmla2, fmla3, fmla4)
-# 
-# LOO_1 = function(y, x, fmla, j){
-#   y_res = rep(NA, 1000)
-#   for (i in 1:1000){
-#     
-#     df[i] = as.data.frame(cbind(y[-i], x[-i], x[-i]^2, x[-i]^3, x[-i]^4))
-#     mod = lm(fmla[[j]], data = df[i])
-#     
-#     
-#     df2[i] = as.data.frame(cbind(x[-i], x[-i]^2, x[-i]^3, x[-i]^4))
-#     yi_hat = predict(mod, df2[i])
-#     yi = y[i]
-#     y_res[i] = yi - yi_hat 
-#   }
-#   loo = mean(y_res^2)
-#     return(loo)
-# }
-# LOO_1(y,x,FMLA, 2)
-# 
-# 
-# 
-# LOO_2 =function(y, x, fmla, i){
-#   r = lm(fmla[[i]], data = df)$residuals
-#   h = hatvalues(lm(fmla[[i]], data = df)) #diag de hatmatrix
-#   loo = mean((r/(1-h))^2)
-#   return(loo)
-# }
-# LOO_2(y,x,FMLA, 1)
-# LOO_2(y,x,FMLA, 2)
-# LOO_2(y,x,FMLA, 3)
-# LOO_2(y,x,FMLA, 4)
-# 
-# #####
+results <- data.frame(
+  Model = model_names,
+  LOO = unlist(lapply(loo_results, function(x) x$result)),       # Résultat de loo()
+  Time_LOO = unlist(lapply(loo_results, function(x) x$time)),    # Temps d'exécution de loo()
+  LOO2 = unlist(lapply(loo2_results, function(x) x$result)),     # Résultat de loo2()
+  Time_LOO2 = unlist(lapply(loo2_results, function(x) x$time))   # Temps d'exécution de loo2()
+)
 
-# Fonction loo qui utilise en entree le modele (ne fonctionne pas si la formule utilise la fonction poly)
-loo=function(mod){
-  n = nrow(mod$model)
-  Call = mod$call # mod1$call --> lm(formula = y ~ x, data = df)
-  erreur=1:n
-  for(i in 1:n){
-    Call$data = mod$model[-i, ] # mod1$call$data = df
-    fit = eval.parent(Call)
-    pred = predict(fit, mod$model[i,])
-    erreur[i] = (pred - mod$model[i,1])^2
-  }
-  return(mean(erreur))
-}
-
-
-
-#Fonction loo qui utilise la formule du cours
-loo2=function(mod){
-  mean((residuals(mod)/(1-hatvalues(mod)))^2)
-}
-
-
-```
-
-
-
-
-# Question 6 --------------------------------------------------------------
-
-```{r}
-loo(mod1)
-loo(mod2)
-loo(mod3)
-loo(mod4)
-
-loo2(mod1)
-loo2(mod2)
-loo2(mod3)
-loo2(mod4)
-
-# les resultats coincident
-# loo2 est plus rapide pour calculer 
-# le plus haut loo est pour mod1 et le plus bas pour mod4 
-# (même si resultats prochent entre mod2, mod3 et mod4)
-
-# modèle le plus parcimonieux est le mod2
-```
-
-
-
-
-# Question 7 --------------------------------------------------------------
-
-```{r}
-library(boot)
-# Loo c'est K=1
-
-mod1_glm = glm(formula = fmla1 , family = gaussian, data = df)
-mod2_glm = glm(formula = fmla2 , family = gaussian, data = df)
-mod3_glm = glm(formula = fmla3 , family = gaussian, data = df)
-mod4_glm = glm(formula = fmla4 , family = gaussian, data = df)
-
-
-cvmod1 = cv.glm(data = df, glmfit = mod1_glm, K = 10) 
-cvmod2 = cv.glm(data = df, glmfit = mod2_glm, K = 10) 
-cvmod3 = cv.glm(data = df, glmfit = mod3_glm, K = 10) 
-cvmod4 = cv.glm(data = df, glmfit = mod4_glm, K = 10) 
-
-summary(cvmod1$delta)
-loo2(mod1)
-
-summary(cvmod2$delta)
-loo2(mod2)
-
-summary(cvmod3$delta)
-loo2(mod3)
-
-summary(cvmod4$delta)
-loo2(mod4)
-
-# les valeurs ont la même ordre de grandeur
+results %>% DT::datatable()
 
 ```
 
 
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
 
-# Question 8 --------------------------------------------------------------
+::: success
+On voit que les résultats donnés par nos deux fonctions coincident bien. Mais la première semble tout de même plus lente pour le calcul.
 
+Et en terme de qualité de modèle, c'est bien mod2 qui minimise le *loo*
+:::
+
+
+
+
+
+## Library *boot*
+
+La fonction cv.glm de la librairie boot permet d’estimer l’erreur test par validation croisée K-fold
+
+
+On va donc maintenant utiliser la fonction *cv.glm* de la library \{ boot \}. Cela va nécessité de recalculer le modèle mais cette fois ci avec la fonction *glm* en spécifiant que l'on veut un modèle gaussien (ce qui nous donnera le même résultat qu'avec *lm*).
 
 ```{r}
-# on regarde les 3 mod où loo faible 
-summary(mod2)
-summary(mod3)
-summary(mod4)
-# les r2 sont tous bon mais le mod2 à toutes ses variables significatives (sauf intercept)
-# on va donc préférer le mod2
-
-# On enlève la cst non significative 
-mod_final = lm(y ~ x + V3-1, data=df)
-mod_final_glm = glm(y ~ x + V3-1, data=df) # par defaut family = gaussian
-summary(mod2)
-summary(mod_final)
-summary(mod_final_glm)
-
-# x = rnorm(1000)
-# y = x - 2*(x^2) + rnorm(1000)
- 
-# REMARQUE :
-# quand on enlève l'intercept, les valeurs des coeffs bougent légèrement 
-# alors que théoriquement identique 
-# pareil, on a une différence sur le r2
-# Pourquoi ??
-
-# regardons le modèle plus simple
-mod1_sansIntercept = lm(y ~ x -1, data=df)
-summary(mod1)
-summary(mod1_sansIntercept)
-# on constante le même soucis
-
-mean(x) # x n'est pas parfaitement centré
-var(x) # var pas = 1
-# Don même si on a demandé à r de générer un x centré reduit,
-# enfait les données ne le sont pas parfaitement !!!!
-
-# on test en juste centrer le jeu de données
-df_center = as.data.frame(scale(df, center=TRUE, scale=FALSE))
-
-mod2_center= lm(y ~ x + V3, data=df_center)
-mod_final_center = lm(y ~ x + V3-1, data=df_center)
-summary(mod2_center)
-summary(mod_final_center)
-# quasi plus de différence pour coeffs et r2
+mod1_glm <- glm(formula = formula(mod1) ,
+                family = gaussian,
+                data = Simu_data_complete)
+mod2_glm <- glm(formula = formula(mod2) ,
+                family = gaussian,
+                data = Simu_data_complete)
+mod3_glm <- glm(formula = formula(mod3) ,
+                family = gaussian,
+                data = Simu_data_complete)
+mod4_glm <- glm(formula = formula(mod4) ,
+                family = gaussian,
+                data = Simu_data_complete)
 
 
-# on test en scale le jeu de données
-df_scale = as.data.frame(scale(df))
+cvmod1 <- cv.glm(data = Simu_data_complete, glmfit = mod1_glm, K = 10)
+cvmod2 <- cv.glm(data = Simu_data_complete, glmfit = mod2_glm, K = 10)
+cvmod3 <- cv.glm(data = Simu_data_complete, glmfit = mod3_glm, K = 10)
+cvmod4 <- cv.glm(data = Simu_data_complete, glmfit = mod4_glm, K = 10) 
 
-mod2_scale= lm(y ~ x + V3, data=df_scale)
-mod_final_scale = lm(y ~ x + V3-1, data=df_scale)
-summary(mod2_scale)
-summary(mod_final_scale)
-# quasi plus de différence pour coeffs et r2
-
-
-## remarque : 
-# le r2 et r2aj est le meilleur pour mod_final qui correspond
-# au mod 2 sans intercept mais où l'on a pas scale le df
+results <- data.frame(
+  Model = model_names,
+  CV_Mean = round( c(mean(cvmod1$delta), mean(cvmod2$delta), mean(cvmod3$delta), mean(cvmod4$delta)), 3),
+  LOO2 = c(loo2(mod1), loo2(mod2), loo2(mod3), loo2(mod4))
+)
 
 
+results %>% DT::datatable()
 ```
 
 
 
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+On voit qu'en moyenne *cv.glm* nous donne des résultats qui sont du même ordre de grandeur que notre fonction *loo2*
+
+Et en terme de qualité de modèle, c'est bien mod2 qui minimise la *cv*.
+:::
 
 
+:::
+
+# Ajustement du meilleur modèle
+
+D'après tout ce que l'on a pu voir durant cette étude, jusqu'à présent le meilleut modèle semble être mod2.
+```{r}
+mod2 %>% summary()
+```
+
+De manière naturelle, l'*intercept* ne semblant pas significatif il conviendrait de tester sans.
+
+Ainsi nous allons essayer le modèle $y \sim x + x^2$.
+```{r}
+mod2_without_intercept <- lm(y ~ 0 + x1 + x2, Simu_data_complete)
+mod2_without_intercept %>% summary()
+```
+
+On voit un modèle avec de très bon résultats et qui à toutes ces variables significatives. Comparons le avec *mod2* : 
+
+```{r}
+models <- list(mod2, mod2_without_intercept)
+model_names <- c("mod2", "mod2_without_intercept")
+
+results <- data.frame(
+  Model = model_names,
+  R2 = unlist(lapply(models, function(m)
+    round(summary(m)$r.squared, 3))),
+  R2adj = unlist(lapply(models, function(m)
+    round(summary(m)$adj.r.squared, 3))),
+  AIC = unlist(lapply(models, function(m)
+    round(AIC(
+      m
+    ), 1))),
+  BIC = unlist(lapply(models, function(m)
+    round(BIC(
+      m
+    ), 1))),
+  LOO2 = c(loo2(mod2), loo2(mod2_without_intercept)),
+  CV_Mean = round(c(
+    mean(cv.glm(
+      data = Simu_data_complete,
+      glmfit = glm(
+        formula = formula(mod2) ,
+        family = gaussian,
+        data = Simu_data_complete
+      ),
+      K = 10
+    )$delta), mean(cv.glm(
+      data = Simu_data_complete,
+      glmfit = glm(
+        formula = formula(mod2_without_intercept) ,
+        family = gaussian,
+        data = Simu_data_complete
+      ),
+      K = 10
+    )$delta)
+  ), 3)
+)
 
 
+results %>% DT::datatable()
+```
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+On voit bien avec tout nos critère qu'enlever l'*intercept* à apporté une amélioration à notre modèle.
+
+Ainsi, si l'on se base sur les résultat de ce nouveau modèle, on obtient la relation linéaire suivante :
+
+- $y =$ `r round(mod2_without_intercept$coefficients,3)[1]`$x$ + `r round(mod2_without_intercept$coefficients,3)[2]`$x^2 + \mathcal{E}$
+
+Alors que pour rappel, on a le lien linéaire théorique qui est:
+
+- $y = x - 2x^2 + \mathcal{E}$.
+
+Donc à la vue de ces résulats je pense que l'on peut dire sans prendre trop de risques que notre estimation est bonne.
+:::
 
 
+# Conclusion
 
+On voit qu'on a bien réussi à retrouver le lien théorique via le test d pluseurs modèle et l'utilisation de plusieurqs critères couplé à de la validation croisée pour affiner notre recherche du modèle le mieux ajusté.
 
+# Session info
 
-
-
-
-
-
-
-
-
+```{r}
+sessioninfo::session_info(pkgs = "attached")
+```
 
 
 
