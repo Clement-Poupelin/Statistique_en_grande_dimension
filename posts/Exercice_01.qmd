@@ -20,6 +20,20 @@ image: "/img/baseball.png"
 description: "Il s'agit d'une première utilisation des méthodes de regression avec selection de variable via des approches stepwise sur des données de baseball"
 ---
 
+
+# Intervenant.e.s
+
+### Rédacteur principal.e.s
+
+- **Clément Poupelin**, [clementjc.poupelin\@gmail.com](mailto:clementjc.poupelin@gmail.com){.email}\
+
+
+### Relecteur.trice.s
+
+- 
+
+
+
 # Setup
 
 :::: panel-tabset
