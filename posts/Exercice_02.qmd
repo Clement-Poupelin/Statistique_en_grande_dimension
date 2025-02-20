@@ -1,7 +1,7 @@
 ---
 title: "Exercice 02"
 author: "Clément Poupelin"
-date: "`r Sys.Date()`"
+date: today
 format: 
   html:
     embed-resources: false
@@ -15,15 +15,28 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["TP"]
+categories: ["regression", "selection de variable"]
 image: "/img/baseball.png"
-description: "Ici, on continu sur des données de baseball à utilser des méthodes de regression avec selection de variable en testant le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"
+description: "Ici, on continu sur des données de baseball à utilser des méthodes de regression avec selection de variable en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"
 ---
+
+# Intervenant.e.s
+
+### Rédaction
+
+- **Clément Poupelin**, [clementjc.poupelin\@gmail.com](mailto:clementjc.poupelin@gmail.com){.email}\
+
+
+### Relecture
+
+- 
+
+
 
 # Setup
 
 ::: panel-tabset
-## packages
+## Packages
 
 ```{r, setup, warning=FALSE, message=FALSE}
 # Données
@@ -32,14 +45,20 @@ library(dplyr)        # manipulation des données
 ```
 
 ## Fonctions
+
+## Seed
+
+```{r}
+set.seed(140400)
+```
+
 :::
 
 # Données
 
-On étudie à nouveau le jeu de données [**Hitters**](https://rdrr.io/cran/ISLR/man/Hitters.html) disponible dans la libraire { *ISLR* } de *R*.
+On étudie toujours le jeu de données [**Hitters**](https://rdrr.io/cran/ISLR/man/Hitters.html) disponible dans la libraire *`{ISLR}`* de *`R`*. Il s'agit d'un jeu de données de la *Major League Baseball* provenant des saisons de 1986 et 1987.
 
-Il s'agit d'un jeu de données de la Major League Baseball provenant des saisons de 1986 et 1987 possèdant `r dim(Hitters)[1]` lignes/individus pour les différents joueurs et `r dim(Hitters)[2]` variables.
-
+Le jeu de données possède `r dim(Hitters)[1]` lignes/individus pour les différents joueurs et `r dim(Hitters)[2]` variables.\
 Parmi les variables, on trouve les informations suivantes :
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -61,25 +80,12 @@ tibble(
   kable_styling(bootstrap_options = c("hover", "condensed"))
 ```
 
-Regardons maintenant le *summary*() pour examiner les différentes variables.
-
-```{r}
-# ?Hitters
-Hitters %>%
-  summary()
-```
-
-::: callout-warning
-On peut déjà remarquer la présence de 59 valeurs manquantes pour la variable *Salary*.
-:::
-
-On va donc commencer par s'en débarasser (il ne s'agit que de 59 lignes sur 322). Puis on va également se concentrer sur les variables quantitatives .
-
+Comme pour l'[Exercice 1](../posts/Exercice_01.qmd), on va commencer par se débarasser des variables manquantes.
 ```{r}
 Hitters_Without_NA <- Hitters %>% na.omit()
 ```
 
-Puis cette fois ci nous allons simplement nous concentrer sur un sous jeu de données composé des 18 premières lignes sans valeurs manquantes.
+Puis cette fois ci nous allons dans un premier temps nous concentrer sur un sous jeu de données composé des 18 premières lignes sans valeurs manquantes.
 
 ```{r}
 Hitters_Without_NA_18 <- Hitters_Without_NA[1:18, ]
@@ -87,10 +93,10 @@ Hitters_Without_NA_18 %>% dim()
 ```
 
 ::: callout-warning
-Attention, on peut remarquer ici que le nombre de variable est supérieur au nombre d'individus.
+Attention, on peut remarquer ici que le nombre de variable est supérieur au nombre d'individus. On est donc dans un cas classique de grandes dimension avec $p>n$.
 :::
 
-Maintenant, il conviendrait dans ce genre de situation d'effectuer de premières analyses descritptives. Mais celle ci ayant déjà été faite pendant l'[Exercice 1](../posts/Exercice_01.qmd), on se permettra de ne pas les refaires.
+Maintenant, il conviendrait dans ce genre de situation d'effectuer de premières analyses descritptives. Mais celle ci ayant déjà été faite sur le jeu de données complet pendant l'[Exercice 1](../posts/Exercice_01.qmd), on se permettra de ne pas les refaires.
 
 # Analyse inférentielle
 
@@ -104,7 +110,6 @@ On va donc ajuster un modèle de régression linéaire en utilisant toutes les v
 mod1 <- lm(formula = Salary ~ .,
            Hitters_Without_NA_18) 
 mod1 %>% summary()
-
 ```
 
 ::: success-header
@@ -118,7 +123,7 @@ On peut clairement constater que ce modèle brut ne fonctionne pas avec pourtant
 :::
 
 
-On peut aussi s'amuser à regarder les critères AIC et BIC de ce modèles qui se retrouve à tendre vers l'infini.
+On peut aussi s'amuser à regarder les critères *AIC* et *BIC* de ce modèles qui théoriquement se retrouve à tendre vers l'infini.
 
 ```{r}
 cat( "AIC = ", AIC(mod1), "et BIC = ", BIC(mod1))
@@ -126,8 +131,7 @@ cat( "AIC = ", AIC(mod1), "et BIC = ", BIC(mod1))
 
 ### Prediction
 
-On va maintenant tenter de prédire la variable *Salary* pour les autres joueurs.
-
+On va maintenant tenter de prédire la variable *Salary* pour les autres joueurs.\
 Déjà on peut regarder sur les 18 joueurs si la prédiction via le modèle nous donne des bonnes valeur.
 
 ```{r, warning=FALSE, message=FALSE}
@@ -135,9 +139,9 @@ Salary_hat <- predict(mod1, Hitters_Without_NA_18)
 Salary <- Hitters_Without_NA_18$Salary
 ```
 
-- $\widehat{Salary} - Salary =$ `r round(mean(Salary_hat - Salary), 2)`
+- $\widehat{Salary^{(1:18)}} - Salary^{(1:18)} =$ `r round(mean(Salary_hat - Salary), 2)`
 
-Ce que l'on constate c'est qu'effectivement nous sommes avec un résultat qui pourrait nous faire penser que le modèle est bien ajusté.
+Ce que l'on constate c'est qu'effectivement nous sommes avec un résultat qui pourrait nous faire penser que le modèle est bien ajusté avec une prédiction quasiment égale à la variable à prédire.
  
  
 Pourtant si nous regardons la prédiction obtenue par le modèle pour les autres joueurs et que nous effectuons la même soustraction pour comparer la qualité de prediction, nous voyons bien l'inéfficacité du modèle. 
@@ -146,17 +150,19 @@ Pourtant si nous regardons la prédiction obtenue par le modèle pour les autres
 Hitters_Without_NA_No18 <- Hitters_Without_NA[19:nrow(Hitters_Without_NA),]
 Salary_hat_No18 <- predict(mod1, Hitters_Without_NA_No18)
 Salary_No18 <- Hitters_Without_NA_No18$Salary
-summary(Salary_hat_No18 - Salary_No18 )
 ```
 
-En effet on voit bien au dessus que les valeurs ne sont pas proche de 0 en moyennes et on même des valeurs assez extrêmes.
+- $\widehat{Salary^{(\neg 1:18)}} - Salary^{(\neg 1:18)} =$ `r round(mean(Salary_hat_No18 - Salary_No18), 2)`
+
+En effet on voit bien au dessus que les valeurs ne sont en moyennes pas proche de 0.
 
 
 ## Modèles parcimonieux
 
 On va maintenant mettre un oeuvre une méthode de sélection automatique classique pour réduire le nombre de variable explicative et tenter d'éviter les problèmes de grande dimension.
 
-Pour cela nous allons donc partir du plus petit modèle (celui avec seulement l'*intercept*) puis faire grandir le nombre de variable. Il av donc s'agir d'une méthode de sélection automatique *forward*.
+Pour cela nous allons donc partir du plus petit modèle (celui avec seulement l'*intercept*) puis faire grandir le nombre de variable. Il va donc s'agir d'une méthode de sélection automatique *forward*. 
+
 
 ```{r}
 mod0 <- lm(Salary~1, Hitters_Without_NA_18)
@@ -177,27 +183,43 @@ Résultats
 ::: success
 Nous obtenons maintenant un modèle avec 2 variable dont une significative. Puis nous pouvons constater des valeurs assez élevés pour le $R^2$ et $R^2_{adjusted}$.
 
-Regardons aussi les critères AIC et BIC.
-```{r}
-cat( "AIC = ", AIC(mod_forw), "et BIC = ", BIC(mod_forw))
-```
+Et on a *AIC* = `r round(AIC(mod_forw), 3)` et *BIC* = `r round(BIC(mod_forw), 3)`.
+
+Donc sans aller tester si c'est un bon modèle prédictif, on constate déjà qu'il va s'agir d'un modèle descriptif fonctionnel avec $n<p$
 :::
+
+
+
+# Permutations
 
 Maintenant, nous allons permuter de façon aléatoire les salaires des 18 joueurs et refaire la même analyse inférentielle. Ainsi, le lien linéaire devrait disparaitre et nous donner de mauvais résultats.
 
-```{r}
-Salary_permute <- sample(Salary)
+::: callout-note
+pour des raisons de repouctibilité, une graine ou seed a été défini dans le setup afin que la génération aléatoire reste identique.
+:::
 
-mod1_permute <- lm(Salary_permute~., Hitters_Without_NA_18)
+Faisons à nouveau le modèle brute sur nos 18 joueurs.
+```{r}
+Hitters_Without_NA_18$Salary_permute <- sample(Salary)
+
+mod1_permute <- lm(Salary_permute~., subset(Hitters_Without_NA_18, select = -Salary))
 mod1_permute %>% summary()
 ```
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
 
+::: success
 A nouveau on peut constater l'inéfficacité d'un modèle avec toutes les variables du fait d'avoir $p>n$.
+:::
 
-Utilisons maintenant la sélection automatique.
+
+Utilisons maintenant la sélection automatique en testant à nouveau l'approche *forward*.
 
 ```{r}
-mod0_permute <- lm(Salary_permute~1, Hitters_Without_NA_18)
+mod0_permute <- lm(Salary_permute~1, subset(Hitters_Without_NA_18, select = -Salary))
 mod_forw_permute <- step(mod0_permute, 
                          scope = formula(mod1_permute),
                          trace = FALSE,
@@ -212,40 +234,63 @@ Résultats
 :::
 
 ::: success
-On retrouve ici un modèle très différent concernant les variables sélectionnés avec de très mauvais résultats de $R^2$ et $R^2_{adjusted}$.
+On constate que plusieurs variables son significatives. Pourtant, on trouve ici un modèle avec de très mauvais $R^2$ et $R^2_{adjusted}$. Donc un modèle de mauvaise qualité avec en plus une variance assez grande.
 :::
+
 
 Pour finir, on va maintenant reprendre le jeu de données **Hitters** complet et permuter tous les salaires de façon aléatoire. Ensuite, on va ajuster le meilleur modèle de régression possible pour expliquer les salaires en fonction des autres variables.
 
 ```{r}
-Salary_permute <- sample(Hitters_Without_NA$Salary)
-Hitters_Without_NA_And_Salary = Hitters_Without_NA[,-19]
+Hitters_Without_NA$Salary_permute <- sample(Hitters_Without_NA$Salary)
 
-Hitters_With_Salary_permute <- cbind(Hitters_Without_NA_And_Salary, Salary_permute)
-
-mod0_permute <- lm(Salary_permute~., Hitters_With_Salary_permute)
-mod1_permute <- lm(Salary_permute~1, Hitters_With_Salary_permute)
+mod0_permute <- lm(Salary_permute~., subset(Hitters_Without_NA, select = -Salary))
+mod1_permute <- lm(Salary_permute~1, subset(Hitters_Without_NA, select = -Salary))
 
 
 mod_permute_back <- step(mod1_permute,
                          scope = formula(mod1_permute),
                          trace = FALSE,
                          direction = c("backward"))
-mod_permute_back %>% summary()
+
 
 
 mod_permute_forw <- step(mod0_permute,
                          scope = formula(mod1_permute),
                          trace = FALSE,
                          direction = c("forward"))
-mod_permute_forw %>% summary()
+
 
 mod_permute_both <- step(mod0_permute,
                          scope = formula(mod1_permute),
                          trace = FALSE,
                          direction = c("both"))
+
+```
+
+::: panel-tabset
+
+## *Backward*
+
+```{r}
+mod_permute_back %>% summary()
+```
+
+
+## *Forward*
+
+
+```{r}
+mod_permute_forw %>% summary()
+```
+
+## *Both*
+
+```{r}
 mod_permute_both %>% summary()
 ```
+
+
+:::
 
 ::: success-header
 ::: success-icon
@@ -254,13 +299,15 @@ Résultats
 :::
 
 ::: success
-On constate de très mauvais résultats de $R^2$ et $R^2_{adjusted}$ et au final la seule variable qui semble vraiment significative est l'*intercept* ce qui montre bien qu'avec la permutation aléatoire de la variable *Salary*, le lien linéaire qui existait à disparu.
+On constate qu'aucune méthode de sélection de variable ne permet d'avoir ne serait-ce qu'un modèle correct ce qui montre bien qu'avec la permutation aléatoire de la variable *Salary*, le lien linéaire qui existait à disparu.
 :::
 
 
 # Conclusion
 
-On a donc pu voir l'importance du lien linéaire dans la construction d'un modèle de regression linéaire. Cela renforce par l'exemple la véracité du modèle de régression linéaire (au cas où l'on en doutais encore).
+Dans un premier temps, on a pu avoir un aperçu de ce qu'il se passe lorsque l'on se retrouve face au fléa de la dimensionalité avec un sous jeu de données où le nombre de variables était supérieur au nombre d'individus.
+
+Puis, on a aussi pu voir l'importance du lien linéaire dans la construction d'un modèle de regression. Cela renforce par l'exemple la véracité du modèle de régression linéaire (au cas où l'on en doutais encore).
 
 # Session info
 
