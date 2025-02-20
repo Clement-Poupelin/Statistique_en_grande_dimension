@@ -1,7 +1,7 @@
 ---
 title: "Exercice 01"
 author: "Clément Poupelin"
-date: "`r Sys.Date()`"
+date: today
 format: 
   html:
     embed-resources: false
@@ -15,7 +15,7 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["TP"]
+categories: ["regression", "selection de variable"]
 image: "/img/baseball.png"
 description: "Il s'agit d'une première utilisation des méthodes de regression avec selection de variable via des approches stepwise sur des données de baseball"
 ---
@@ -23,12 +23,12 @@ description: "Il s'agit d'une première utilisation des méthodes de regression 
 
 # Intervenant.e.s
 
-### Rédacteur principal.e.s
+### Rédaction
 
 - **Clément Poupelin**, [clementjc.poupelin\@gmail.com](mailto:clementjc.poupelin@gmail.com){.email}\
 
 
-### Relecteur.trice.s
+### Relecture
 
 - 
 
@@ -37,16 +37,12 @@ description: "Il s'agit d'une première utilisation des méthodes de regression 
 # Setup
 
 :::: panel-tabset
-## packages
+## Packages
 
 ```{r, setup, warning=FALSE, message=FALSE}
 # Données
 library(ISLR)         # Hitters data 
 library(dplyr)        # manipulation des données
-
-# PCA
-library(FactoMineR)
-library(factoextra)
 
 # Inférence
 library(leaps)        # regsubsets 
@@ -55,17 +51,128 @@ library(car)          # pour VIF
 # Plots
 ## ggplot
 library(ggplot2)
-library(reshape2)     # transformer les données en format long
 library(gridExtra)
-
-## for pairs panel
-library(psych)
-library(RColorBrewer)
 ```
 
 ## Fonctions
 
 ::: panel-tabset
+
+### boxplot 
+
+```{r}
+my_boxplot <- function(data) {
+  # Transformer les données en format long pour ggplot
+  data_long <- reshape2::melt(data)
+  
+  ggplot(data_long, aes(x = variable, y = value, fill = variable)) +
+    geom_boxplot() +
+    scale_fill_viridis_d() +  # Palette de couleurs harmonieuse
+    labs(title = "Distribution des Variables (Boxplot)", x = "Variables", y = "Valeurs") +
+    theme_minimal() +  # Thème épuré
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotation des étiquettes
+}
+```
+
+### barplot 
+
+```{r}
+my_barplot <- function(data, variable1, variable2) {
+  ggplot(data, aes(x = {{ variable1 }}, fill = {{ variable2 }})) +
+    geom_bar(position = "dodge") +
+    scale_fill_manual(values = c("#C41E3A", "#0033A0")) +  
+    labs(
+      title = "Répartition des joueurs par League et Division",
+      x = deparse(substitute(variable1)), 
+      y = "Nombre de joueurs"
+    ) +
+    theme_minimal()
+}
+
+```
+
+### Heatmap
+
+```{r}
+my_League_heatmap <- function(data) {
+  table_league <- as.data.frame(table(
+    data$League,
+    data$NewLeague
+  ))
+  colnames(table_league) <- c("League", "NewLeague", "Count")
+  
+  ggplot(table_league, aes(x = League, y = NewLeague, fill = Count)) +
+    geom_tile(color = "white") +
+    scale_fill_gradient(low = "deeppink", high = "deeppink4") +
+    geom_text(aes(label = Count), color = "white", size = 5) +
+    labs(
+      title = "Transition des Joueurs entre les Ligues",
+      x = "League d'origine",
+      y = "Nouvelle League",
+      fill = "Nombre de joueurs"
+    ) +
+    theme_minimal()
+}
+```
+
+### pairs.panels 
+```{r}
+
+
+my_pairs.panels <- function(data) {
+  psych::pairs.panels(
+    data,
+    method = "pearson",  # Méthode de corrélation
+    hist.col = RColorBrewer::brewer.pal(9, "Set3"),  # Couleurs des histogrammes
+    density = TRUE,  # Ajout des courbes de densité
+    ellipses = TRUE,  # Ajout d'ellipses
+    smooth = TRUE,  # Ajout de régressions lissées
+    lm = TRUE,  # Ajout des droites de régression
+    col = "#69b3a2",
+    alpha = 0.5,  # Transparence
+    cex.labels = 3.5,  # Taille du texte des variables
+    font.labels = 2  # Mettre en gras
+  )
+}
+
+
+
+```
+
+### VIF plot
+
+```{r}
+my_VIFplot <- function(vif) {
+  vif_df <- data.frame(Variable = names(vif), VIF = vif)
+  
+  p <- ggplot(vif_df, aes(
+    x = reorder(Variable, VIF),
+    y = pmin(VIF, 15),
+    fill = VIF > 10
+  )) +
+    geom_bar(stat = "identity") +
+    geom_text(aes(label = ifelse(VIF > 10, round(VIF, 1), "")), hjust = -0.2, size = 6) +
+    coord_flip() +
+    scale_fill_manual(values = c("FALSE" = "#0072B2", "TRUE" = "#D55E00")) +
+    labs(title = "Variance Inflation Factor (VIF)", x = "Variables", y = "VIF (limité à 15)") +
+    theme_minimal() +
+    theme(
+      axis.title = element_text(size = 34, face = "bold"),
+      plot.title = element_text(
+        size = 54,
+        face = "bold",
+        hjust = 0.5
+      ),
+      axis.text.x = element_text(size = 26),
+      axis.text.y = element_text(size = 18),
+      legend.text = element_text(size = 30),
+      legend.title = element_text(size = 38, face = "bold")
+    )
+  
+  return(p)
+}
+```
+
 ### Critères
 
 On rappel que $SCR = \sum_i (y_i - f(x_i))^2$ et $SCT = \sum_i (y_i - \bar{y})^2$.\
@@ -172,7 +279,7 @@ Best_model <- function(model, criteria_df){
     best_model_criteria <- which.max(criteria)
     selected_vars <- summary(model)$which[best_model_criteria,]
     
-    cat("Meilleur modèle selon", criteria_name," : Modèle avec", best_model_criteria, "variables\n", 
+    cat("Meilleur modèle selon", criteria_name, " = ", round(max(criteria), 3), " : Modèle avec", best_model_criteria, "variables\n", 
         rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE]), "\n", "\n")
   }
   ## On a ensuite les critères à minimiser
@@ -183,7 +290,7 @@ Best_model <- function(model, criteria_df){
     best_model_criteria <- which.min(criteria)
     selected_vars <- summary(model)$which[best_model_criteria,]
     
-    cat("Meilleur modèle selon", criteria_name," : Modèle avec", best_model_criteria, "variables\n", 
+    cat("Meilleur modèle selon", criteria_name, " = ", round(min(criteria), 3)," : Modèle avec", best_model_criteria, "variables\n", 
         rownames(as.data.frame(selected_vars)[as.data.frame(selected_vars)[, 1] == TRUE, , drop = FALSE]), "\n", "\n")
   }
 }
@@ -193,12 +300,9 @@ Best_model <- function(model, criteria_df){
 
 # Données
 
-On étudie le jeu de données [**Hitters**](https://rdrr.io/cran/ISLR/man/Hitters.html) disponible dans la libraire { *ISLR* } de *R*.
+On étudie le jeu de données [**Hitters**](https://rdrr.io/cran/ISLR/man/Hitters.html) disponible dans la libraire *`{ISLR}`* de *`R`*. Il s'agit d'un jeu de données de la *Major League Baseball* provenant des saisons de 1986 et 1987.
 
-Il s'agit d'un je de données de la Major League Baseball provenant des saisons de 1986 et 1987.
-
-Le jeu de données possède `r dim(Hitters)[1]` lignes/individus pour les différents joueurs et `r dim(Hitters)[2]` variables.
-
+Le jeu de données possède `r dim(Hitters)[1]` lignes/individus pour les différents joueurs et `r dim(Hitters)[2]` variables.\
 Parmi les variables, on trouve les informations suivantes :
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -220,7 +324,7 @@ tibble(
   kable_styling(bootstrap_options = c("hover", "condensed"))
 ```
 
-Regardons maintenant le *summary*() pour examiner les différentes variables.
+Regardons maintenant le *`summary`* pour examiner les différentes variables.
 
 ```{r}
 # ?Hitters
@@ -232,33 +336,31 @@ Hitters %>%
 On peut déjà remarquer la présence de 59 valeurs manquantes pour la variable *Salary*.
 :::
 
-On va donc commencer par s'en débarasser (il ne s'agit que de 59 lignes sur 322). Puis on va également créé un sous jeu de données ne conservant que les variables quantitatives .
+On va donc commencer par s'en débarasser (il ne s'agit que de 59 joueurs sur les 322). Puis on va également créer un sous jeu de données ne conservant que les variables quantitatives .
 
 ```{r}
 Hitters_Without_NA <- Hitters %>% na.omit()
 Hitters_Without_NA_quant <- Hitters_Without_NA %>% subset(, select = -c(League, Division, NewLeague))
+Hitters_Without_NA_quali <- Hitters_Without_NA %>% subset(, select = c(League, Division, NewLeague))
 ```
 
 # Analyse descriptive
 
+Avant de se lancer dans des analyses inférentielles avec de l'estimation, prédiction, etc... Il convient toujours de commencer par quelques analyses descritpives afin de mieuxcomprendre les données sur lesquelles on travail.
+
+
 :::: panel-tabset
-## Boxplot
+
+## Variables quantitatives
+
+:::: panel-tabset
+
+### Boxplot
 
 On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.
 
 ```{r, message=FALSE, fig.height=6, fig.width=8}
-# Transformer les données en format long pour ggplot
-Hitters_long <- melt(Hitters_Without_NA_quant)
-
-ggplot(Hitters_long, aes(x = variable, y = value, fill = variable)) +
-  geom_boxplot() +
-  scale_fill_viridis_d() +  # Palette de couleurs harmonieuse
-  labs(title = "Distribution des Variables (Boxplot)",
-       x = "Variables",
-       y = "Valeurs") +
-  theme_minimal() +  # Thème épuré
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotation des étiquettes
-
+my_boxplot(Hitters_Without_NA_quant)
 ```
 
 
@@ -273,24 +375,15 @@ Résultats
 Comme on pouvait s'y attendre, on retrouve des distributions assez variées selon les différentes statistques des joueurs.
 
 On peut tout de même remarquer que nos variables ont en général peu de valeurs outliers.
+
 :::
 
-## Correlation panel
+### Correlations
 
-On regarde ici la corrélation calculée entre chacune de nos variables.
+On regarde ici la corrélation calculée entre chacune de nos variables quantitative.
 
-```{r, fig.height=22, fig.width=28}
-pairs.panels(
-  Hitters_Without_NA_quant,
-  method = "pearson",      # Méthode de corrélation 
-  hist.col = brewer.pal(9, "Set3"), # Couleurs des histogrammes
-  density = TRUE,          # Ajout des courbes de densité
-  ellipses = TRUE,         # Ajout d'ellipses 
-  smooth = TRUE,           # Ajout de régressions lissées
-  lm = TRUE,               # Ajout des droites de régression
-  col = "#69b3a2",         # Couleur des points
-  alpha = 0.5              # Transparence 
-)
+```{r, fig.height=26, fig.width=32}
+my_pairs.panels(Hitters_Without_NA_quant)
 ```
 
 
@@ -301,9 +394,58 @@ Résultats
 :::
 
 ::: success
-On voit la présence de plusieurs fortes corrélations qui peut déjà nous alerter si l'on veut faire des modèles de regressions linéaires car on risque d'avoir un problème de colinéarité entre les varibales explicatives.
+On voit la présence de plusieurs fortes corrélations qui peut déjà nous alerter si l'on veut faire des modèles de regressions linéaires car on risque d'avoir un problème de colinéarité entre les varibales explicatives. Parmi ces fortes corrélations, on arrive même à distiguer deux zones où les variables sont très corrélées entre elles (de *AtBat* à *RBI* et de *Years* à *Cwalks*)
 
 Par contre, il n'y a aucune forte corrélation entre la variable *Salary* et les autres variables du jeu de données. Ce qui peut nous indiquer qu'il n'y aura pas une variable avec très forte influence sur *Salary*.
+:::
+
+:::
+
+
+## Variables qualitatives 
+
+
+::: panel-tabset
+
+### Barplot
+
+Ici, regardons un peu le nombre des joeurs par ligue, selon la division.
+```{r, fig.height=6, fig.width=12}
+grid.arrange(my_barplot(Hitters_Without_NA_quali, League, Division),
+             my_barplot(Hitters_Without_NA_quali, NewLeague, Division)
+             , ncol=2)
+```
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+De manière globale, on peut remarque que de fin 1986 à début 1987, il ne semble pas y avoir beaucoup de changement dans la répartition des joueurs par ligue selon la division.
+
+De manière plus locale, on remarque qu'il y a un peu plus de joueur en division Ouest (*West*) que division Est (*East*). Et ça, qu'on sit en ligue Américaine (*American League*) ou ligue Nationale (*National League*)
+:::
+
+
+### Heatmap
+
+On peut regarder la Heatmap nous donnans la transition des joueurs entre les ligues, i.e on regarde la similarité des variables *League* et *NewLeague*.
+```{r}
+my_League_heatmap(Hitters_Without_NA_quali)
+```
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+On voit bien ici qu'effectivement les joueurs n'ont globalement pas changer de ligue entre fin 1986 et début 1987. Seulement 8 joueurs sont passés de ligue américaine à ligue nationale et 10 de ligue nationale à ligue américaine.
+:::
+
 :::
 
 
@@ -314,14 +456,18 @@ Avec une Analyse en Composantes Principales (PCA) on peut regarder un peu le com
 En effet, Cette méthode respose sur la transformation des variables d'origine en nouvelles variables non corrélées, appelées composantes principales, qui capturent successivement la plus grande variance possible des données.
 
 ```{r}
-res_pca <- PCA(Hitters_Without_NA, 
-               quali.sup = c(which(colnames(Hitters_Without_NA) %in% c("League", "Division", "NewLeague"))),
-               quanti.sup = which(colnames(Hitters_Without_NA) == "Salary"),
-               graph = FALSE)
+res_pca <- FactoMineR::PCA(
+  Hitters_Without_NA,
+  quali.sup = c(which(
+    colnames(Hitters_Without_NA) %in% c("League", "Division", "NewLeague")
+  )),
+  quanti.sup = which(colnames(Hitters_Without_NA) == "Salary"),
+  graph = FALSE
+)
 
 ```
 
-Ici, on spécifi nos varibales qualitatives et on décide de mettre la variable *Salary* en variable supplémentaire, ce qui veut d'ire qu'elle ne sera pas considéré pour la formation de nos composantes principales (variable que l'on cherchera à estimer plus tard).
+Ici, on spécifi nos variables qualitatives et on décide de mettre la variable *Salary* en variable supplémentaire, ce qui veut dire qu'elle ne sera pas considéré pour la formation de nos composantes principales (variable que l'on cherchera à estimer plus tard).
 
 ::: panel-tabset
 #### Barplot des variances
@@ -329,13 +475,15 @@ Ici, on spécifi nos varibales qualitatives et on décide de mettre la variable 
 Tout d'abord, on peut commencer par regarder le pourcentage de variance expliqué par nos différentes composantes principales.
 
 ```{r}
-fviz_eig(res_pca, 
-         ncp = 10,
-         addlabels = TRUE, 
-         barfill = "coral",
-         barcolor = "coral",
-         ylim = c(0, 50),
-         main = "Percentage of variance of the 10 first components")
+factoextra::fviz_eig(
+  res_pca,
+  ncp = 10,
+  addlabels = TRUE,
+  barfill = "coral",
+  barcolor = "coral",
+  ylim = c(0, 50),
+  main = "Percentage of variance of the 10 first components"
+)
 ```
 
 ::: success-header
@@ -354,15 +502,70 @@ Le plan des individus est une projection des observations (dans notre cas, les j
 
 Ainsi, des individus proches sur le graphique ont des caractéristiques similaires par rapport aux variables utilisées.
 
-Puis, le placement d'un individu en fonction des axes peut permettre de savoir comment le jouer se caractérise par rapport aux variables qui contribuent le plus à ces axes.
+Puis, le placement d'un individu en fonction des axes peut permettre de savoir comment le jouer se caractérise par rapport aux variables qui contribuent le plus à ces axes.\
+On peut ensuite regarder ce placement en fonction de nos différentes variables qualitatives.
+
+::: panel-tabset
+
+##### Simple
 
 ```{r, fig.height=6, fig.width=8}
-fviz_pca_ind(res_pca, 
-             label = "none",  # Supprime les noms des individus
-             pointsize = 2,    # Taille des points
-             col.ind = "cyan3")
+factoextra::fviz_pca_ind(
+  res_pca,
+  label = "none",
+  pointsize = 2,
+  col.ind = "cyan3"
+)
 
 ```
+
+##### *League*
+
+```{r, fig.height=6, fig.width=8}
+factoextra::fviz_pca_ind(
+  res_pca,
+  habillage = Hitters_Without_NA$League,
+  addEllipses=TRUE,
+  ellipse.level=0.95,
+  label = "none",
+  pointsize = 2,
+  col.ind = "cyan3"
+)
+
+```
+
+##### *NewLeague*
+
+```{r, fig.height=6, fig.width=8}
+factoextra::fviz_pca_ind(
+  res_pca,
+  habillage = Hitters_Without_NA$NewLeague,
+  addEllipses=TRUE,
+  ellipse.level=0.95,
+  label = "none",
+  pointsize = 2,
+  col.ind = "cyan3"
+)
+
+```
+
+##### *Division*
+
+```{r, fig.height=6, fig.width=8}
+factoextra::fviz_pca_ind(
+  res_pca,
+  habillage = Hitters_Without_NA$Division,
+  addEllipses=TRUE,
+  ellipse.level=0.95,
+  label = "none",
+  pointsize = 2,
+  col.ind = "cyan3"
+)
+
+```
+
+
+:::
 
 ::: success-header
 ::: success-icon
@@ -371,7 +574,9 @@ Résultats
 :::
 
 ::: success
-Ici, on voit que les joueurs se répartissent bien sur le plan ce qui témoignent de la présence d'une grande variété de type de joueurs.
+Ici, on voit que les joueurs se répartissent de manière plûtot uniforme sur le plan ce qui témoignent de la présence d'une grande variété de type de joueurs.
+
+Et on ne voit pas de regroupement se faire en fonction de nos différentes variables qualitatives.
 :::
 
 #### Variables
@@ -389,11 +594,12 @@ De plus, selon l'angle entre deux varibles, on peut faire des suppositions sur l
 -   Si l’angle est proche de 90°, alors les variables ne sont pas corrélées
 
 ```{r, fig.height=6, fig.width=8}
-fviz_pca_var(res_pca, 
-             col.var = "cos2",
-             gradient.cols = rainbow(n = 8, start = .6, end = .9),
-             repel = TRUE)
-
+factoextra::fviz_pca_var(
+  res_pca,
+  col.var = "cos2",
+  gradient.cols = rainbow(n = 8, start = .6, end = .9),
+  repel = TRUE
+)
 ```
 
 
@@ -405,7 +611,8 @@ Résultats
 :::
 
 ::: success
-Dans notre cas, ce que l'on peut voir c'est que la majorité de nos variables sont bien représentées par nos deux axes (cumulant plus de 70% d'explication). Mais beaucoup semblent aussi fortement corrélées avecla formation de deux groupes et la variable *Salary* se trouvant au milieu. Cette corrélation ayant déjà pu être observé précédemment.
+Dans notre cas, ce que l'on peut voir c'est que la majorité de nos variables sont bien représentées par nos deux axes (cumulant plus de 70% d'explication). Mais beaucoup semblent aussi fortement corrélées avec la formation de deux groupes et la variable *Salary* se trouvant au milieu. Cette corrélation entre nos variables quantitatives ayant déjà pu être observé précédemment.\
+Pour aller un peu plus loin dans la compréhension de ce phénomène, on peut remarquer que les deux groupes correspondent en fait aux variables qui sont des statistiques de joueurs pour la saison de 1986 (*Hits*, *AtBat*, *Runs*, *RBI*, ...) et des statistiques de joueurs sur toute leur carrière (*Cwalks*, *CAtBat*, *CHmRun*, *CRBI*, ...). Ainsi cela explique la présence de fortes corrélations corrélation.
 :::
 
 :::
@@ -437,21 +644,20 @@ Résultats
 :::
 
 ::: success
-Quelques conclusions sur le modèle :
+Ce qu'on peut remarquer en premier sur ce modèle c'est que beaucoup de variables ont un effet non significatif. 
 
--   beaucoup de variables ont un effet non significatif
+Aussi, ce modèle offre des valeurs de $R^2$ et $R^2_{adjusted}$ autour de 0.5 ce qui témoigne d'une mauvaise qualité d'ajustament du modèle
 
--   le $R^2$ et le $R^2_{adjusted}$ sont autour de 0.5 ce qui témoigne d'une mauvaise qualité d'ajustament du modèle
-
--   l'écart type résiduel est de 315.6 ce qui est assez important et témoigne d'un modèle peu précis
+Et enfin, l'écart type résiduel est de 315.6 ce qui est assez important et témoigne d'un modèle peu précis
 :::
 
-Pour tenter de trouver un meilleur ajustment, il est important d'analyser d'avantage le lien entre toutes les variables explicatives. On utilise alors comunément le VIF (*variance inflation factor*). 
+Pour tenter de trouver un meilleur ajustment, il est important d'analyser d'avantage le lien entre toutes les variables explicatives. On utilise alors comunément le *VIF* (*variance inflation factor*). 
 
 On obtient alors pour chacune de nos variable une valeur qui, plus elle est élevé, témoigne de la multicolinéarité entre nos variables explicatives.
 
-```{r}
+```{r, fig.height=10, fig.width=16}
 vif(mod1) 
+my_VIFplot(vif(mod1))
 ```
 
 On remarque ainsi que beaucoup de valeurs sont supérieur à 10 ce qui s'interprète communément comme la précence d'une forte colinéarité sur nos variables explicatives.
@@ -470,8 +676,18 @@ Maintenant, on va donc tenter de trouver le meilleur sous-modèle possible. Pour
 
 Puis reproduire la même procédure avec des séléctions *backward*, *forward* et *stepwise*
 
+Tout d'abord, on va définir un nouveau modèle simple ne comprenant que l'*intercept*.
+```{r}
+mod0 <- lm(Salary~1,
+           Hitters_Without_NA)
+summary(mod0)$call
+```
+
+Le principe de ces méthodes de régression avec sélection de variables est de tester et comparer les différents modèles possibles avec nos variables en allant du modèle le plus simple $y \sim 1$ jusqu'au modèle le plus complet $y \sim .$ ou l'inverse. Puis à chaque étape de rajout ou de suppression d'une variable dans le modèles, on sélectionne le meilleur modèle via le critère de notre choix.
+
+
 ::: callout-note
-Un rappel sur nos critère se trouve dans la partie *Setup*, onglet fonction, de ce document avec la création de fonction pour les calculer.
+Un rappel sur nos critère se trouve dans la partie **Setup**, onglet **Fonction**, de ce document avec la création de fonction pour les calculer.
 :::
 
 ::::::::::: panel-tabset
@@ -514,7 +730,7 @@ Aussi, on peut voir encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$
 
 
 ::: callout-note
-plot.regsubsets() de leaps ne prend pas directement "aic" comme option de scale. Pour une sélection basée sur AIC, une approche alternative consiste à utiliser la fonction stepAIC() du package MASS, qui permet une sélection pas à pas basée sur AIC.
+*`plot.regsubsets`* de *`{leaps}`* ne prend pas directement "aic" comme option de scale. Pour une sélection basée sur AIC, une approche alternative consiste à utiliser la fonction *`stepAIC`* du package *`{MASS}`*, qui permet une sélection pas à pas basée sur AIC.
 :::
 
 #### Evolution des critères
@@ -547,12 +763,25 @@ On peut ainsi voir que ce sont plutot des modèles entre 5 et 10 variables qui o
 
 #### Meilleur modèle
 
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
 
 ```{r}
 criteria_df <- data.frame(r2, r2a, cp, aic, bic)
 Best_model(selec_auto, criteria_df)
 ```
+
+:::
+
+
 ::::
 
 ### Backward
@@ -613,21 +842,32 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
 
 #### Meilleur modèle
 
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
 
 ```{r}
 criteria_df <- data.frame(r2, r2a, cp, aic, bic)
 Best_model(selec_back, criteria_df)
 ```
+
+:::
+
 :::
 
 #### **Utilisation de la fonction step**
 
 ---
 
-On peut également utiliser la fonction *step* de la library { *stats* }. Pour cela, on part du plus gros modèle défini précédemment par *mod1.*
+On peut également utiliser la fonction *`step`* de la library *`{stats}`*. Pour cela, on part du plus gros modèle défini précédemment par *mod1.*
 
-La fonction *step* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
+La fonction *`step`* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
 
 ::: panel-tabset
 #### BIC
@@ -676,8 +916,31 @@ modselect_back_cp <- step(mod1,
 modselect_back_cp %>% summary()
 ```
 
-On voit que parmi nos modèles, le BIC semble le plus parcimonieux mais de manière général on constate encore des valeurs de $R^2$ et $R^2_{adjusted}$ assez faibles.
+
 :::
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+Avec la fonction *`step`* nous avons le modèle utilisant le critère BIC qui nous permet d'avoir toutes nos variables significatives (sauf l'*intercept* ce qui pourrait nous donner envie de faire des modèles sans).
+
+Par contre, nos valeurs de $R^2$ et $R^2_{adjusted}$ sont encore assez faible pour considérer ces modèles comme étant de très bonne qualité.
+:::
+
+
+::: callout-note
+Aussi, si on veut comparer le modèle initial et le modèle final, on peut utiliser la fonction *`anova`*. Cela permet de voir si la sélection de variables a significativement amélioré l'ajustement.
+
+```{r}
+anova(mod0, modselect_back_bic, test = "Chisq")
+```
+
+De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère BIC) propose un meilleur ajustement que celui sans variable.
+::: 
 
 ### Forward
 
@@ -737,6 +1000,14 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
 
 #### Meilleur modèle
 
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
 
 ```{r}
@@ -745,21 +1016,20 @@ Best_model(selec_forw, criteria_df)
 ```
 :::
 
+:::
+
 #### **Utilisation de la fonction step**
 
 ---
 
-On peut également utiliser la fonction *step* de la library { *stats* }. Cette fois ci il faut définir en modèle de départ le plus petit modèle (celui composé seulement de l'intercept).
+On peut également utiliser la fonction *`step`* de la library *`{stats}`*. Cette fois ci il faut définir en modèle de départ le plus petit modèle (celui composé seulement de l'intercept).
 
-La fonction *step* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
+La fonction *`step`* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
 
 ::: panel-tabset
 #### BIC
 
 ```{r}
-mod0 <- lm(Salary~1,
-           Hitters_Without_NA)
-
 modselect_forw_bic <- step(mod0,
                        scope = formula(mod1),
                        trace = FALSE, # trace = TRUE permet de voir le détail des étapes
@@ -802,8 +1072,30 @@ modselect_forw_cp <- step(mod0,
 modselect_forw_cp %>% summary()
 ```
 
-On voit que parmi nos modèles, le BIC semble le plus parcimonieux mais de manière général on constate encore des valeurs de $R^2$ et $R^2_{adjusted}$ assez faibles.
 :::
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+Avec la fonction *`step`* nous avons le modèle utilisant le critère BIC qui nous permet d'avoir toutes nos variables significatives (sauf l'*intercept* ce qui pourrait nous donner envie de faire des modèles sans).
+
+Par contre, nos valeurs de $R^2$ et $R^2_{adjusted}$ sont encore assez faible pour considérer ces modèles comme étant de très bonne qualité.
+:::
+
+
+::: callout-note
+Aussi, si on veut comparer le modèle initial et le modèle final, on peut utiliser la fonction *`anova`*. Cela permet de voir si la sélection de variables a significativement amélioré l'ajustement.
+
+```{r}
+anova(mod0, modselect_forw_bic, test = "Chisq")
+```
+
+De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère BIC) propose un meilleur ajustement que celui sans variable.
+::: 
 
 ### Stepwise
 
@@ -861,6 +1153,14 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
 
 #### Meilleur modèle
 
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+
 Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
 
 ```{r}
@@ -869,56 +1169,71 @@ Best_model(selec_seq, criteria_df)
 ```
 :::
 
+:::
+
 #### **Utilisation de la fonction step**
 
 ---
 
-On peut également utiliser la fonction *step* de la library { *stats* }.
+On peut également utiliser la fonction *`step`* de la library *`{stats}`*.
 
-La fonction *step* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
+La fonction *`step`* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
 
 ::: panel-tabset
 #### BIC
 
 ```{r}
-modselect_bic <- step(mod0,
+modselect_seq_bic <- step(mod0,
                   scope = formula(mod1),
                   trace = FALSE,
                   direction = c("both"),
                   k = log(n))
-modselect_bic %>% summary()
+modselect_seq_bic %>% summary()
 ```
 
 #### AIC
 
 ```{r}
-modselect_aic <- step(mod0,
+modselect_seq_aic <- step(mod0,
                   scope = formula(mod1),
                   trace = FALSE,
                   direction = c("both"),
                   k = 2)
-modselect_aic %>% summary()
+modselect_seq_aic %>% summary()
 ```
 
 #### $C_p$
 
 ```{r}
-modselect_cp <- step(mod0,
+modselect_seq_cp <- step(mod0,
                   scope = formula(mod1),
                   trace = FALSE,
                   direction = c("both"),
                   k = 1)
-modselect_cp %>% summary()
+modselect_seq_cp %>% summary()
 ```
 
-Malheuresement, même en sélection *both* nous avons encore des $R^2$ et $R^2_{adjusted}$ faibles.
 :::
 
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+Avec la fonction *`step`* nous avons le modèle utilisant le critère BIC qui nous permet d'avoir toutes nos variables significatives (sauf l'*intercept* ce qui pourrait nous donner envie de faire des modèles sans).
+
+Par contre, nos valeurs de $R^2$ et $R^2_{adjusted}$ sont encore assez faible pour considérer ces modèles comme étant de très bonne qualité.
+:::
+
+
 ::: callout-note
-Aussi, si on veut comparer le modèle initial et le modèle final, on peut utiliser la fonction *ANOVA*. Cela permet de voir si la sélection de variables a significativement amélioré l'ajustement.
+Aussi, si on veut comparer le modèle initial et le modèle final, on peut utiliser la fonction *`anova`*. Cela permet de voir si la sélection de variables a significativement amélioré l'ajustement.
 
 ```{r}
-anova(mod0, modselect_bic, test = "Chisq")
+anova(mod0, modselect_seq_bic, test = "Chisq")
 ```
 
 De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère BIC) propose un meilleur ajustement que celui sans variable.
