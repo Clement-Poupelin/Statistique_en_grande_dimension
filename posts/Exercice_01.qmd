@@ -1268,11 +1268,11 @@ On voit que les valeurs sont différentes mais en fait le comportement est ident
 
 À la lumière des résultats de notre analyse, on peut envisager le modèle *both* car bien qu'il n'ait pas montré de grandes améliorations en termes de $R^2$ et $R^2_{adjusted}$, il permet de réduire le nombre de variables tout en maintenant celles qui sont significatives. Ce modèle est donc plus parcimonieux tout en conservant des variables importantes. Cependant, une réflexion supplémentaire pourrait être menée sur l'éventuelle suppression de l'*intercept*, ce qui nécessiterait une validation supplémentaire.
 
-En ce qui concerne le choix final du modèle, on peut opté pour celui qui maximise le critère BIC, ce qui nous mène à un modèle avec 6 variables. Le BIC est particulièrement utile pour privilégier un modèle plus simple et plus parcimonieux, ce qui est un atout lorsqu'on cherche à éviter un surajustement. Toutefois, il est important de noter que la qualité de l'ajustement n'est pas optimale, ce qui suggère qu'il pourrait manquer certaines informations pour expliquer pleinement la variable cible (le salaire).
+En ce qui concerne le choix final du modèle, on peut opter pour celui qui maximise le critère BIC, ce qui nous mène à un modèle avec 6 variables. Le BIC est particulièrement utile pour privilégier un modèle plus simple et plus parcimonieux, ce qui est un atout lorsqu'on cherche à éviter un surajustement. Toutefois, il est important de noter que la qualité de l'ajustement n'est pas optimale, ce qui suggère qu'il pourrait manquer certaines informations pour expliquer pleinement la variable cible (le salaire).
 
 Enfin, la validité interne est un aspect crucial qui n'a pas été suffisamment exploré dans cette analyse. Il aurait été pertinent de vérifier que toutes les hypothèses sous-jacentes des modèles étaient satisfaites. Cela aurait permis de renforcer la robustesse de nos résultats et de garantir que les conclusions qu'on sont fiables.
 
-Donc, il serait pertinent d'examiner plus en profondeur la validité interne, notamment en testant les hypothèses de normalité, d'homoscédasticité, et d'indépendance des résidus.
+Donc, il serait pertinent d'examiner plus en profondeur des modèles sans *intercept* et la validité interne, notamment en testant les hypothèses de normalité, d'homoscédasticité, et d'indépendance des résidus.
 
 # Session info
 
