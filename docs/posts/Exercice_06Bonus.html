@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Clément Poupelin">
 <meta name="description" content="Comparaison de la regression Ridge et Lasso via le github de Laurent Rouvière">
 
-<title>Exercice 6 Bonus : Ridge vs Lasso – Statistique en grande dimension</title>
+<title>Statistique en grande dimension - Exercice 06 Bonus : Ridge vs Lasso</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,7 +24,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -35,7 +35,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -84,13 +84,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 50,
-  "keyboard-shortcut": [
-    "f",
-    "/",
-    "s"
-  ],
-  "show-item-context": false,
+  "limit": 20,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -99,12 +93,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
-    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
+
 <script src="../site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
@@ -118,35 +112,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
 <script src="../site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../custom.css">
 </head>
@@ -154,10 +121,10 @@ window.Quarto = {
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
+      <div class="navbar-brand-container">
     <a href="../index.html" class="navbar-brand navbar-brand-logo">
     <img src="../img/logo_univ_nantes_complet.png" alt="" class="navbar-logo">
     </a>
@@ -166,76 +133,76 @@ window.Quarto = {
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../TP_StatGdeDim.pdf"> <i class="bi bi-file-earmark-font-fill" role="img">
+    <a class="nav-link" href="../TP_StatGdeDim.pdf" rel="" target=""><i class="bi bi-file-earmark-font-fill" role="img">
 </i> 
-<span class="menu-text">Feuille de TP</span></a>
+ <span class="menu-text">Feuille de TP</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../about.html"> 
-<span class="menu-text">About</span></a>
+    <a class="nav-link" href="../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-github" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-github" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
       <i class="bi bi-github" role="img">
 </i> 
  <span class="menu-text"></span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-bi-github">    
         <li>
-    <a class="dropdown-item" href="https://github.com/Clement-Poupelin">
+    <a class="dropdown-item" href="https://github.com/Clement-Poupelin" rel="" target="">
  <span class="dropdown-text">Clément Poupelin</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://github.com/nonomtrt">
+    <a class="dropdown-item" href="https://github.com/nonomtrt" rel="" target="">
  <span class="dropdown-text">Noémie Matrat</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-linkedin" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-linkedin" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
       <i class="bi bi-linkedin" role="img">
 </i> 
  <span class="menu-text"></span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-bi-linkedin">    
         <li>
-    <a class="dropdown-item" href="http://www.linkedin.com/in/cl%C3%A9ment-poupelin-7675311a7/">
+    <a class="dropdown-item" href="http://www.linkedin.com/in/cl%C3%A9ment-poupelin-7675311a7/" rel="" target="">
  <span class="dropdown-text">Clément Poupelin</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://www.linkedin.com/in/no%C3%A9mie-matrat-86a34a200/">
+    <a class="dropdown-item" href="https://www.linkedin.com/in/no%C3%A9mie-matrat-86a34a200/" rel="" target="">
  <span class="dropdown-text">Noémie Matrat</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item compact">
-    <a class="nav-link" href="mailto:clementjc.poupelin@gmail.com"> <i class="bi bi-envelope" role="img">
+    <a class="nav-link" href="mailto:clementjc.poupelin@gmail.com" rel="" target=""><i class="bi bi-envelope" role="img">
 </i> 
-<span class="menu-text"></span></a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="http://clement-poupelin.github.io/"> <i class="bi bi-person-circle" role="img">
+    <a class="nav-link" href="http://clement-poupelin.github.io/" rel="" target=""><i class="bi bi-person-circle" role="img">
 </i> 
-<span class="menu-text"></span></a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.instagram.com/clement__poupelin"> <i class="bi bi-instagram" role="img">
+    <a class="nav-link" href="https://www.instagram.com/clement__poupelin" rel="" target=""><i class="bi bi-instagram" role="img">
 </i> 
-<span class="menu-text"></span></a>
+ <span class="menu-text"></span></a>
   </li>  
 </ul>
-          </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
+          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -298,7 +265,6 @@ window.Quarto = {
 
 
 
-
 <p>Dans cette partie et avant de passer à l’exercice 7, nous allons faire la section 3.1 sur la gression Ridge et Lasso avec glmnet sous R du <a href="https://lrouviere.github.io/TUTO_GRANDE_DIM/correction/03-ridge-lasso.html">tutoriel de Laurent Rouvière</a></p>
 <section id="rappels-sur-ridge-et-lasso" class="level1">
 <h1>Rappels sur Ridge et Lasso</h1>
@@ -345,8 +311,8 @@ Cette méthode est tout de même robuste en grande dimension et particulièremen
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PCA</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -357,8 +323,8 @@ Cette méthode est tout de même robuste en grande dimension et particulièremen
 <div class="cell-output cell-output-stderr">
 <pre><code>Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plots</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="do">## ggplot</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
@@ -377,8 +343,8 @@ Attachement du package : 'psych'</code></pre>
 
     %+%, alpha</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
@@ -389,8 +355,8 @@ Attachement du package : 'psych'</code></pre>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>my_boxplot <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Transformer les données en format long pour ggplot</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  data_long <span class="ot">&lt;-</span> <span class="fu">melt</span>(data)</span>
@@ -407,8 +373,8 @@ Attachement du package : 'psych'</code></pre>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>my_pairs.panels <span class="ot">&lt;-</span> <span class="cf">function</span>(data){</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairs.panels</span>(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    data,</span>
@@ -437,7 +403,7 @@ Attachement du package : 'psych'</code></pre>
 <p>La base de données d’origine <em>ozone.txt</em> répertorie 112 données météorologiques mesurées durant l’été 2001 à Rennes. Celles-ci sont caractérisées par les 13 variables suivantes :</p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-hover table-condensed caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<table class="table table-hover table-condensed table-sm table-striped small" data-quarto-postprocess="true">
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><span style=" font-weight: bold;    ">maxO3</span></td>
@@ -499,19 +465,20 @@ Attachement du package : 'psych'</code></pre>
 </div>
 <p>On identifie le regroupement de toutes les données météorologiques récoltées en une journée par la date à laquelle les relevés ont été effectués.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ozone <span class="ot">&lt;-</span><span class="fu">read.table</span>(<span class="st">"https://r-stat-sc-donnees.github.io/ozone.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ozone <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
+
 <div class="datatables html-widget html-fill-item" id="htmlwidget-ece5d165eb27eb0e4b2c" style="width:100%;height:auto;"></div>
 <script type="application/json" data-for="htmlwidget-ece5d165eb27eb0e4b2c">{"x":{"filter":"none","vertical":false,"data":[["20010601","20010602","20010603","20010604","20010605","20010606","20010607","20010610","20010611","20010612","20010613","20010614","20010615","20010616","20010617","20010618","20010620","20010621","20010622","20010623","20010624","20010625","20010626","20010627","20010628","20010629","20010630","20010701","20010702","20010703","20010704","20010705","20010706","20010707","20010708","20010709","20010710","20010711","20010712","20010713","20010714","20010715","20010716","20010717","20010718","20010719","20010720","20010721","20010722","20010723","20010724","20010725","20010726","20010727","20010728","20010729","20010730","20010731","20010801","20010802","20010803","20010804","20010805","20010806","20010807","20010808","20010809","20010810","20010811","20010812","20010813","20010814","20010815","20010819","20010820","20010821","20010822","20010823","20010824","20010825","20010826","20010827","20010828","20010829","20010830","20010831","20010901","20010902","20010903","20010904","20010905","20010906","20010907","20010908","20010912","20010913","20010914","20010915","20010916","20010917","20010918","20010919","20010920","20010921","20010922","20010923","20010924","20010925","20010927","20010928","20010929","20010930"],[87,82,92,114,94,80,79,79,101,106,101,90,72,70,83,88,145,81,121,146,121,146,108,83,57,81,67,70,106,139,79,93,97,113,72,88,77,71,56,45,67,67,84,63,69,92,88,66,72,81,83,149,153,159,149,160,156,84,126,116,77,63,54,65,72,60,70,77,98,111,75,116,109,67,76,113,117,131,166,159,100,114,112,101,76,59,78,76,55,71,66,59,68,63,78,74,71,69,71,60,42,65,71,96,98,92,76,84,77,99,83,70],[15.6,17,15.3,16.2,17.4,17.7,16.8,14.9,16.1,18.3,17.3,17.6,18.3,17.1,15.4,15.9,21,16.2,19.7,23.6,20.4,27,24,19.7,20.1,19.6,19.5,18.8,24.1,26.6,19.5,16.8,20.8,17.5,18.1,19.2,19.4,19.2,13.8,14.3,15.6,16.9,17.4,15.1,15.1,16.7,16.9,18,18.6,18.8,19,19.9,23.8,24,23.3,25,24.9,20.5,25.3,21.3,20,18.7,18.6,19.2,19.9,18.7,18.4,17.1,17.8,20.9,18.8,23.5,20.8,18.8,17.8,20.6,21.6,22.7,19.8,25,20.1,21,21,16.9,17.5,16.5,17.7,17.3,15.3,15.9,16.2,18.3,16.9,17.3,14.2,15.8,15.2,17.1,15.4,13.7,12.7,14.8,15.5,11.3,15.2,14.7,13.3,13.3,16.2,16.9,16.9,15.7],[18.5,18.4,17.6,19.7,20.5,19.8,15.6,17.5,19.6,21.9,19.3,20.3,19.6,18.2,17.4,19.1,24.6,22.4,24.2,28.6,25.2,32.7,23.5,22.9,22.4,25.1,23.4,22.7,28.4,30.1,18.8,18.2,23.7,18.2,21.2,22,20.7,21,17.3,14.5,18.6,19.1,20.4,20.5,15.6,19.1,20.3,21.6,21.9,22.5,22.5,26.9,27.7,28.3,27.6,29.6,30.5,26.3,29.5,23.8,18.2,20.6,18.7,23,21.6,21.4,17.1,20,22.8,25.2,20.5,29.8,23.7,21.1,21.3,24.8,26.9,28.4,27.2,33.5,22.9,26.3,24.4,17.8,18.6,20.3,20.2,22.7,16.8,19.2,18.9,18.3,20.8,19.8,22.2,18.7,17.9,17.7,17.7,14,14.3,16.3,18,19.4,19.7,17.6,17.7,17.7,20.8,23,19.8,18.6],[18.4,17.7,19.5,22.5,20.4,18.3,14.9,18.9,21.4,22.9,20.2,17.4,19.4,18,16.6,21.5,26.9,23.4,26.9,28.4,27.7,33.7,25.1,24.8,22.8,27.2,23.7,24.9,30.1,31.9,17.8,22,25,22.7,23.9,25.2,22.5,22.4,18.5,15.2,20.3,19.5,21.4,20.6,15.9,19.3,20.7,23.3,23.6,23.9,24.1,29,29.4,26.5,28.8,31.1,32.2,27.8,31.2,22.1,23.6,20.3,17.8,22.7,20.4,21.7,20.5,20.8,24.3,26.7,26,31.7,26.6,18.9,24,27,28.6,30.1,30.8,35.5,27.6,26.4,26.8,20.6,18.7,20.3,21.5,24.6,19.2,19.5,19.3,19,22.5,19.4,22,19.1,18.6,17.5,16.6,15.8,14.9,15.9,17.4,20.2,20.3,18.2,17.7,17.8,22.1,22.6,22.1,20.7],[4,5,2,1,8,6,7,5,2,5,7,7,7,7,8,6,0,8,2,1,1,0,4,7,7,3,5,5,0,0,8,8,2,8,7,4,7,6,8,8,5,5,3,8,8,7,6,8,4,6,2,3,1,2,4,0,0,1,1,7,5,6,8,8,7,7,3,4,1,1,8,1,8,7,7,1,6,5,4,1,8,7,1,7,7,5,5,4,8,7,2,7,6,7,5,8,6,6,4,4,8,7,7,3,2,1,7,3,6,6,6,7],[4,5,5,1,8,6,8,5,4,6,7,6,5,7,7,5,1,3,1,1,0,0,4,6,6,4,5,2,0,1,8,8,3,8,6,7,8,4,8,8,7,5,4,6,8,6,6,6,7,3,4,4,1,2,6,3,1,0,4,7,7,7,8,7,7,7,6,5,1,5,7,3,5,7,5,1,6,3,0,1,8,4,6,7,7,7,5,5,7,5,5,7,5,8,5,7,5,7,5,5,7,7,7,3,2,4,7,5,5,4,5,7],[8,7,4,0,7,7,8,4,4,8,3,8,6,7,7,4,1,1,0,2,0,0,0,6,7,4,4,1,1,4,8,6,4,5,4,4,7,6,6,8,5,6,6,6,8,4,5,5,6,2,6,3,4,7,3,5,4,2,4,8,6,7,8,7,8,7,3,4,0,2,1,5,4,8,5,2,4,3,1,1,6,5,3,7,7,6,3,6,5,3,6,7,7,8,6,7,1,8,5,4,7,7,6,3,2,6,6,6,5,7,3,7],[0.6946,-4.3301,2.9544,0.9848,-0.5,-5.6382,-4.3301,0,-0.766,1.2856,-1.5,0.6946,-0.8682,-4.3301,-4.3301,0.5209,-0.342,0,1.5321,1,0,2.9544,-2.5712,-2.5981,-5.6382,-1.9284,-1.5321,0.6840000000000001,2.8191,1.8794,0.6946,0,0,-3.7588,-2.5981,-1.9696,-6.5778,-7.8785,1.5,0.6840000000000001,-3.2139,-2.2981,0,2,-4.5963,-2.0521,-2.8191,-3,0.866,0.5209,0,1,0.9397,-0.342,0.866,1.5321,-0.5,-1.3681,3,0,-3.4641,-5,-4.6985,-3.8302,-3,-5.6382,-5.9088,-1.9284,0,-1.0261,-0.866,1.8794,-1.0261,-5.3623,-3.0642,1.3681,1.5321,0.1736,0.6428,1,1.2856,3.0642,4,-2,-3.4641,-4.3301,0,-2.9544,-1.8794,-6.1284,-1.3681,-3.9392,-1.5,-4.5963,-0.866,-4.5963,-1.0419,-5.1962,-3.8302,0,-2.5,-4.3301,-3.9392,-0.1736,4,5.1962,-0.9397,0,-0.6946,1.5,-4,0],[-1.7101,-4,1.8794,0.3473,-2.9544,-5,-1.8794,-1.0419,-1.0261,-2.2981,-1.5,-1.0419,-2.7362,-7.8785,-2.0521,-2.9544,-1.5321,0.3473,1.7321,-1.9284,-0.5209,6.5778,-3.8567,-3.9392,-3.8302,-2.5712,-3.0642,0,3.9392,2,-0.866,0,1.7101,-3.9392,-3.9392,-3.0642,-5.6382,-6.8937,-3.8302,4,-3.7588,-3.7588,0.3473,-5.3623,-3.8302,-4.4995,-3.4641,-3.5,-1.9696,-1,-1.0261,-0.9397,1.5,1.2856,-1.5321,-0.6840000000000001,-1.8794,-0.6946,3.7588,-2.3941,-2.5981,-4.924,-2.5,-4.924,-4.5963,-6.0622,-3.2139,-1.0261,-1.5321,-3,0,1.3681,-1.7101,-5.3623,-2.2981,0.8682,1.9284,-1.9696,-0.866,0.6946,-1.7321,2.8191,4,-0.5209,-4,-5.3623,0.5209,-2.9544,-1.8794,0,-0.8682,-1.9284,-3.4641,-6.0622,-5,-6.8937,-1.3681,-2.7362,0,3.2139,-3.2139,-6.0622,-3.0642,3.7588,5,5.1423,-0.766,-1,-2,0.8682,-3.7588,-1.0419],[-0.6946,-3,0.5209,-0.1736,-4.3301,-6,-3.7588,-1.3892,-2.2981,-3.9392,-0.8682,-0.6946,-6.8944,-5.1962,-3,-1.0261,-0.6840000000000001,-2.5712,2,-1.2155,1.0261,4.3301,-4.6985,-4.924,-4.5963,-4.3301,-0.8682,1.3681,3.4641,1.3681,-1.0261,1.2856,-2.7362,-4.6985,-3.7588,-4,-9,-6.8937,-2.0521,2.9544,-4,0,-2.5981,-6.1284,-4.3301,-2.7362,-3,-3.2139,-1.0261,-2,0.5209,-0.6428,0,-2,-0.1736,2.8191,-1.2856,0,5,-1.3892,-3.7588,-5.6382,-0.8682,-5.6382,-5.1962,-6.8937,-4.4995,0.5209,-1,-2.2981,0,0.6946,-3.2139,-2.5,-3.9392,-2.2981,1.9284,-1.9284,0.6840000000000001,-1.7101,-0.6840000000000001,1.3681,3.7588,1.8794,-1.7321,-4.5,0,-2,-2.3941,-1.3892,1.7101,-1.7101,-3.0642,-4.3301,-5,-7.5175,-1.0419,-1.0419,1.3892,0,-2.5,-5.1962,0,3.8302,4.3301,3.5,-0.5,-1.2856,-1.3681,0.8682,-4,-4],[84,87,82,92,114,94,80,99,79,101,106,101,90,72,70,83,121,145,81,121,146,121,146,108,83,57,81,67,70,106,139,79,93,97,113,72,88,77,71,56,45,67,67,84,63,69,92,88,66,72,81,83,149,153,159,149,160,156,84,126,116,77,63,54,65,72,60,70,77,98,111,75,116,86,67,76,113,117,131,166,159,100,114,112,101,76,59,78,76,55,71,66,59,68,62,78,74,71,69,71,60,42,65,71,96,98,92,76,71,77,99,83],["Nord","Nord","Est","Nord","Ouest","Ouest","Ouest","Nord","Nord","Ouest","Nord","Sud","Sud","Ouest","Nord","Ouest","Ouest","Nord","Est","Sud","Nord","Est","Sud","Ouest","Ouest","Sud","Ouest","Nord","Est","Sud","Ouest","Sud","Nord","Ouest","Ouest","Ouest","Ouest","Ouest","Ouest","Est","Ouest","Ouest","Sud","Ouest","Ouest","Nord","Ouest","Sud","Ouest","Nord","Nord","Ouest","Nord","Nord","Ouest","Sud","Ouest","Nord","Est","Sud","Ouest","Ouest","Sud","Ouest","Ouest","Ouest","Nord","Nord","Ouest","Ouest","Nord","Sud","Sud","Ouest","Ouest","Sud","Sud","Ouest","Ouest","Sud","Ouest","Est","Est","Nord","Ouest","Ouest","Nord","Ouest","Ouest","Nord","Nord","Nord","Ouest","Ouest","Ouest","Ouest","Nord","Nord","Nord","Nord","Nord","Ouest","Ouest","Est","Est","Nord","Ouest","Sud","Sud","Sud","Ouest","Sud"],["Sec","Sec","Sec","Sec","Sec","Pluie","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Pluie","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Pluie","Sec","Sec","Sec","Sec","Sec","Sec","Pluie","Sec","Pluie","Pluie","Sec","Sec","Sec","Pluie","Pluie","Pluie","Pluie","Sec","Pluie","Pluie","Sec","Pluie","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Pluie","Pluie","Pluie","Pluie","Sec","Pluie","Pluie","Pluie","Sec","Pluie","Sec","Sec","Sec","Sec","Pluie","Pluie","Sec","Pluie","Sec","Sec","Sec","Sec","Sec","Sec","Pluie","Sec","Pluie","Pluie","Pluie","Pluie","Pluie","Pluie","Pluie","Pluie","Sec","Sec","Pluie","Pluie","Pluie","Sec","Pluie","Pluie","Pluie","Sec","Pluie","Sec","Sec","Pluie","Sec","Pluie","Sec","Pluie","Sec"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>maxO3<\/th>\n      <th>T9<\/th>\n      <th>T12<\/th>\n      <th>T15<\/th>\n      <th>Ne9<\/th>\n      <th>Ne12<\/th>\n      <th>Ne15<\/th>\n      <th>Vx9<\/th>\n      <th>Vx12<\/th>\n      <th>Vx15<\/th>\n      <th>maxO3v<\/th>\n      <th>vent<\/th>\n      <th>pluie<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"maxO3","targets":1},{"name":"T9","targets":2},{"name":"T12","targets":3},{"name":"T15","targets":4},{"name":"Ne9","targets":5},{"name":"Ne12","targets":6},{"name":"Ne15","targets":7},{"name":"Vx9","targets":8},{"name":"Vx12","targets":9},{"name":"Vx15","targets":10},{"name":"maxO3v","targets":11},{"name":"vent","targets":12},{"name":"pluie","targets":13}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ozone <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -554,16 +521,12 @@ Attachement du package : 'psych'</code></pre>
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <p>On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">my_boxplot</span>(ozone)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 <div class="success-header">
@@ -581,46 +544,34 @@ Attachement du package : 'psych'</code></pre>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(ozone, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"T9"</span>, <span class="st">"T12"</span>, <span class="st">"T15"</span>))  <span class="sc">%&gt;%</span> <span class="fu">my_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(ozone, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"Ne9"</span>, <span class="st">"Ne12"</span>, <span class="st">"Ne15"</span>))  <span class="sc">%&gt;%</span> <span class="fu">my_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 </div>
 <div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(ozone, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"Vx9"</span>, <span class="st">"Vx12"</span>, <span class="st">"Vx15"</span>))  <span class="sc">%&gt;%</span> <span class="fu">my_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 </div>
@@ -630,16 +581,12 @@ Attachement du package : 'psych'</code></pre>
 <div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <p>On regarde ici la corrélation calculée entre chacune de nos variables.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">my_pairs.panels</span>(ozone)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="2688"></p>
-</figure>
-</div>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="2688"></p>
 </div>
 </div>
 <div class="success-header">
@@ -657,8 +604,8 @@ Attachement du package : 'psych'</code></pre>
 <p>Avec une Analyse en Composantes Principales (PCA) on peut regarder un peu le comportement de nos données.</p>
 <p>En effet, Cette méthode respose sur la transformation des variables d’origine en nouvelles variables non corrélées, appelées composantes principales, qui capturent successivement la plus grande variance possible des données.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>res_pca <span class="ot">&lt;-</span> <span class="fu">PCA</span>(ozone, </span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">quali.sup =</span> <span class="fu">c</span>(<span class="fu">which</span>(<span class="fu">colnames</span>(ozone) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"vent"</span>, <span class="st">"pluie"</span>))),</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">quanti.sup =</span> <span class="fu">c</span>(<span class="fu">which</span>(<span class="fu">colnames</span>(ozone) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"max03"</span>, <span class="st">"max03v"</span>))),</span>
@@ -672,8 +619,8 @@ Attachement du package : 'psych'</code></pre>
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <p>Tout d’abord, on peut commencer par regarder le pourcentage de variance expliqué par nos différentes composantes principales.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_eig</span>(res_pca, </span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">ncp =</span> <span class="dv">10</span>,</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">addlabels =</span> <span class="cn">TRUE</span>, </span>
@@ -683,11 +630,7 @@ Attachement du package : 'psych'</code></pre>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">main =</span> <span class="st">"Percentage of variance of the 10 first components"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="success-header">
@@ -709,8 +652,8 @@ Attachement du package : 'psych'</code></pre>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(res_pca,</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">label=</span><span class="st">"none"</span>, </span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">pointsize =</span> <span class="dv">2</span>,</span>
@@ -719,18 +662,14 @@ Attachement du package : 'psych'</code></pre>
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">ellipse.level=</span><span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(res_pca,</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">label=</span><span class="st">"none"</span>,</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">pointsize =</span> <span class="dv">2</span>,</span>
@@ -739,11 +678,7 @@ Attachement du package : 'psych'</code></pre>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">ellipse.level=</span><span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 </div>
@@ -769,19 +704,15 @@ Attachement du package : 'psych'</code></pre>
 <li><p>Si l’angle est proche de 90°, alors les variables ne sont pas corrélées</p></li>
 </ul>
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_var</span>(res_pca, </span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">col.var =</span> <span class="st">"cos2"</span>,</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">gradient.cols =</span> <span class="fu">rainbow</span>(<span class="at">n =</span> <span class="dv">8</span>, <span class="at">start =</span> .<span class="dv">6</span>, <span class="at">end =</span> .<span class="dv">9</span>),</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 <div class="success-header">
@@ -804,8 +735,8 @@ Attachement du package : 'psych'</code></pre>
 <section id="analyse-inférentielle" class="level1">
 <h1>Analyse inférentielle</h1>
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ozone &lt;- read.csv("~/1.Workspace/Master_IS/M2/X3MS020_Statistique_en_grande_dimension/ozone.txt", sep="")</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>ozone <span class="ot">&lt;-</span><span class="fu">read.table</span>(<span class="st">"https://r-stat-sc-donnees.github.io/ozone.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ozone)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -826,8 +757,8 @@ Attachement du package : 'psych'</code></pre>
 20010605 Ouest   Sec
 20010606 Ouest Pluie</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ozone)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -860,20 +791,16 @@ Attachement du package : 'psych'</code></pre>
                    
                    </code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs.panels</span>(ozone)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
 </div>
-</div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>ozone.X <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(maxO3<span class="sc">~</span>.,<span class="at">data=</span>ozone)[,<span class="sc">-</span><span class="dv">1</span>] <span class="co">#  codage des variables qualitatives avec la fonction model.matrix</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>ozone.Y <span class="ot">&lt;-</span> ozone<span class="sc">$</span>maxO3</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -894,8 +821,8 @@ Attachement du package : 'Matrix'</code></pre>
 <div class="cell-output cell-output-stderr">
 <pre><code>Loaded glmnet 4.1-8</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>mod.R <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(ozone.X, ozone.Y, <span class="at">alpha=</span><span class="dv">0</span>) <span class="do">## Ridge </span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>mod.L <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(ozone.X, ozone.Y, <span class="at">alpha=</span><span class="dv">1</span>) <span class="do">## Lasso</span></span>
@@ -908,8 +835,8 @@ Attachement du package : 'Matrix'</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 22007.27 20052.20 18270.82 16647.69 15168.76 13821.21</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># When alpha=0, the largest lambda reported does not quite give </span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the zero coefficients reported (lambda=inf would in principle).</span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Instead, the largest lambda for alpha=0.001 is used, and the sequence </span></span>
@@ -926,8 +853,8 @@ Attachement du package : 'Matrix'</code></pre>
      ventNord     ventOuest       ventSud      pluieSec 
 -5.830507e-36 -1.022483e-35  1.519222e-35  2.772246e-35 </code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Our coefficients</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
@@ -940,14 +867,10 @@ Attachement du package : 'Matrix'</code></pre>
 <span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mod.R,<span class="at">xvar=</span><span class="st">"lambda"</span>,<span class="at">label=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-17-2.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-17-2.png" class="img-fluid" width="672"></p>
 </div>
-</div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -962,8 +885,8 @@ Attachement du package : 'Matrix'</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 22.00727 20.05220 18.27082 16.64769 15.16876 13.82121</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>mod.L<span class="sc">$</span>beta[,<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -972,21 +895,17 @@ Attachement du package : 'Matrix'</code></pre>
      Vx15    maxO3v  ventNord ventOuest   ventSud  pluieSec 
         0         0         0         0         0         0 </code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mod.L,<span class="at">label=</span><span class="cn">TRUE</span>)  </span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mod.L,<span class="at">xvar=</span><span class="st">"lambda"</span>,<span class="at">label=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-17-3.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-17-3.png" class="img-fluid" width="672"></p>
 </div>
-</div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="do">####</span></span>
@@ -996,14 +915,10 @@ Attachement du package : 'Matrix'</code></pre>
 <span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ridgeCV)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-17-4.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-17-4.png" class="img-fluid" width="672"></p>
 </div>
-</div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># abline(v=log(ridgeCV$lambda.1se), col='red')</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co"># abline(v=log(ridgeCV$lambda.min), col='red')</span></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1030,27 +945,23 @@ Attachement du package : 'Matrix'</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 7.375962</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>ridgeCV<span class="sc">$</span>lambda<span class="fl">.1</span>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 57.1094</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>lassoCV <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(ozone.X, ozone.Y, <span class="at">alpha=</span><span class="dv">1</span>)</span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lassoCV)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-17-5.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-17-5.png" class="img-fluid" width="672"></p>
 </div>
-</div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># abline(v=log(lassoCV$lambda.1se), col='red')</span></span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="co"># abline(v=log(lassoCV$lambda.min), col='red')</span></span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1059,15 +970,15 @@ Attachement du package : 'Matrix'</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1.626496</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>lassoCV<span class="sc">$</span>lambda<span class="fl">.1</span>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 5.98287</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="do">####</span></span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Prédiction de la variable cible pour de nouveaux individus ####</span></span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1084,8 +995,8 @@ Attachement du package : 'Matrix'</code></pre>
 20010723   89.39929
 20010724   96.81660</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(ridgeCV, <span class="at">newx =</span> ozone.X[<span class="dv">50</span><span class="sc">:</span><span class="dv">51</span>,],<span class="at">s=</span><span class="st">"lambda.1se"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -1093,8 +1004,8 @@ Attachement du package : 'Matrix'</code></pre>
 20010723   93.50409
 20010724   96.00444</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(lassoCV, <span class="at">newx =</span> ozone.X[<span class="dv">50</span><span class="sc">:</span><span class="dv">51</span>,],<span class="at">s=</span><span class="st">"lambda.min"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -1102,8 +1013,8 @@ Attachement du package : 'Matrix'</code></pre>
 20010723   87.19995
 20010724   97.82825</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(lassoCV, <span class="at">newx =</span> ozone.X[<span class="dv">50</span><span class="sc">:</span><span class="dv">51</span>,],<span class="at">s=</span><span class="st">"lambda.1se"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -1111,8 +1022,8 @@ Attachement du package : 'Matrix'</code></pre>
 20010723   87.71031
 20010724   94.98276</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparaison performances MCO, ridge et lasso ####</span></span>
 <span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="co"># validation croisée pour comparer les performances des estimateurs</span></span>
@@ -1159,8 +1070,8 @@ Attachement du package : 'Matrix'</code></pre>
 <pre><code>       lin    ridge    lasso
 1 247.4596 271.8111 272.9936</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># On remarque que les approches régularisées </span></span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="co"># n’apportent rien par rapport aux estimateurs MCO ici.</span></span>
 <span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ceci peut s’expliquer par le fait que le nombre de variables</span></span>
@@ -1191,8 +1102,8 @@ attr(*, "non-estim") has doubtful cases</code></pre>
 <pre><code>       lin    ridge    lasso
 1 196622.7 335.9692 268.1647</code></pre>
 </div>
-<details class="code-fold">
-<summary>Show the code</summary>
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Les méthodes régularisées permettent ici de diminuer</span></span>
 <span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="co"># les erreurs quadratiques de manière intéressante.</span></span>
 <span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Cela vient certainement du fait du nombre de </span></span>
@@ -1254,33 +1165,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -1349,15 +1233,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  let localAlternateSentinel = 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -1392,7 +1274,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const onCopySuccess = function(e) {
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1424,29 +1317,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
   });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -1498,27 +1369,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/clement-poupelin\.github\.io\/Statistique_en_grande_dimension\/");
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+  function tippyHover(el, contentFn) {
     const config = {
       allowHTML: true,
+      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1528,17 +1382,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start',
+      placement: 'bottom-start'
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1550,130 +1395,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
-          }
-        }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
-        }
-        return container.innerHTML
-      } else {
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(note);
-        }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
-      }
-    }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
-          }
-        } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
-          .then(res => res.text())
-          .then(html => {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
-            if (note !== null) {
-              const html = processXRef(id, note);
-              instance.setContent(html);
-            } 
-          }).finally(() => {
-            instance.enable();
-            instance.show();
-          });
-        }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
+      return note.innerHTML;
     });
   }
       let selectedAnnoteEl;
@@ -1717,7 +1439,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
-            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1743,32 +1464,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1979,24 +1674,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-155"><a href="#cb68-155" aria-hidden="true" tabindex="-1"></a>La base de données d'origine *ozone.txt* répertorie 112 données météorologiques mesurées durant l'été 2001 à Rennes. Celles-ci sont caractérisées par les 13 variables suivantes : </span>
 <span id="cb68-156"><a href="#cb68-156" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-157"><a href="#cb68-157" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, echo=FALSE, message=FALSE, warning=FALSE}</span></span>
-<span id="cb68-158"><a href="#cb68-158" aria-hidden="true" tabindex="-1"></a><span class="in">ozone &lt;-read.table("https://r-stat-sc-donnees.github.io/ozone.txt", header=TRUE)</span></span>
+<span id="cb68-158"><a href="#cb68-158" aria-hidden="true" tabindex="-1"></a>ozone <span class="ot">&lt;-</span><span class="fu">read.table</span>(<span class="st">"https://r-stat-sc-donnees.github.io/ozone.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>)</span>
 <span id="cb68-159"><a href="#cb68-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-160"><a href="#cb68-160" aria-hidden="true" tabindex="-1"></a><span class="in">library(tidyverse)</span></span>
-<span id="cb68-161"><a href="#cb68-161" aria-hidden="true" tabindex="-1"></a><span class="in">library(kableExtra)</span></span>
-<span id="cb68-162"><a href="#cb68-162" aria-hidden="true" tabindex="-1"></a><span class="in">identity_keys &lt;- cell_spec(</span></span>
-<span id="cb68-163"><a href="#cb68-163" aria-hidden="true" tabindex="-1"></a><span class="in">  x = colnames(ozone), format = "html", bold = TRUE)</span></span>
-<span id="cb68-164"><a href="#cb68-164" aria-hidden="true" tabindex="-1"></a><span class="in">identity_values &lt;- c("concentration maximale d'ozone (en DU)", "température à 9H (en °C)", "température à 12H (en °C)", "température à 15H (en °C)", "nébulosité à 9H (en octa)", "nébulosité à 12H (en octa)", "nébulosité à 15H (en octa)", "vitesse du vent à 9H", "vitesse du vent à 12H", "vitesse du vent à 15H", "concentration maximale d'ozone de la veille (en DU)", "direction principale du vent (Nord / Ouest / Sud / Est)", "présence ou non de pluie (Sec / Pluie)")</span></span>
-<span id="cb68-165"><a href="#cb68-165" aria-hidden="true" tabindex="-1"></a><span class="in">tibble(</span></span>
-<span id="cb68-166"><a href="#cb68-166" aria-hidden="true" tabindex="-1"></a><span class="in">  keys = identity_keys, </span></span>
-<span id="cb68-167"><a href="#cb68-167" aria-hidden="true" tabindex="-1"></a><span class="in">  values = identity_values, </span></span>
-<span id="cb68-168"><a href="#cb68-168" aria-hidden="true" tabindex="-1"></a><span class="in">) %&gt;% </span></span>
-<span id="cb68-169"><a href="#cb68-169" aria-hidden="true" tabindex="-1"></a><span class="in">  kbl(</span></span>
-<span id="cb68-170"><a href="#cb68-170" aria-hidden="true" tabindex="-1"></a><span class="in">    format = "html", </span></span>
-<span id="cb68-171"><a href="#cb68-171" aria-hidden="true" tabindex="-1"></a><span class="in">    booktabs = TRUE, </span></span>
-<span id="cb68-172"><a href="#cb68-172" aria-hidden="true" tabindex="-1"></a><span class="in">    escape = FALSE, </span></span>
-<span id="cb68-173"><a href="#cb68-173" aria-hidden="true" tabindex="-1"></a><span class="in">    col.names = NULL</span></span>
-<span id="cb68-174"><a href="#cb68-174" aria-hidden="true" tabindex="-1"></a><span class="in">  ) %&gt;% </span></span>
-<span id="cb68-175"><a href="#cb68-175" aria-hidden="true" tabindex="-1"></a><span class="in">  kable_styling(bootstrap_options = c("hover", "condensed"))</span></span>
+<span id="cb68-160"><a href="#cb68-160" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb68-161"><a href="#cb68-161" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb68-162"><a href="#cb68-162" aria-hidden="true" tabindex="-1"></a>identity_keys <span class="ot">&lt;-</span> <span class="fu">cell_spec</span>(</span>
+<span id="cb68-163"><a href="#cb68-163" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">colnames</span>(ozone), <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb68-164"><a href="#cb68-164" aria-hidden="true" tabindex="-1"></a>identity_values <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"concentration maximale d'ozone (en DU)"</span>, <span class="st">"température à 9H (en °C)"</span>, <span class="st">"température à 12H (en °C)"</span>, <span class="st">"température à 15H (en °C)"</span>, <span class="st">"nébulosité à 9H (en octa)"</span>, <span class="st">"nébulosité à 12H (en octa)"</span>, <span class="st">"nébulosité à 15H (en octa)"</span>, <span class="st">"vitesse du vent à 9H"</span>, <span class="st">"vitesse du vent à 12H"</span>, <span class="st">"vitesse du vent à 15H"</span>, <span class="st">"concentration maximale d'ozone de la veille (en DU)"</span>, <span class="st">"direction principale du vent (Nord / Ouest / Sud / Est)"</span>, <span class="st">"présence ou non de pluie (Sec / Pluie)"</span>)</span>
+<span id="cb68-165"><a href="#cb68-165" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb68-166"><a href="#cb68-166" aria-hidden="true" tabindex="-1"></a>  <span class="at">keys =</span> identity_keys, </span>
+<span id="cb68-167"><a href="#cb68-167" aria-hidden="true" tabindex="-1"></a>  <span class="at">values =</span> identity_values, </span>
+<span id="cb68-168"><a href="#cb68-168" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb68-169"><a href="#cb68-169" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(</span>
+<span id="cb68-170"><a href="#cb68-170" aria-hidden="true" tabindex="-1"></a>    <span class="at">format =</span> <span class="st">"html"</span>, </span>
+<span id="cb68-171"><a href="#cb68-171" aria-hidden="true" tabindex="-1"></a>    <span class="at">booktabs =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb68-172"><a href="#cb68-172" aria-hidden="true" tabindex="-1"></a>    <span class="at">escape =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb68-173"><a href="#cb68-173" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="cn">NULL</span></span>
+<span id="cb68-174"><a href="#cb68-174" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb68-175"><a href="#cb68-175" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"hover"</span>, <span class="st">"condensed"</span>))</span>
 <span id="cb68-176"><a href="#cb68-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb68-177"><a href="#cb68-177" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-178"><a href="#cb68-178" aria-hidden="true" tabindex="-1"></a>On identifie le regroupement de toutes les données météorologiques récoltées en une journée par la date à laquelle les relevés ont été effectués.</span>
@@ -2021,7 +1716,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-201"><a href="#cb68-201" aria-hidden="true" tabindex="-1"></a>On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.</span>
 <span id="cb68-202"><a href="#cb68-202" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-203"><a href="#cb68-203" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, fig.height=6, fig.width=8}</span></span>
-<span id="cb68-204"><a href="#cb68-204" aria-hidden="true" tabindex="-1"></a><span class="in">my_boxplot(ozone)</span></span>
+<span id="cb68-204"><a href="#cb68-204" aria-hidden="true" tabindex="-1"></a><span class="fu">my_boxplot</span>(ozone)</span>
 <span id="cb68-205"><a href="#cb68-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb68-206"><a href="#cb68-206" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-207"><a href="#cb68-207" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
@@ -2040,15 +1735,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-220"><a href="#cb68-220" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-221"><a href="#cb68-221" aria-hidden="true" tabindex="-1"></a><span class="fu">### Température</span></span>
 <span id="cb68-222"><a href="#cb68-222" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, fig.height=6, fig.width=8}</span></span>
-<span id="cb68-223"><a href="#cb68-223" aria-hidden="true" tabindex="-1"></a><span class="in">subset(ozone, select = c("T9", "T12", "T15"))  %&gt;% my_boxplot()</span></span>
+<span id="cb68-223"><a href="#cb68-223" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(ozone, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"T9"</span>, <span class="st">"T12"</span>, <span class="st">"T15"</span>))  <span class="sc">%&gt;%</span> <span class="fu">my_boxplot</span>()</span>
 <span id="cb68-224"><a href="#cb68-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb68-225"><a href="#cb68-225" aria-hidden="true" tabindex="-1"></a><span class="fu">### Nébulosité</span></span>
 <span id="cb68-226"><a href="#cb68-226" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, fig.height=6, fig.width=8}</span></span>
-<span id="cb68-227"><a href="#cb68-227" aria-hidden="true" tabindex="-1"></a><span class="in">subset(ozone, select = c("Ne9", "Ne12", "Ne15"))  %&gt;% my_boxplot()</span></span>
+<span id="cb68-227"><a href="#cb68-227" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(ozone, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"Ne9"</span>, <span class="st">"Ne12"</span>, <span class="st">"Ne15"</span>))  <span class="sc">%&gt;%</span> <span class="fu">my_boxplot</span>()</span>
 <span id="cb68-228"><a href="#cb68-228" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb68-229"><a href="#cb68-229" aria-hidden="true" tabindex="-1"></a><span class="fu">### Vitesse du vent </span></span>
 <span id="cb68-230"><a href="#cb68-230" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, fig.height=6, fig.width=8}</span></span>
-<span id="cb68-231"><a href="#cb68-231" aria-hidden="true" tabindex="-1"></a><span class="in">subset(ozone, select = c("Vx9", "Vx12", "Vx15"))  %&gt;% my_boxplot()</span></span>
+<span id="cb68-231"><a href="#cb68-231" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(ozone, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"Vx9"</span>, <span class="st">"Vx12"</span>, <span class="st">"Vx15"</span>))  <span class="sc">%&gt;%</span> <span class="fu">my_boxplot</span>()</span>
 <span id="cb68-232"><a href="#cb68-232" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb68-233"><a href="#cb68-233" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb68-234"><a href="#cb68-234" aria-hidden="true" tabindex="-1"></a></span>
@@ -2058,7 +1753,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-238"><a href="#cb68-238" aria-hidden="true" tabindex="-1"></a>On regarde ici la corrélation calculée entre chacune de nos variables.</span>
 <span id="cb68-239"><a href="#cb68-239" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-240"><a href="#cb68-240" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=22, fig.width=28}</span></span>
-<span id="cb68-241"><a href="#cb68-241" aria-hidden="true" tabindex="-1"></a><span class="in">my_pairs.panels(ozone)</span></span>
+<span id="cb68-241"><a href="#cb68-241" aria-hidden="true" tabindex="-1"></a><span class="fu">my_pairs.panels</span>(ozone)</span>
 <span id="cb68-242"><a href="#cb68-242" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb68-243"><a href="#cb68-243" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-244"><a href="#cb68-244" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
@@ -2126,22 +1821,22 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-310"><a href="#cb68-310" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
 <span id="cb68-311"><a href="#cb68-311" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Pluie </span></span>
 <span id="cb68-312"><a href="#cb68-312" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=6, fig.width=8}</span></span>
-<span id="cb68-313"><a href="#cb68-313" aria-hidden="true" tabindex="-1"></a><span class="in">fviz_pca_ind(res_pca,</span></span>
-<span id="cb68-314"><a href="#cb68-314" aria-hidden="true" tabindex="-1"></a><span class="in">             label="none", </span></span>
-<span id="cb68-315"><a href="#cb68-315" aria-hidden="true" tabindex="-1"></a><span class="in">             pointsize = 2,</span></span>
-<span id="cb68-316"><a href="#cb68-316" aria-hidden="true" tabindex="-1"></a><span class="in">             habillage=as.factor(ozone$pluie),</span></span>
-<span id="cb68-317"><a href="#cb68-317" aria-hidden="true" tabindex="-1"></a><span class="in">             addEllipses=TRUE,</span></span>
-<span id="cb68-318"><a href="#cb68-318" aria-hidden="true" tabindex="-1"></a><span class="in">             ellipse.level=0.95)</span></span>
+<span id="cb68-313"><a href="#cb68-313" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(res_pca,</span>
+<span id="cb68-314"><a href="#cb68-314" aria-hidden="true" tabindex="-1"></a>             <span class="at">label=</span><span class="st">"none"</span>, </span>
+<span id="cb68-315"><a href="#cb68-315" aria-hidden="true" tabindex="-1"></a>             <span class="at">pointsize =</span> <span class="dv">2</span>,</span>
+<span id="cb68-316"><a href="#cb68-316" aria-hidden="true" tabindex="-1"></a>             <span class="at">habillage=</span><span class="fu">as.factor</span>(ozone<span class="sc">$</span>pluie),</span>
+<span id="cb68-317"><a href="#cb68-317" aria-hidden="true" tabindex="-1"></a>             <span class="at">addEllipses=</span><span class="cn">TRUE</span>,</span>
+<span id="cb68-318"><a href="#cb68-318" aria-hidden="true" tabindex="-1"></a>             <span class="at">ellipse.level=</span><span class="fl">0.95</span>)</span>
 <span id="cb68-319"><a href="#cb68-319" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb68-320"><a href="#cb68-320" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-321"><a href="#cb68-321" aria-hidden="true" tabindex="-1"></a><span class="fu">##### vent </span></span>
 <span id="cb68-322"><a href="#cb68-322" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=6, fig.width=8}</span></span>
-<span id="cb68-323"><a href="#cb68-323" aria-hidden="true" tabindex="-1"></a><span class="in">fviz_pca_ind(res_pca,</span></span>
-<span id="cb68-324"><a href="#cb68-324" aria-hidden="true" tabindex="-1"></a><span class="in">             label="none",</span></span>
-<span id="cb68-325"><a href="#cb68-325" aria-hidden="true" tabindex="-1"></a><span class="in">             pointsize = 2,</span></span>
-<span id="cb68-326"><a href="#cb68-326" aria-hidden="true" tabindex="-1"></a><span class="in">             habillage=as.factor(ozone$vent),</span></span>
-<span id="cb68-327"><a href="#cb68-327" aria-hidden="true" tabindex="-1"></a><span class="in">             addEllipses=TRUE,</span></span>
-<span id="cb68-328"><a href="#cb68-328" aria-hidden="true" tabindex="-1"></a><span class="in">             ellipse.level=0.95)</span></span>
+<span id="cb68-323"><a href="#cb68-323" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(res_pca,</span>
+<span id="cb68-324"><a href="#cb68-324" aria-hidden="true" tabindex="-1"></a>             <span class="at">label=</span><span class="st">"none"</span>,</span>
+<span id="cb68-325"><a href="#cb68-325" aria-hidden="true" tabindex="-1"></a>             <span class="at">pointsize =</span> <span class="dv">2</span>,</span>
+<span id="cb68-326"><a href="#cb68-326" aria-hidden="true" tabindex="-1"></a>             <span class="at">habillage=</span><span class="fu">as.factor</span>(ozone<span class="sc">$</span>vent),</span>
+<span id="cb68-327"><a href="#cb68-327" aria-hidden="true" tabindex="-1"></a>             <span class="at">addEllipses=</span><span class="cn">TRUE</span>,</span>
+<span id="cb68-328"><a href="#cb68-328" aria-hidden="true" tabindex="-1"></a>             <span class="at">ellipse.level=</span><span class="fl">0.95</span>)</span>
 <span id="cb68-329"><a href="#cb68-329" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb68-330"><a href="#cb68-330" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb68-331"><a href="#cb68-331" aria-hidden="true" tabindex="-1"></a></span>
@@ -2170,10 +1865,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-354"><a href="#cb68-354" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Si l’angle est proche de 90°, alors les variables ne sont pas corrélées</span>
 <span id="cb68-355"><a href="#cb68-355" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-356"><a href="#cb68-356" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=6, fig.width=8}</span></span>
-<span id="cb68-357"><a href="#cb68-357" aria-hidden="true" tabindex="-1"></a><span class="in">fviz_pca_var(res_pca, </span></span>
-<span id="cb68-358"><a href="#cb68-358" aria-hidden="true" tabindex="-1"></a><span class="in">             col.var = "cos2",</span></span>
-<span id="cb68-359"><a href="#cb68-359" aria-hidden="true" tabindex="-1"></a><span class="in">             gradient.cols = rainbow(n = 8, start = .6, end = .9),</span></span>
-<span id="cb68-360"><a href="#cb68-360" aria-hidden="true" tabindex="-1"></a><span class="in">             repel = TRUE)</span></span>
+<span id="cb68-357"><a href="#cb68-357" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_var</span>(res_pca, </span>
+<span id="cb68-358"><a href="#cb68-358" aria-hidden="true" tabindex="-1"></a>             <span class="at">col.var =</span> <span class="st">"cos2"</span>,</span>
+<span id="cb68-359"><a href="#cb68-359" aria-hidden="true" tabindex="-1"></a>             <span class="at">gradient.cols =</span> <span class="fu">rainbow</span>(<span class="at">n =</span> <span class="dv">8</span>, <span class="at">start =</span> .<span class="dv">6</span>, <span class="at">end =</span> .<span class="dv">9</span>),</span>
+<span id="cb68-360"><a href="#cb68-360" aria-hidden="true" tabindex="-1"></a>             <span class="at">repel =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb68-361"><a href="#cb68-361" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-362"><a href="#cb68-362" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb68-363"><a href="#cb68-363" aria-hidden="true" tabindex="-1"></a></span>
@@ -2370,23 +2065,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-556"><a href="#cb68-556" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-557"><a href="#cb68-557" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-558"><a href="#cb68-558" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
-    <div class="nav-footer-left">
-<p>Copyright 2025, Clément Poupelin</p>
-</div>   
+    <div class="nav-footer-left">Copyright 2025, Clément Poupelin</div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
-    <div class="nav-footer-right">
-<p>This blog is built with <a href="https://quarto.org/">Quarto</a></p>
-</div>
+    <div class="nav-footer-right">This blog is built with <a href="https://quarto.org/">Quarto</a></div>
   </div>
 </footer>
-
 
 
 
