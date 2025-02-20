@@ -1,5 +1,5 @@
 ---
-title: "Exercice 3"
+title: "Exercice 03"
 author: "Clément Poupelin"
 date: "`r Sys.Date()`"
 format: 

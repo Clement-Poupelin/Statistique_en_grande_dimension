@@ -1,5 +1,5 @@
 ---
-title: "Exercice 9"
+title: "Exercice 09"
 author: "Clément Poupelin"
 date: "2023-2024"
 format: 

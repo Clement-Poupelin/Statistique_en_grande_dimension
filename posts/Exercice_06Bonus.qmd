@@ -1,5 +1,5 @@
 ---
-title: "Exercice 6 Bonus : Ridge vs Lasso"
+title: "Exercice 06 Bonus : Ridge vs Lasso"
 author: "Clément Poupelin"
 date: "2023-2024"
 format: 

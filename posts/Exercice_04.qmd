@@ -1,5 +1,5 @@
 ---
-title: "Exercice 4"
+title: "Exercice 04"
 author: "Clément Poupelin"
 date: "`r Sys.Date()`"
 format: 
@@ -103,15 +103,13 @@ my_VIFplot <- function(vif) {
   return(p)
 }
 ```
-
-
 :::
 ::::
 
 # Données
 
 On considère le jeu de données Caravan de la librairie ISLR de R. Ce jeu de données contient, pour 5822 clients d’une assurance, 86 variables décrivant leur profil.\
-Dans ces 86 variables, les variables 1 à 43 contiennent des données sociodémographiques et les variables 44 à 86 la propriété du produit. \
+Dans ces 86 variables, les variables 1 à 43 contiennent des données sociodémographiques et les variables 44 à 86 la propriété du produit.\
 A savoir que les données sociodémographiques sont dérivées des codes postaux. Tous les clients vivant dans des zones ayant le même code postal ont les mêmes attributs sociodémographiques.\
 
 Puis, la dernière variable *Purchase* indique si le client a souscrit une assurance pour caravane ou non. Cela veut donc dire que nos variables sont pour beaucoup qualitative (nominales ou ordinales).
@@ -128,7 +126,7 @@ Pour nos analyses, on s'intéressera à la variable *Purchase*. Celle ci pouvans
 
 # Analyse descriptive (pertinent ?? car var quali)
 
-::::::::::::::::::: panel-tabset
+:::::::::::::::::::::::::: panel-tabset
 ## Boxplot
 
 On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.
@@ -145,11 +143,11 @@ Résultats
 ::::
 
 ::: success
-
 On voit que pour nos variables, nous sommes sur des valeurs généralement comprises entre 0 et 10 sauf pour la vairiable *MOSTYPE* représentant ??? qui a des valuers beaucoup plus importante.
 :::
 
 Ainsi, ssi l'on veut mieux voir la distribution de nos variables, on peut enlever *MOSTYPE*.
+
 ```{r, message=FALSE, fig.height=8, fig.width=16}
 my_boxplot(Caravan[,-1])
 ```
@@ -158,10 +156,8 @@ my_boxplot(Caravan[,-1])
 
 Lorsque nos données sont de grandes dimension, des correlation panel deviennent difficile à produire et à lire. On peut donc tenter de passer sur une représentation commune qui est la heatmap. Ici, on fera la heatmap pour nos variable sociodémographiques, pour nos variables de propriété du produit et sur toutes les vaiables.
 
-::: panel-tabset
-
+:::::::::::: panel-tabset
 ### Sociodémographiques
-
 
 ```{r}
 
@@ -188,14 +184,9 @@ Résultats
 ::::
 
 ::: success
-
 :::
 
 ### Produit
-
-
-
-
 
 :::: success-header
 ::: success-icon
@@ -205,7 +196,6 @@ Résultats
 ::::
 
 ::: success
-
 :::
 
 ### Tout
@@ -218,10 +208,8 @@ Résultats
 ::::
 
 ::: success
-
 :::
-
-:::
+::::::::::::
 
 ## PCA
 
@@ -333,7 +321,7 @@ Ici aussi, du fait du grand nombre de variable il est difficile de dicerner quel
 Maintenant, certaines variables sont tout de même bien représenter sur nos premiers axes et sont assez proche, ce qui témoigne d'une corrélation entre elles.
 :::
 ::::::::::::
-:::::::::::::::::::
+::::::::::::::::::::::::::
 
 # Analyse inférentielle
 

@@ -1,0 +1,21 @@
+---
+title: "Exercice 10"
+author: "Clément Poupelin"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    embed-resources: false
+    toc: true
+    code-fold: true
+    code-summary: "Show the code"
+    code-tools: true
+    toc-location: right
+    page-layout: article
+    code-overflow: wrap
+toc: true
+number-sections: false
+editor: visual
+categories: ["TP"]
+image: ""
+description: "Description"
+---
