@@ -2,11 +2,14 @@
 title: "Statistique en grande dimension"
 listing:
   contents: posts
+  fields: [image, title, categories, description, reading-time, author, date]
   sort: "title"
   type: grid
+  image-height: 6cm
+  grid-columns: 3
   categories: true
-  sort-ui: false
-  filter-ui: false
+  sort-ui: true
+  filter-ui: true
 page-layout: full
 title-block-banner: true
 ---
