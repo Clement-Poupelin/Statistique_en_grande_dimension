@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Clément Poupelin">
-<meta name="dcterms.date" content="2025-02-19">
+<meta name="dcterms.date" content="2025-02-20">
 <meta name="description" content="Première essais de techniques de validations croisées sur des données générées manuellement">
 
 <title>Exercice 3 – Statistique en grande dimension</title>
@@ -267,7 +267,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">February 19, 2025</p>
+        <p class="date">February 20, 2025</p>
       </div>
     </div>
     
@@ -285,7 +285,7 @@ window.Quarto = {
   <ul>
   <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
   <li><a href="#données" id="toc-données" class="nav-link" data-scroll-target="#données">Données</a></li>
-  <li><a href="#ananlyse-descriptive" id="toc-ananlyse-descriptive" class="nav-link" data-scroll-target="#ananlyse-descriptive">Ananlyse descriptive</a></li>
+  <li><a href="#analyse-descriptive" id="toc-analyse-descriptive" class="nav-link" data-scroll-target="#analyse-descriptive">Analyse descriptive</a></li>
   <li><a href="#analyse-inférentielle" id="toc-analyse-inférentielle" class="nav-link" data-scroll-target="#analyse-inférentielle">Analyse inférentielle</a></li>
   <li><a href="#validation-croisée" id="toc-validation-croisée" class="nav-link" data-scroll-target="#validation-croisée">Validation croisée</a></li>
   <li><a href="#ajustement-du-meilleur-modèle" id="toc-ajustement-du-meilleur-modèle" class="nav-link" data-scroll-target="#ajustement-du-meilleur-modèle">Ajustement du meilleur modèle</a></li>
@@ -304,7 +304,7 @@ window.Quarto = {
 <section id="setup" class="level1">
 <h1>Setup</h1>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Packages</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">fonctions</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Seed</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Packages</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Fonctions</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Seed</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
@@ -462,10 +462,11 @@ Note
 <p>pour des raisons de repouctibilité, une graine ou seed a été défini dans le setup afin que la génération aléatoire reste identique.</p>
 </div>
 </div>
-<p>On va ainsi supposer avoir observé les deux vecteurs <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span> précédents, sans connaître le lien théorique précédent qui lie <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span>. Et on cherchera donc à l’estimer.</p>
+<p>On va ainsi supposer avoir observé les deux vecteurs <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span> précédents, sans connaître le lien théorique précédent qui lie <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span>.<br>
+Et donc on cherchera à estimer ce lien.</p>
 </section>
-<section id="ananlyse-descriptive" class="level1">
-<h1>Ananlyse descriptive</h1>
+<section id="analyse-descriptive" class="level1">
+<h1>Analyse descriptive</h1>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Boxplot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Correlation panel</a></li></ul>
 <div class="tab-content">
@@ -491,7 +492,8 @@ Note
 <p>Résultats</p>
 </div>
 <div class="success">
-<p>On voit bien que notre variable <span class="math inline">\(x\)</span> a une distribution normale centré réduite et que <span class="math inline">\(y\)</span>, de manière logique avec le modèle simulé, a d’avantages de valeurs négatives.</p>
+<p>On voit bien que notre variable <span class="math inline">\(x\)</span> a une distribution normale centré réduite mais quelle n’est pas non plus parfaitement symétrique (forcément entre la “perfection” de la théorie et la génération par ordinateur il y a toujours une légère différence).</p>
+<p>Et concernant <span class="math inline">\(y\)</span>, de manière logique avec le modèle simulé, on peut voir d’avantages de valeurs négatives.</p>
 </div>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
@@ -516,8 +518,8 @@ Note
 <p>Résultats</p>
 </div>
 <div class="success">
-<p>On voit que la corrélation est faible. Pourtant le nuage de point semble quand à lui témoigner d’une influence de <span class="math inline">\(x\)</span> sur <span class="math inline">\(y\)</span></p>
-<p>Puis on retrouve un belle histogramme de distibution <span class="math inline">\(\mathcal{N}(0, 1)\)</span> pour notre variable <span class="math inline">\(x\)</span>.</p>
+<p>Tout d’abord, on peut remarquer une corrélation faible de 34% entre <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span>. Pourtant le nuage de point semble quand à lui témoigner d’une influence de <span class="math inline">\(x\)</span> sur <span class="math inline">\(y\)</span> pouvant justifier d’un lien linéaire.</p>
+<p>Aussi on retrouve un belle histogramme de distibution <span class="math inline">\(\mathcal{N}(0, 1)\)</span> pour notre variable <span class="math inline">\(x\)</span>.</p>
 </div>
 </div>
 </div>
@@ -566,7 +568,7 @@ Note
 </ul>
 </div>
 </div>
-<p>A partir du <em>summary()</em> de ces différents modèles et de différentes fonctions <em>R</em>, on est capable ensuite capable d’obtenir différents critères de sélection.</p>
+<p>Ensuite, partir du <em>summary()</em> et de différentes fonctions <em>R</em>, on est capable capable d’obtenir différents critères permettant de comparer la qualité de nos modèles.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -589,7 +591,7 @@ Note
 <script type="application/json" data-for="htmlwidget-5ca2671e1d845ab306c1">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["mod1","mod2","mod3","mod4"],[0.116,0.913,0.913,0.913],[0.115,0.913,0.913,0.913],[5152.3,2832.9,2834.5,2835.6],[5167.1,2852.5,2859,2865.1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Model<\/th>\n      <th>R2<\/th>\n      <th>R2adj<\/th>\n      <th>AIC<\/th>\n      <th>BIC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Model","targets":1},{"name":"R2","targets":2},{"name":"R2adj","targets":3},{"name":"AIC","targets":4},{"name":"BIC","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
-<p>Ainsi, on peut voir que c’est <em>mod2</em> qui ressort comme étant le meilleur modèle avec de forte valeur de <span class="math inline">\(R^2\)</span> et <span class="math inline">\(R^2_{adjusted}\)</span> puis des critères AIC et BIC minimisé.</p>
+<p>On peut voir ici que c’est <em>mod2</em> qui ressort comme étant le meilleur modèle avec de forte valeur de <span class="math inline">\(R^2\)</span> et <span class="math inline">\(R^2_{adjusted}\)</span> puis des critères AIC et BIC minimisés.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -622,18 +624,27 @@ F-statistic:  5248 on 2 and 997 DF,  p-value: &lt; 2.2e-16</code></pre>
 <section id="validation-croisée" class="level1">
 <h1>Validation croisée</h1>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Rappels validation croisée</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Validation “manuelle”</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">Library <em>boot</em></a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Rappel validation croisée</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Validation “manuelle”</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">Library <em>boot</em></a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
-<p>texte avec dedans le principe du LOO !!!!</p>
+<p>Le principe de la validation croisée (<em>cross validation</em>) est d’estimer le risque de prédiction en confrontant notre modèle à un échantillon test qui n’a pas été utilisé pour l’ajustement de celui ci.<br>
+La validation croisée possède ainsi de nombreux avantages mais a comme principal inconvénient son temps de calcul qui peut rapidement devenir important.<br>
+</p>
+<p>Dans le cas du K-fold, on coupe l’échantillon de taille <span class="math inline">\(n\)</span> en environ K parties égales. Ensuite, on fait l’ajustement du modèle sur K-1 échantillons et on garde le K-ième comme échantillon test pour calculer l’erreur de prédiction. On répète alors le procédé de telle sorte à ce que chaque échantillon serve une fois de test. Cela nous fait donc calculer K erreurs.</p>
+<p>A savoir que selon la valeur de K, on peut se retrouver dans des cas particuliers très utilisés.</p>
+<ul>
+<li><p>Lorsque K = n, il s’agit de la procédure Leave One Out (LOO).</p></li>
+<li><p>Lorsque K = 2, on est sur une procédure Hold out ou testset</p></li>
+</ul>
+<p>La validation croisée par K-fold est donc un outil couramment utilisé. Le choix de K est quant à lui très important et il faut penser que si K est trop grand, le biais sera faible mais à contrario, la variance deviendra très grande. Par contre, si K est trop petit, l’estimation risque de posséder un grand biais puisque notre taille d’échantillon test sera beaucoup plus grande que celle de l’échantillon d’apprentissage. On a donc ici un bel exemple de compromis entre biais et variance pour trouver le K le plus judicieux.</p>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
-<p>Dans un premier temps et pour bien comprendre la méthode, on va utiliser deux fonctions permettant d’estimer l’erreur test par une validation croisée <em>LOO</em> (<em>Leave-one-out</em>) pour un modèle ajusté par la fonction <em>lm</em> :</p>
+<p>Dans un premier temps et pour bien comprendre la méthode, on va utiliser deux fonctions (construite pour l’occasion et dont le code se trouve dans la partie <strong>fonction</strong> du <strong>Setup</strong>) permettant d’estimer l’erreur test par une validation croisée <em>LOO</em> (<em>Leave-one-out</em>) pour un modèle ajusté par la fonction <em>lm</em> :</p>
 <ul>
-<li><p>la première, <em>loo</em> (qui se trouve dans les fonctions du setup), en utilisant le principe général de cette méthode qui nécessite donc l’estimation de n modèles différents</p></li>
-<li><p>a seconde, <em>loo2</em> (qui se trouve dans les fonctions du setup), en utilisant la formule adaptée à la régression linéaire donnant directement le risque LOO à partir de la seule estimation du modèle complet (on pourra utiliser la fonction <em>hatvalues</em>)</p></li>
+<li><p>la première, <em>loo</em>, en utilisant le principe général de cette méthode qui nécessite donc l’estimation de n modèles différents</p></li>
+<li><p>la seconde, <em>loo2</em>, en utilisant la formule adaptée à la régression linéaire donnant directement le risque LOO à partir de la seule estimation du modèle complet (on pourra utiliser la fonction <em>hatvalues</em>)</p></li>
 </ul>
-<p>AInsi, en testant sur nos quatre modèle, on obtient les résultats suivants :</p>
+<p>Ainsi, en testant sur nos quatre modèle, on obtient les résultats suivants :</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -642,17 +653,17 @@ F-statistic:  5248 on 2 and 997 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> model_names,</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOO =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo_results, <span class="cf">function</span>(x) x<span class="sc">$</span>result)),       <span class="co"># Résultat de loo()</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time_LOO =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo_results, <span class="cf">function</span>(x) x<span class="sc">$</span>time)),    <span class="co"># Temps d'exécution de loo()</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOO2 =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo2_results, <span class="cf">function</span>(x) x<span class="sc">$</span>result)),     <span class="co"># Résultat de loo2()</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time_LOO2 =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo2_results, <span class="cf">function</span>(x) x<span class="sc">$</span>time))   <span class="co"># Temps d'exécution de loo2()</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOO =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo_results, <span class="cf">function</span>(x) x<span class="sc">$</span>result)),       </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time_LOO =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo_results, <span class="cf">function</span>(x) x<span class="sc">$</span>time)),    </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOO2 =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo2_results, <span class="cf">function</span>(x) x<span class="sc">$</span>result)),     </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time_LOO2 =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo2_results, <span class="cf">function</span>(x) x<span class="sc">$</span>time))   </span>
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>results <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="datatables html-widget html-fill-item" id="htmlwidget-b57d78979e16a7b99a95" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-b57d78979e16a7b99a95">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["mod1","mod2","mod3","mod4"],[10.182,0.993,0.994,0.995],[0.5639999999999999,0.614,0.6919999999999999,0.789],[10.182,0.993,0.994,0.995],[0,0.001,0,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Model<\/th>\n      <th>LOO<\/th>\n      <th>Time_LOO<\/th>\n      <th>LOO2<\/th>\n      <th>Time_LOO2<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Model","targets":1},{"name":"LOO","targets":2},{"name":"Time_LOO","targets":3},{"name":"LOO2","targets":4},{"name":"Time_LOO2","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-b57d78979e16a7b99a95">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["mod1","mod2","mod3","mod4"],[10.182,0.993,0.994,0.995],[0.513,0.569,0.661,0.729],[10.182,0.993,0.994,0.995],[0,0.001,0,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Model<\/th>\n      <th>LOO<\/th>\n      <th>Time_LOO<\/th>\n      <th>LOO2<\/th>\n      <th>Time_LOO2<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Model","targets":1},{"name":"LOO","targets":2},{"name":"Time_LOO","targets":3},{"name":"LOO2","targets":4},{"name":"Time_LOO2","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="success-header">
@@ -663,12 +674,25 @@ F-statistic:  5248 on 2 and 997 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <div class="success">
 <p>On voit que les résultats donnés par nos deux fonctions coincident bien. Mais la première semble tout de même plus lente pour le calcul.</p>
-<p>Et en terme de qualité de modèle, c’est bien mod2 qui minimise le <em>loo</em></p>
+<p>Et en terme de qualité de modèle, c’est bien mod2 qui minimise l’erreur de la <em>cross validation</em> par <em>loo</em>.</p>
 </div>
 </div>
 <div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
-<p>La fonction cv.glm de la librairie boot permet d’estimer l’erreur test par validation croisée K-fold</p>
-<p>On va donc maintenant utiliser la fonction <em>cv.glm</em> de la library { boot }. Cela va nécessité de recalculer le modèle mais cette fois ci avec la fonction <em>glm</em> en spécifiant que l’on veut un modèle gaussien (ce qui nous donnera le même résultat qu’avec <em>lm</em>).</p>
+<p>On va donc maintenant utiliser la fonction <em>cv.glm</em> de la library { boot } permettant d’estimer l’erreur test par validation croisée <em>K-fold</em>. Cela va nécessité de recalculer le modèle mais cette fois ci avec la fonction <em>glm</em> en spécifiant que l’on veut un modèle gaussien (ce qui nous donnera le même résultat qu’avec <em>lm</em>).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>On spécifi ici dans <em>glm</em> que le modèle est gaussien mais dans la pratique ce n’est pas nécéssaire pusiqu’il s’agit de la valeur par défaut de la fonction.</p>
+</div>
+</div>
+<p>De plus, nous utiliserons <span class="math inline">\(K=10\)</span> qui est une valeurs assez communément utilisé sachant que si on voulait reproduire la procédure <em>LOO</em> il faudrait utiliser <span class="math inline">\(K=n\)</span> (cf rappel).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -712,8 +736,8 @@ F-statistic:  5248 on 2 and 997 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>Résultats</p>
 </div>
 <div class="success">
-<p>On voit qu’en moyenne <em>cv.glm</em> nous donne des résultats qui sont du même ordre de grandeur que notre fonction <em>loo2</em></p>
-<p>Et en terme de qualité de modèle, c’est bien mod2 qui minimise la <em>cv</em>.</p>
+<p>On voit qu’en moyenne <em>cv.glm</em> nous donne des résultats qui sont du même ordre de grandeur que notre fonction <em>loo2</em>.</p>
+<p>Et en terme de qualité de modèle, c’est bien mod2 qui minimise l’erreur de la <em>cross validation</em>.</p>
 </div>
 </div>
 </div>
@@ -721,7 +745,7 @@ F-statistic:  5248 on 2 and 997 DF,  p-value: &lt; 2.2e-16</code></pre>
 </section>
 <section id="ajustement-du-meilleur-modèle" class="level1">
 <h1>Ajustement du meilleur modèle</h1>
-<p>D’après tout ce que l’on a pu voir durant cette étude, jusqu’à présent le meilleut modèle semble être mod2.</p>
+<p>D’après tout ce que l’on a pu voir durant cette étude, jusqu’à présent le meilleur modèle semble être mod2.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -804,25 +828,23 @@ F-statistic:  7352 on 2 and 998 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mean</span>(<span class="fu">cv.glm</span>(</span>
 <span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> Simu_data_complete,</span>
 <span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">glmfit =</span> <span class="fu">glm</span>(</span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">formula =</span> <span class="fu">formula</span>(mod2) ,</span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">family =</span> gaussian,</span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> Simu_data_complete</span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">K =</span> <span class="dv">10</span></span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">$</span>delta), <span class="fu">mean</span>(<span class="fu">cv.glm</span>(</span>
-<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> Simu_data_complete,</span>
-<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">glmfit =</span> <span class="fu">glm</span>(</span>
-<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">formula =</span> <span class="fu">formula</span>(mod2_without_intercept) ,</span>
-<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">family =</span> gaussian,</span>
-<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> Simu_data_complete</span>
-<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">K =</span> <span class="dv">10</span></span>
-<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">$</span>delta)</span>
-<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>  ), <span class="dv">3</span>)</span>
-<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>results <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">formula =</span> <span class="fu">formula</span>(mod2),</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> Simu_data_complete</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">K =</span> <span class="dv">10</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">$</span>delta), <span class="fu">mean</span>(<span class="fu">cv.glm</span>(</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> Simu_data_complete,</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">glmfit =</span> <span class="fu">glm</span>(</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">formula =</span> <span class="fu">formula</span>(mod2_without_intercept),</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> Simu_data_complete</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">K =</span> <span class="dv">10</span></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">$</span>delta)</span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>  ), <span class="dv">3</span>)</span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>results <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="datatables html-widget html-fill-item" id="htmlwidget-cb474ddd59216635016d" style="width:100%;height:auto;"></div>
@@ -845,12 +867,13 @@ F-statistic:  7352 on 2 and 998 DF,  p-value: &lt; 2.2e-16</code></pre>
 <ul>
 <li><span class="math inline">\(y = x - 2x^2 + \mathcal{E}\)</span>.</li>
 </ul>
-<p>Donc à la vue de ces résulats je pense que l’on peut dire sans prendre trop de risques que notre estimation est bonne.</p>
+<p>Donc je pense que l’on peut dire sans prendre trop de risques que notre estimation et notre méthode de sélection est bonne.</p>
 </div>
 </section>
 <section id="conclusion" class="level1">
 <h1>Conclusion</h1>
-<p>On voit qu’on a bien réussi à retrouver le lien théorique via le test d pluseurs modèle et l’utilisation de plusieurqs critères couplé à de la validation croisée pour affiner notre recherche du modèle le mieux ajusté.</p>
+<p>On voit qu’on a bien réussi à retrouver le lien théorique via le test de pluseurs modèle et l’utilisation de plusieurs critères couplés à de la validation croisée pour affiner notre recherche du modèle le mieux ajusté.</p>
+<p>Ainsi, il est important d’avancer étape par étape car ici chaques étapes était importante pour trouver le meilleur modèle. Et ici on se basait sur un modèle généré par nous même et possédant un lien linéaire bien défini ce qui nous permettait tout de même si bien orienter nos recherche. La réalité nous offre souvent des situations plus compliquées et tout ces outils deviennent donc cruciaux pour bien avancer.</p>
 </section>
 <section id="session-info" class="level1">
 <h1>Session info</h1>
@@ -870,7 +893,7 @@ F-statistic:  7352 on 2 and 998 DF,  p-value: &lt; 2.2e-16</code></pre>
  collate  fr_FR.UTF-8
  ctype    fr_FR.UTF-8
  tz       Europe/Paris
- date     2025-02-19
+ date     2025-02-20
  pandoc   3.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/x86_64/ (via rmarkdown)
 
 ─ Packages ───────────────────────────────────────────────────────────────────
@@ -1528,7 +1551,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> false</span></span>
 <span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> visual</span></span>
 <span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> ["TP"]</span></span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> "/img/validation.png"</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> "/img/approuver.png"</span></span>
 <span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Première essais de techniques de validations croisées sur des données générées manuellement"</span></span>
 <span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a></span>
@@ -1556,7 +1579,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## fonctions </span></span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fonctions </span></span>
 <span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
 <span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a></span>
@@ -1684,323 +1707,340 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb25-186"><a href="#cb25-186" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-187"><a href="#cb25-187" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-188"><a href="#cb25-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-189"><a href="#cb25-189" aria-hidden="true" tabindex="-1"></a>On va ainsi supposer avoir observé les deux vecteurs $x$ et $y$ précédents, sans connaître le lien théorique précédent qui lie $x$ et $y$. Et on cherchera donc à l'estimer.</span>
-<span id="cb25-190"><a href="#cb25-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-189"><a href="#cb25-189" aria-hidden="true" tabindex="-1"></a>On va ainsi supposer avoir observé les deux vecteurs $x$ et $y$ précédents, sans connaître le lien théorique précédent qui lie $x$ et $y$. \</span>
+<span id="cb25-190"><a href="#cb25-190" aria-hidden="true" tabindex="-1"></a>Et donc on cherchera à estimer ce lien.</span>
 <span id="cb25-191"><a href="#cb25-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-192"><a href="#cb25-192" aria-hidden="true" tabindex="-1"></a><span class="fu"># Ananlyse descriptive</span></span>
-<span id="cb25-193"><a href="#cb25-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-194"><a href="#cb25-194" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
-<span id="cb25-195"><a href="#cb25-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-196"><a href="#cb25-196" aria-hidden="true" tabindex="-1"></a><span class="fu">## Boxplot</span></span>
-<span id="cb25-197"><a href="#cb25-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-198"><a href="#cb25-198" aria-hidden="true" tabindex="-1"></a>On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.</span>
-<span id="cb25-199"><a href="#cb25-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-200"><a href="#cb25-200" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, fig.height=6, fig.width=8}</span></span>
-<span id="cb25-201"><a href="#cb25-201" aria-hidden="true" tabindex="-1"></a><span class="in">my_boxplot(Simu_data)</span></span>
-<span id="cb25-202"><a href="#cb25-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb25-203"><a href="#cb25-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-204"><a href="#cb25-204" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
-<span id="cb25-205"><a href="#cb25-205" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
-<span id="cb25-206"><a href="#cb25-206" aria-hidden="true" tabindex="-1"></a>::: </span>
-<span id="cb25-207"><a href="#cb25-207" aria-hidden="true" tabindex="-1"></a>Résultats</span>
-<span id="cb25-208"><a href="#cb25-208" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb25-209"><a href="#cb25-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-210"><a href="#cb25-210" aria-hidden="true" tabindex="-1"></a>::: success</span>
-<span id="cb25-211"><a href="#cb25-211" aria-hidden="true" tabindex="-1"></a>On voit bien que notre variable $x$ a une distribution normale centré réduite et que $y$, de manière logique avec le modèle simulé, a d'avantages de valeurs négatives.</span>
-<span id="cb25-212"><a href="#cb25-212" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-192"><a href="#cb25-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-193"><a href="#cb25-193" aria-hidden="true" tabindex="-1"></a><span class="fu"># Analyse descriptive</span></span>
+<span id="cb25-194"><a href="#cb25-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-195"><a href="#cb25-195" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
+<span id="cb25-196"><a href="#cb25-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-197"><a href="#cb25-197" aria-hidden="true" tabindex="-1"></a><span class="fu">## Boxplot</span></span>
+<span id="cb25-198"><a href="#cb25-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-199"><a href="#cb25-199" aria-hidden="true" tabindex="-1"></a>On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.</span>
+<span id="cb25-200"><a href="#cb25-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-201"><a href="#cb25-201" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, fig.height=6, fig.width=8}</span></span>
+<span id="cb25-202"><a href="#cb25-202" aria-hidden="true" tabindex="-1"></a><span class="in">my_boxplot(Simu_data)</span></span>
+<span id="cb25-203"><a href="#cb25-203" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-204"><a href="#cb25-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-205"><a href="#cb25-205" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
+<span id="cb25-206"><a href="#cb25-206" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
+<span id="cb25-207"><a href="#cb25-207" aria-hidden="true" tabindex="-1"></a>::: </span>
+<span id="cb25-208"><a href="#cb25-208" aria-hidden="true" tabindex="-1"></a>Résultats</span>
+<span id="cb25-209"><a href="#cb25-209" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-210"><a href="#cb25-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-211"><a href="#cb25-211" aria-hidden="true" tabindex="-1"></a>::: success</span>
+<span id="cb25-212"><a href="#cb25-212" aria-hidden="true" tabindex="-1"></a>On voit bien que notre variable $x$ a une distribution normale centré réduite mais quelle n'est pas non plus parfaitement symétrique (forcément entre la "perfection" de la théorie et la génération par ordinateur il y a toujours une légère différence).</span>
 <span id="cb25-213"><a href="#cb25-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-214"><a href="#cb25-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-215"><a href="#cb25-215" aria-hidden="true" tabindex="-1"></a><span class="fu">## Correlation panel</span></span>
+<span id="cb25-214"><a href="#cb25-214" aria-hidden="true" tabindex="-1"></a>Et concernant $y$, de manière logique avec le modèle simulé, on peut voir d'avantages de valeurs négatives.</span>
+<span id="cb25-215"><a href="#cb25-215" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-216"><a href="#cb25-216" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-217"><a href="#cb25-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-218"><a href="#cb25-218" aria-hidden="true" tabindex="-1"></a>On regarde ici la corrélation calculée entre chacune de nos variables.</span>
+<span id="cb25-218"><a href="#cb25-218" aria-hidden="true" tabindex="-1"></a><span class="fu">## Correlation panel</span></span>
 <span id="cb25-219"><a href="#cb25-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-220"><a href="#cb25-220" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=22, fig.width=28}</span></span>
-<span id="cb25-221"><a href="#cb25-221" aria-hidden="true" tabindex="-1"></a><span class="in">my_pairs.panels(Simu_data)</span></span>
-<span id="cb25-222"><a href="#cb25-222" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb25-223"><a href="#cb25-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-224"><a href="#cb25-224" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
-<span id="cb25-225"><a href="#cb25-225" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
-<span id="cb25-226"><a href="#cb25-226" aria-hidden="true" tabindex="-1"></a>::: </span>
-<span id="cb25-227"><a href="#cb25-227" aria-hidden="true" tabindex="-1"></a>Résultats</span>
-<span id="cb25-228"><a href="#cb25-228" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb25-229"><a href="#cb25-229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-230"><a href="#cb25-230" aria-hidden="true" tabindex="-1"></a>::: success</span>
-<span id="cb25-231"><a href="#cb25-231" aria-hidden="true" tabindex="-1"></a>On voit que la corrélation est faible. Pourtant le nuage de point semble quand à lui témoigner d'une influence de $x$ sur $y$</span>
+<span id="cb25-220"><a href="#cb25-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-221"><a href="#cb25-221" aria-hidden="true" tabindex="-1"></a>On regarde ici la corrélation calculée entre chacune de nos variables.</span>
+<span id="cb25-222"><a href="#cb25-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-223"><a href="#cb25-223" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=22, fig.width=28}</span></span>
+<span id="cb25-224"><a href="#cb25-224" aria-hidden="true" tabindex="-1"></a><span class="in">my_pairs.panels(Simu_data)</span></span>
+<span id="cb25-225"><a href="#cb25-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-226"><a href="#cb25-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-227"><a href="#cb25-227" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
+<span id="cb25-228"><a href="#cb25-228" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
+<span id="cb25-229"><a href="#cb25-229" aria-hidden="true" tabindex="-1"></a>::: </span>
+<span id="cb25-230"><a href="#cb25-230" aria-hidden="true" tabindex="-1"></a>Résultats</span>
+<span id="cb25-231"><a href="#cb25-231" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-232"><a href="#cb25-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-233"><a href="#cb25-233" aria-hidden="true" tabindex="-1"></a>Puis on retrouve un belle histogramme de distibution $\mathcal{N}(0, 1)$ pour notre variable $x$.</span>
-<span id="cb25-234"><a href="#cb25-234" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-233"><a href="#cb25-233" aria-hidden="true" tabindex="-1"></a>::: success</span>
+<span id="cb25-234"><a href="#cb25-234" aria-hidden="true" tabindex="-1"></a>Tout d'abord, on peut remarquer une corrélation faible de <span class="in">`r round(cor(x,y), 2)*100`</span>% entre $x$ et $y$. Pourtant le nuage de point semble quand à lui témoigner d'une influence de $x$ sur $y$ pouvant justifier d'un lien linéaire.</span>
 <span id="cb25-235"><a href="#cb25-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-236"><a href="#cb25-236" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb25-237"><a href="#cb25-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-236"><a href="#cb25-236" aria-hidden="true" tabindex="-1"></a>Aussi on retrouve un belle histogramme de distibution $\mathcal{N}(0, 1)$ pour notre variable $x$.</span>
+<span id="cb25-237"><a href="#cb25-237" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-238"><a href="#cb25-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-239"><a href="#cb25-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-239"><a href="#cb25-239" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-240"><a href="#cb25-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-241"><a href="#cb25-241" aria-hidden="true" tabindex="-1"></a><span class="fu"># Analyse inférentielle</span></span>
+<span id="cb25-241"><a href="#cb25-241" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-242"><a href="#cb25-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-243"><a href="#cb25-243" aria-hidden="true" tabindex="-1"></a>Maintenant, on va ajuster différents modèles à tester :</span>
-<span id="cb25-244"><a href="#cb25-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-245"><a href="#cb25-245" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>mod1 : $y = \beta_0 + \beta_1x + \mathcal{E}$</span>
-<span id="cb25-246"><a href="#cb25-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-247"><a href="#cb25-247" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>mod2 : $y = \beta_0 + \beta_1x + \beta_2x^2 + \mathcal{E}$</span>
-<span id="cb25-248"><a href="#cb25-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-249"><a href="#cb25-249" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>mod3 : $y = \beta_0 + \beta_1x + \beta_2x^2 + \beta_3x^3 + \mathcal{E}$</span>
-<span id="cb25-250"><a href="#cb25-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-251"><a href="#cb25-251" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>mod4 : $y = \beta_0 + \beta_1x + \beta_2x^2 + \beta_3x^3 + \beta_4x^4 + \mathcal{E}$</span>
-<span id="cb25-252"><a href="#cb25-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-243"><a href="#cb25-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-244"><a href="#cb25-244" aria-hidden="true" tabindex="-1"></a><span class="fu"># Analyse inférentielle</span></span>
+<span id="cb25-245"><a href="#cb25-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-246"><a href="#cb25-246" aria-hidden="true" tabindex="-1"></a>Maintenant, on va ajuster différents modèles à tester :</span>
+<span id="cb25-247"><a href="#cb25-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-248"><a href="#cb25-248" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>mod1 : $y = \beta_0 + \beta_1x + \mathcal{E}$</span>
+<span id="cb25-249"><a href="#cb25-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-250"><a href="#cb25-250" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>mod2 : $y = \beta_0 + \beta_1x + \beta_2x^2 + \mathcal{E}$</span>
+<span id="cb25-251"><a href="#cb25-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-252"><a href="#cb25-252" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>mod3 : $y = \beta_0 + \beta_1x + \beta_2x^2 + \beta_3x^3 + \mathcal{E}$</span>
 <span id="cb25-253"><a href="#cb25-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-254"><a href="#cb25-254" aria-hidden="true" tabindex="-1"></a>On va donc commencer par compléter notre data frame avec des variables correspondant à $x^2$, $x^3$ et $x^4$. Puis nous pourrons ajuster les différents modèles.</span>
-<span id="cb25-257"><a href="#cb25-257" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb25-258"><a href="#cb25-258" aria-hidden="true" tabindex="-1"></a>Simu_data_complete <span class="ot">&lt;-</span> <span class="fu">cbind</span>(Simu_data, x<span class="sc">^</span><span class="dv">2</span>, x<span class="sc">^</span><span class="dv">3</span>, x<span class="sc">^</span><span class="dv">4</span>)</span>
-<span id="cb25-259"><a href="#cb25-259" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(Simu_data_complete) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"y"</span>, <span class="st">"x1"</span>, <span class="st">"x2"</span>, <span class="st">"x3"</span>, <span class="st">"x4"</span>)</span>
-<span id="cb25-260"><a href="#cb25-260" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb25-261"><a href="#cb25-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-262"><a href="#cb25-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-265"><a href="#cb25-265" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb25-266"><a href="#cb25-266" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1, Simu_data_complete)</span>
-<span id="cb25-267"><a href="#cb25-267" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2, Simu_data_complete)</span>
-<span id="cb25-268"><a href="#cb25-268" aria-hidden="true" tabindex="-1"></a>mod3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3, Simu_data_complete)</span>
-<span id="cb25-269"><a href="#cb25-269" aria-hidden="true" tabindex="-1"></a>mod4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3 <span class="sc">+</span> x4, Simu_data_complete)</span>
-<span id="cb25-270"><a href="#cb25-270" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb25-271"><a href="#cb25-271" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb25-272"><a href="#cb25-272" aria-hidden="true" tabindex="-1"></a>Théoriquement, on est dans une situation où le $R^2$ pour le modèle 1 est égale à la corrélation de pearson au carré de $x$ et $y$.</span>
-<span id="cb25-273"><a href="#cb25-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-274"><a href="#cb25-274" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$R^2 =$ <span class="in">`r round(summary(mod1)$r.squared, 3)`</span></span>
-<span id="cb25-275"><a href="#cb25-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-276"><a href="#cb25-276" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\rho^2 =$ <span class="in">`r round(cor(x,y)^2, 3)`</span></span>
-<span id="cb25-277"><a href="#cb25-277" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-254"><a href="#cb25-254" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>mod4 : $y = \beta_0 + \beta_1x + \beta_2x^2 + \beta_3x^3 + \beta_4x^4 + \mathcal{E}$</span>
+<span id="cb25-255"><a href="#cb25-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-256"><a href="#cb25-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-257"><a href="#cb25-257" aria-hidden="true" tabindex="-1"></a>On va donc commencer par compléter notre data frame avec des variables correspondant à $x^2$, $x^3$ et $x^4$. Puis nous pourrons ajuster les différents modèles.</span>
+<span id="cb25-260"><a href="#cb25-260" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-261"><a href="#cb25-261" aria-hidden="true" tabindex="-1"></a>Simu_data_complete <span class="ot">&lt;-</span> <span class="fu">cbind</span>(Simu_data, x<span class="sc">^</span><span class="dv">2</span>, x<span class="sc">^</span><span class="dv">3</span>, x<span class="sc">^</span><span class="dv">4</span>)</span>
+<span id="cb25-262"><a href="#cb25-262" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(Simu_data_complete) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"y"</span>, <span class="st">"x1"</span>, <span class="st">"x2"</span>, <span class="st">"x3"</span>, <span class="st">"x4"</span>)</span>
+<span id="cb25-263"><a href="#cb25-263" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-264"><a href="#cb25-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-265"><a href="#cb25-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-268"><a href="#cb25-268" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-269"><a href="#cb25-269" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1, Simu_data_complete)</span>
+<span id="cb25-270"><a href="#cb25-270" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2, Simu_data_complete)</span>
+<span id="cb25-271"><a href="#cb25-271" aria-hidden="true" tabindex="-1"></a>mod3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3, Simu_data_complete)</span>
+<span id="cb25-272"><a href="#cb25-272" aria-hidden="true" tabindex="-1"></a>mod4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3 <span class="sc">+</span> x4, Simu_data_complete)</span>
+<span id="cb25-273"><a href="#cb25-273" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-274"><a href="#cb25-274" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb25-275"><a href="#cb25-275" aria-hidden="true" tabindex="-1"></a>Théoriquement, on est dans une situation où le $R^2$ pour le modèle 1 est égale à la corrélation de pearson au carré de $x$ et $y$.</span>
+<span id="cb25-276"><a href="#cb25-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-277"><a href="#cb25-277" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$R^2 =$ <span class="in">`r round(summary(mod1)$r.squared, 3)`</span></span>
 <span id="cb25-278"><a href="#cb25-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-279"><a href="#cb25-279" aria-hidden="true" tabindex="-1"></a>A partir du *summary()* de ces différents modèles et de différentes fonctions *R*, on est capable ensuite capable d'obtenir différents critères de sélection.</span>
-<span id="cb25-280"><a href="#cb25-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-283"><a href="#cb25-283" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb25-284"><a href="#cb25-284" aria-hidden="true" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">list</span>(mod1, mod2, mod3, mod4)</span>
-<span id="cb25-285"><a href="#cb25-285" aria-hidden="true" tabindex="-1"></a>model_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"mod1"</span>, <span class="st">"mod2"</span>, <span class="st">"mod3"</span>, <span class="st">"mod4"</span>)</span>
-<span id="cb25-286"><a href="#cb25-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-287"><a href="#cb25-287" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb25-288"><a href="#cb25-288" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> model_names,</span>
-<span id="cb25-289"><a href="#cb25-289" aria-hidden="true" tabindex="-1"></a>  <span class="at">R2 =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m) <span class="fu">round</span>(<span class="fu">summary</span>(m)<span class="sc">$</span>r.squared, <span class="dv">3</span>))),</span>
-<span id="cb25-290"><a href="#cb25-290" aria-hidden="true" tabindex="-1"></a>  <span class="at">R2adj =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m) <span class="fu">round</span>(<span class="fu">summary</span>(m)<span class="sc">$</span>adj.r.squared, <span class="dv">3</span>))),</span>
-<span id="cb25-291"><a href="#cb25-291" aria-hidden="true" tabindex="-1"></a>  <span class="at">AIC =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m) <span class="fu">round</span>(<span class="fu">AIC</span>(m), <span class="dv">1</span>))),</span>
-<span id="cb25-292"><a href="#cb25-292" aria-hidden="true" tabindex="-1"></a>  <span class="at">BIC =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m) <span class="fu">round</span>(<span class="fu">BIC</span>(m), <span class="dv">1</span>)))</span>
-<span id="cb25-293"><a href="#cb25-293" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-294"><a href="#cb25-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-295"><a href="#cb25-295" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-296"><a href="#cb25-296" aria-hidden="true" tabindex="-1"></a>results <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
-<span id="cb25-297"><a href="#cb25-297" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-279"><a href="#cb25-279" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\rho^2 =$ <span class="in">`r round(cor(x,y)^2, 3)`</span></span>
+<span id="cb25-280"><a href="#cb25-280" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-281"><a href="#cb25-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-282"><a href="#cb25-282" aria-hidden="true" tabindex="-1"></a>Ensuite, partir du *summary()* et de différentes fonctions *R*, on est capable capable d'obtenir différents critères permettant de comparer la qualité de nos modèles.</span>
+<span id="cb25-283"><a href="#cb25-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-286"><a href="#cb25-286" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-287"><a href="#cb25-287" aria-hidden="true" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">list</span>(mod1, mod2, mod3, mod4)</span>
+<span id="cb25-288"><a href="#cb25-288" aria-hidden="true" tabindex="-1"></a>model_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"mod1"</span>, <span class="st">"mod2"</span>, <span class="st">"mod3"</span>, <span class="st">"mod4"</span>)</span>
+<span id="cb25-289"><a href="#cb25-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-290"><a href="#cb25-290" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb25-291"><a href="#cb25-291" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> model_names,</span>
+<span id="cb25-292"><a href="#cb25-292" aria-hidden="true" tabindex="-1"></a>  <span class="at">R2 =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m) <span class="fu">round</span>(<span class="fu">summary</span>(m)<span class="sc">$</span>r.squared, <span class="dv">3</span>))),</span>
+<span id="cb25-293"><a href="#cb25-293" aria-hidden="true" tabindex="-1"></a>  <span class="at">R2adj =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m) <span class="fu">round</span>(<span class="fu">summary</span>(m)<span class="sc">$</span>adj.r.squared, <span class="dv">3</span>))),</span>
+<span id="cb25-294"><a href="#cb25-294" aria-hidden="true" tabindex="-1"></a>  <span class="at">AIC =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m) <span class="fu">round</span>(<span class="fu">AIC</span>(m), <span class="dv">1</span>))),</span>
+<span id="cb25-295"><a href="#cb25-295" aria-hidden="true" tabindex="-1"></a>  <span class="at">BIC =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m) <span class="fu">round</span>(<span class="fu">BIC</span>(m), <span class="dv">1</span>)))</span>
+<span id="cb25-296"><a href="#cb25-296" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-297"><a href="#cb25-297" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-298"><a href="#cb25-298" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-299"><a href="#cb25-299" aria-hidden="true" tabindex="-1"></a>Ainsi, on peut voir que c'est *mod2* qui ressort comme étant le meilleur modèle avec de forte valeur de $R^2$ et $R^2_{adjusted}$ puis des critères AIC et BIC minimisé.</span>
-<span id="cb25-300"><a href="#cb25-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-303"><a href="#cb25-303" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb25-304"><a href="#cb25-304" aria-hidden="true" tabindex="-1"></a>mod2 <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
-<span id="cb25-305"><a href="#cb25-305" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb25-306"><a href="#cb25-306" aria-hidden="true" tabindex="-1"></a>On constate en plus avec le *summary()* que toutes nos variables sont significatives sauf l'*intercept*.</span>
-<span id="cb25-307"><a href="#cb25-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-308"><a href="#cb25-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-309"><a href="#cb25-309" aria-hidden="true" tabindex="-1"></a><span class="fu"># Validation croisée</span></span>
+<span id="cb25-299"><a href="#cb25-299" aria-hidden="true" tabindex="-1"></a>results <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
+<span id="cb25-300"><a href="#cb25-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-301"><a href="#cb25-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-302"><a href="#cb25-302" aria-hidden="true" tabindex="-1"></a>On peut voir ici que c'est *mod2* qui ressort comme étant le meilleur modèle avec de forte valeur de $R^2$ et $R^2_{adjusted}$ puis des critères AIC et BIC minimisés.</span>
+<span id="cb25-303"><a href="#cb25-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-306"><a href="#cb25-306" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-307"><a href="#cb25-307" aria-hidden="true" tabindex="-1"></a>mod2 <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb25-308"><a href="#cb25-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-309"><a href="#cb25-309" aria-hidden="true" tabindex="-1"></a>On constate en plus avec le *summary()* que toutes nos variables sont significatives sauf l'*intercept*.</span>
 <span id="cb25-310"><a href="#cb25-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-311"><a href="#cb25-311" aria-hidden="true" tabindex="-1"></a>::: panel-tabset </span>
-<span id="cb25-312"><a href="#cb25-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-313"><a href="#cb25-313" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rappels validation croisée </span></span>
-<span id="cb25-314"><a href="#cb25-314" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-315"><a href="#cb25-315" aria-hidden="true" tabindex="-1"></a>texte avec dedans le principe du LOO !!!!</span>
-<span id="cb25-316"><a href="#cb25-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-317"><a href="#cb25-317" aria-hidden="true" tabindex="-1"></a><span class="fu">## Validation "manuelle"</span></span>
-<span id="cb25-318"><a href="#cb25-318" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-319"><a href="#cb25-319" aria-hidden="true" tabindex="-1"></a>Dans un premier temps et pour bien comprendre la méthode, on va utiliser deux fonctions permettant d’estimer l’erreur test par une validation</span>
-<span id="cb25-320"><a href="#cb25-320" aria-hidden="true" tabindex="-1"></a>croisée *LOO* (*Leave-one-out*) pour un modèle ajusté par la fonction *lm* :</span>
-<span id="cb25-321"><a href="#cb25-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-322"><a href="#cb25-322" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>la première, *loo* (qui se trouve dans les fonctions du setup), en utilisant le principe général de cette méthode qui nécessite donc l’estimation de n modèles différents </span>
-<span id="cb25-323"><a href="#cb25-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-311"><a href="#cb25-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-312"><a href="#cb25-312" aria-hidden="true" tabindex="-1"></a><span class="fu"># Validation croisée</span></span>
+<span id="cb25-313"><a href="#cb25-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-314"><a href="#cb25-314" aria-hidden="true" tabindex="-1"></a>::: panel-tabset </span>
+<span id="cb25-315"><a href="#cb25-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-316"><a href="#cb25-316" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rappel validation croisée </span></span>
+<span id="cb25-317"><a href="#cb25-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-318"><a href="#cb25-318" aria-hidden="true" tabindex="-1"></a>Le principe de la validation croisée (*cross validation*) est d’estimer le risque de prédiction en confrontant notre modèle à un échantillon test qui n’a pas été utilisé pour l’ajustement de celui ci.\</span>
+<span id="cb25-319"><a href="#cb25-319" aria-hidden="true" tabindex="-1"></a>La validation croisée possède ainsi de nombreux avantages mais a comme principal inconvénient son temps de calcul qui peut rapidement devenir important.\</span>
+<span id="cb25-320"><a href="#cb25-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-321"><a href="#cb25-321" aria-hidden="true" tabindex="-1"></a>Dans le cas du K-fold, on coupe l’échantillon de taille $n$ en environ K parties égales. Ensuite, on fait l'ajustement du modèle sur K-1 échantillons et on garde le K-ième comme échantillon test pour calculer l'erreur de prédiction. On répète alors le procédé de telle sorte à ce que chaque échantillon serve une fois de test. Cela nous fait donc calculer K erreurs.</span>
+<span id="cb25-322"><a href="#cb25-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-323"><a href="#cb25-323" aria-hidden="true" tabindex="-1"></a>A savoir que selon la valeur de K, on peut se retrouver dans des cas particuliers très utilisés.</span>
 <span id="cb25-324"><a href="#cb25-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-325"><a href="#cb25-325" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a seconde, *loo2* (qui se trouve dans les fonctions du setup), en utilisant la formule adaptée à la régression linéaire donnant directement le risque LOO à partir de la seule estimation du modèle complet (on pourra utiliser la fonction *hatvalues*)</span>
+<span id="cb25-325"><a href="#cb25-325" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Lorsque K = n, il s’agit de la procédure Leave One Out (LOO).</span>
 <span id="cb25-326"><a href="#cb25-326" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-327"><a href="#cb25-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-328"><a href="#cb25-328" aria-hidden="true" tabindex="-1"></a>AInsi, en testant sur nos quatre modèle, on obtient les résultats suivants : </span>
-<span id="cb25-331"><a href="#cb25-331" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb25-332"><a href="#cb25-332" aria-hidden="true" tabindex="-1"></a>loo_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(models, <span class="cf">function</span>(m) <span class="fu">get_loo_results</span>(m, loo))</span>
-<span id="cb25-333"><a href="#cb25-333" aria-hidden="true" tabindex="-1"></a>loo2_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(models, <span class="cf">function</span>(m) <span class="fu">get_loo_results</span>(m, loo2))</span>
-<span id="cb25-334"><a href="#cb25-334" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-335"><a href="#cb25-335" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb25-336"><a href="#cb25-336" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> model_names,</span>
-<span id="cb25-337"><a href="#cb25-337" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOO =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo_results, <span class="cf">function</span>(x) x<span class="sc">$</span>result)),       <span class="co"># Résultat de loo()</span></span>
-<span id="cb25-338"><a href="#cb25-338" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time_LOO =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo_results, <span class="cf">function</span>(x) x<span class="sc">$</span>time)),    <span class="co"># Temps d'exécution de loo()</span></span>
-<span id="cb25-339"><a href="#cb25-339" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOO2 =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo2_results, <span class="cf">function</span>(x) x<span class="sc">$</span>result)),     <span class="co"># Résultat de loo2()</span></span>
-<span id="cb25-340"><a href="#cb25-340" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time_LOO2 =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo2_results, <span class="cf">function</span>(x) x<span class="sc">$</span>time))   <span class="co"># Temps d'exécution de loo2()</span></span>
-<span id="cb25-341"><a href="#cb25-341" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-342"><a href="#cb25-342" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-343"><a href="#cb25-343" aria-hidden="true" tabindex="-1"></a>results <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
-<span id="cb25-344"><a href="#cb25-344" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-345"><a href="#cb25-345" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb25-346"><a href="#cb25-346" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-347"><a href="#cb25-347" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-348"><a href="#cb25-348" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
-<span id="cb25-349"><a href="#cb25-349" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
-<span id="cb25-350"><a href="#cb25-350" aria-hidden="true" tabindex="-1"></a>::: </span>
-<span id="cb25-351"><a href="#cb25-351" aria-hidden="true" tabindex="-1"></a>Résultats</span>
-<span id="cb25-352"><a href="#cb25-352" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb25-353"><a href="#cb25-353" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-354"><a href="#cb25-354" aria-hidden="true" tabindex="-1"></a>::: success</span>
-<span id="cb25-355"><a href="#cb25-355" aria-hidden="true" tabindex="-1"></a>On voit que les résultats donnés par nos deux fonctions coincident bien. Mais la première semble tout de même plus lente pour le calcul.</span>
+<span id="cb25-327"><a href="#cb25-327" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Lorsque K = 2, on est sur une procédure Hold out ou testset </span>
+<span id="cb25-328"><a href="#cb25-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-329"><a href="#cb25-329" aria-hidden="true" tabindex="-1"></a>La validation croisée par K-fold est donc un outil couramment utilisé. Le choix de K est quant à lui très important et il faut penser que si K est trop grand, le biais sera faible mais à contrario, la variance deviendra très grande. Par contre, si K est trop petit, l’estimation risque de posséder un grand biais puisque notre taille d’échantillon test sera beaucoup plus grande que celle de l’échantillon d’apprentissage. On a donc ici un bel exemple de compromis entre biais et variance pour trouver le K le plus judicieux.</span>
+<span id="cb25-330"><a href="#cb25-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-331"><a href="#cb25-331" aria-hidden="true" tabindex="-1"></a><span class="fu">## Validation "manuelle"</span></span>
+<span id="cb25-332"><a href="#cb25-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-333"><a href="#cb25-333" aria-hidden="true" tabindex="-1"></a>Dans un premier temps et pour bien comprendre la méthode, on va utiliser deux fonctions (construite pour l'occasion et dont le code se trouve dans la partie **fonction** du **Setup**) permettant d’estimer l’erreur test par une validation</span>
+<span id="cb25-334"><a href="#cb25-334" aria-hidden="true" tabindex="-1"></a>croisée *LOO* (*Leave-one-out*) pour un modèle ajusté par la fonction *lm* :</span>
+<span id="cb25-335"><a href="#cb25-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-336"><a href="#cb25-336" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>la première, *loo*, en utilisant le principe général de cette méthode qui nécessite donc l’estimation de n modèles différents </span>
+<span id="cb25-337"><a href="#cb25-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-338"><a href="#cb25-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-339"><a href="#cb25-339" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>la seconde, *loo2*, en utilisant la formule adaptée à la régression linéaire donnant directement le risque LOO à partir de la seule estimation du modèle complet (on pourra utiliser la fonction *hatvalues*)</span>
+<span id="cb25-340"><a href="#cb25-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-341"><a href="#cb25-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-342"><a href="#cb25-342" aria-hidden="true" tabindex="-1"></a>Ainsi, en testant sur nos quatre modèle, on obtient les résultats suivants : </span>
+<span id="cb25-345"><a href="#cb25-345" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-346"><a href="#cb25-346" aria-hidden="true" tabindex="-1"></a>loo_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(models, <span class="cf">function</span>(m) <span class="fu">get_loo_results</span>(m, loo))</span>
+<span id="cb25-347"><a href="#cb25-347" aria-hidden="true" tabindex="-1"></a>loo2_results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(models, <span class="cf">function</span>(m) <span class="fu">get_loo_results</span>(m, loo2))</span>
+<span id="cb25-348"><a href="#cb25-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-349"><a href="#cb25-349" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb25-350"><a href="#cb25-350" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> model_names,</span>
+<span id="cb25-351"><a href="#cb25-351" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOO =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo_results, <span class="cf">function</span>(x) x<span class="sc">$</span>result)),       </span>
+<span id="cb25-352"><a href="#cb25-352" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time_LOO =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo_results, <span class="cf">function</span>(x) x<span class="sc">$</span>time)),    </span>
+<span id="cb25-353"><a href="#cb25-353" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOO2 =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo2_results, <span class="cf">function</span>(x) x<span class="sc">$</span>result)),     </span>
+<span id="cb25-354"><a href="#cb25-354" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time_LOO2 =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(loo2_results, <span class="cf">function</span>(x) x<span class="sc">$</span>time))   </span>
+<span id="cb25-355"><a href="#cb25-355" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb25-356"><a href="#cb25-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-357"><a href="#cb25-357" aria-hidden="true" tabindex="-1"></a>Et en terme de qualité de modèle, c'est bien mod2 qui minimise le *loo*</span>
-<span id="cb25-358"><a href="#cb25-358" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb25-359"><a href="#cb25-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-357"><a href="#cb25-357" aria-hidden="true" tabindex="-1"></a>results <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
+<span id="cb25-358"><a href="#cb25-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-359"><a href="#cb25-359" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb25-360"><a href="#cb25-360" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-361"><a href="#cb25-361" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-362"><a href="#cb25-362" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-363"><a href="#cb25-363" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-364"><a href="#cb25-364" aria-hidden="true" tabindex="-1"></a><span class="fu">## Library *boot*</span></span>
-<span id="cb25-365"><a href="#cb25-365" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-366"><a href="#cb25-366" aria-hidden="true" tabindex="-1"></a>La fonction cv.glm de la librairie boot permet d’estimer l’erreur test par validation croisée K-fold</span>
+<span id="cb25-362"><a href="#cb25-362" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
+<span id="cb25-363"><a href="#cb25-363" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
+<span id="cb25-364"><a href="#cb25-364" aria-hidden="true" tabindex="-1"></a>::: </span>
+<span id="cb25-365"><a href="#cb25-365" aria-hidden="true" tabindex="-1"></a>Résultats</span>
+<span id="cb25-366"><a href="#cb25-366" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-367"><a href="#cb25-367" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-368"><a href="#cb25-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-369"><a href="#cb25-369" aria-hidden="true" tabindex="-1"></a>On va donc maintenant utiliser la fonction *cv.glm* de la library \{ boot \}. Cela va nécessité de recalculer le modèle mais cette fois ci avec la fonction *glm* en spécifiant que l'on veut un modèle gaussien (ce qui nous donnera le même résultat qu'avec *lm*).</span>
+<span id="cb25-368"><a href="#cb25-368" aria-hidden="true" tabindex="-1"></a>::: success</span>
+<span id="cb25-369"><a href="#cb25-369" aria-hidden="true" tabindex="-1"></a>On voit que les résultats donnés par nos deux fonctions coincident bien. Mais la première semble tout de même plus lente pour le calcul.</span>
 <span id="cb25-370"><a href="#cb25-370" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-373"><a href="#cb25-373" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb25-374"><a href="#cb25-374" aria-hidden="true" tabindex="-1"></a>mod1_glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> <span class="fu">formula</span>(mod1) ,</span>
-<span id="cb25-375"><a href="#cb25-375" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> gaussian,</span>
-<span id="cb25-376"><a href="#cb25-376" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> Simu_data_complete)</span>
-<span id="cb25-377"><a href="#cb25-377" aria-hidden="true" tabindex="-1"></a>mod2_glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> <span class="fu">formula</span>(mod2) ,</span>
-<span id="cb25-378"><a href="#cb25-378" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> gaussian,</span>
-<span id="cb25-379"><a href="#cb25-379" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> Simu_data_complete)</span>
-<span id="cb25-380"><a href="#cb25-380" aria-hidden="true" tabindex="-1"></a>mod3_glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> <span class="fu">formula</span>(mod3) ,</span>
-<span id="cb25-381"><a href="#cb25-381" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> gaussian,</span>
-<span id="cb25-382"><a href="#cb25-382" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> Simu_data_complete)</span>
-<span id="cb25-383"><a href="#cb25-383" aria-hidden="true" tabindex="-1"></a>mod4_glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> <span class="fu">formula</span>(mod4) ,</span>
-<span id="cb25-384"><a href="#cb25-384" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> gaussian,</span>
-<span id="cb25-385"><a href="#cb25-385" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> Simu_data_complete)</span>
+<span id="cb25-371"><a href="#cb25-371" aria-hidden="true" tabindex="-1"></a>Et en terme de qualité de modèle, c'est bien mod2 qui minimise l'erreur de la *cross validation* par *loo*.</span>
+<span id="cb25-372"><a href="#cb25-372" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-373"><a href="#cb25-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-374"><a href="#cb25-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-375"><a href="#cb25-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-376"><a href="#cb25-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-377"><a href="#cb25-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-378"><a href="#cb25-378" aria-hidden="true" tabindex="-1"></a><span class="fu">## Library *boot*</span></span>
+<span id="cb25-379"><a href="#cb25-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-380"><a href="#cb25-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-381"><a href="#cb25-381" aria-hidden="true" tabindex="-1"></a>On va donc maintenant utiliser la fonction *cv.glm* de la library \{ boot \} permettant d’estimer l’erreur test par validation croisée *K-fold*. Cela va nécessité de recalculer le modèle mais cette fois ci avec la fonction *glm* en spécifiant que l'on veut un modèle gaussien (ce qui nous donnera le même résultat qu'avec *lm*).</span>
+<span id="cb25-382"><a href="#cb25-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-383"><a href="#cb25-383" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb25-384"><a href="#cb25-384" aria-hidden="true" tabindex="-1"></a>On spécifi ici dans *glm* que le modèle est gaussien mais dans la pratique ce n'est pas nécéssaire pusiqu'il s'agit de la valeur par défaut de la fonction.</span>
+<span id="cb25-385"><a href="#cb25-385" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-386"><a href="#cb25-386" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-387"><a href="#cb25-387" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-388"><a href="#cb25-388" aria-hidden="true" tabindex="-1"></a>cvmod1 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(<span class="at">data =</span> Simu_data_complete, <span class="at">glmfit =</span> mod1_glm, <span class="at">K =</span> <span class="dv">10</span>)</span>
-<span id="cb25-389"><a href="#cb25-389" aria-hidden="true" tabindex="-1"></a>cvmod2 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(<span class="at">data =</span> Simu_data_complete, <span class="at">glmfit =</span> mod2_glm, <span class="at">K =</span> <span class="dv">10</span>)</span>
-<span id="cb25-390"><a href="#cb25-390" aria-hidden="true" tabindex="-1"></a>cvmod3 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(<span class="at">data =</span> Simu_data_complete, <span class="at">glmfit =</span> mod3_glm, <span class="at">K =</span> <span class="dv">10</span>)</span>
-<span id="cb25-391"><a href="#cb25-391" aria-hidden="true" tabindex="-1"></a>cvmod4 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(<span class="at">data =</span> Simu_data_complete, <span class="at">glmfit =</span> mod4_glm, <span class="at">K =</span> <span class="dv">10</span>) </span>
-<span id="cb25-392"><a href="#cb25-392" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-393"><a href="#cb25-393" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb25-394"><a href="#cb25-394" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> model_names,</span>
-<span id="cb25-395"><a href="#cb25-395" aria-hidden="true" tabindex="-1"></a>  <span class="at">CV_Mean =</span> <span class="fu">round</span>( <span class="fu">c</span>(<span class="fu">mean</span>(cvmod1<span class="sc">$</span>delta), <span class="fu">mean</span>(cvmod2<span class="sc">$</span>delta), <span class="fu">mean</span>(cvmod3<span class="sc">$</span>delta), <span class="fu">mean</span>(cvmod4<span class="sc">$</span>delta)), <span class="dv">3</span>),</span>
-<span id="cb25-396"><a href="#cb25-396" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOO2 =</span> <span class="fu">c</span>(<span class="fu">loo2</span>(mod1), <span class="fu">loo2</span>(mod2), <span class="fu">loo2</span>(mod3), <span class="fu">loo2</span>(mod4))</span>
-<span id="cb25-397"><a href="#cb25-397" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-398"><a href="#cb25-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-399"><a href="#cb25-399" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-400"><a href="#cb25-400" aria-hidden="true" tabindex="-1"></a>results <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
-<span id="cb25-401"><a href="#cb25-401" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb25-402"><a href="#cb25-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-387"><a href="#cb25-387" aria-hidden="true" tabindex="-1"></a>De plus, nous utiliserons $K=10$ qui est une valeurs assez communément utilisé sachant que si on voulait reproduire la procédure *LOO* il faudrait utiliser $K=n$ (cf rappel).</span>
+<span id="cb25-390"><a href="#cb25-390" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-391"><a href="#cb25-391" aria-hidden="true" tabindex="-1"></a>mod1_glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> <span class="fu">formula</span>(mod1) ,</span>
+<span id="cb25-392"><a href="#cb25-392" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> gaussian,</span>
+<span id="cb25-393"><a href="#cb25-393" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> Simu_data_complete)</span>
+<span id="cb25-394"><a href="#cb25-394" aria-hidden="true" tabindex="-1"></a>mod2_glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> <span class="fu">formula</span>(mod2) ,</span>
+<span id="cb25-395"><a href="#cb25-395" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> gaussian,</span>
+<span id="cb25-396"><a href="#cb25-396" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> Simu_data_complete)</span>
+<span id="cb25-397"><a href="#cb25-397" aria-hidden="true" tabindex="-1"></a>mod3_glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> <span class="fu">formula</span>(mod3) ,</span>
+<span id="cb25-398"><a href="#cb25-398" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> gaussian,</span>
+<span id="cb25-399"><a href="#cb25-399" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> Simu_data_complete)</span>
+<span id="cb25-400"><a href="#cb25-400" aria-hidden="true" tabindex="-1"></a>mod4_glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> <span class="fu">formula</span>(mod4) ,</span>
+<span id="cb25-401"><a href="#cb25-401" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> gaussian,</span>
+<span id="cb25-402"><a href="#cb25-402" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> Simu_data_complete)</span>
 <span id="cb25-403"><a href="#cb25-403" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-404"><a href="#cb25-404" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-405"><a href="#cb25-405" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
-<span id="cb25-406"><a href="#cb25-406" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
-<span id="cb25-407"><a href="#cb25-407" aria-hidden="true" tabindex="-1"></a>::: </span>
-<span id="cb25-408"><a href="#cb25-408" aria-hidden="true" tabindex="-1"></a>Résultats</span>
-<span id="cb25-409"><a href="#cb25-409" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb25-410"><a href="#cb25-410" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-411"><a href="#cb25-411" aria-hidden="true" tabindex="-1"></a>::: success</span>
-<span id="cb25-412"><a href="#cb25-412" aria-hidden="true" tabindex="-1"></a>On voit qu'en moyenne *cv.glm* nous donne des résultats qui sont du même ordre de grandeur que notre fonction *loo2*</span>
-<span id="cb25-413"><a href="#cb25-413" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-414"><a href="#cb25-414" aria-hidden="true" tabindex="-1"></a>Et en terme de qualité de modèle, c'est bien mod2 qui minimise la *cv*.</span>
-<span id="cb25-415"><a href="#cb25-415" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-405"><a href="#cb25-405" aria-hidden="true" tabindex="-1"></a>cvmod1 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(<span class="at">data =</span> Simu_data_complete, <span class="at">glmfit =</span> mod1_glm, <span class="at">K =</span> <span class="dv">10</span>)</span>
+<span id="cb25-406"><a href="#cb25-406" aria-hidden="true" tabindex="-1"></a>cvmod2 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(<span class="at">data =</span> Simu_data_complete, <span class="at">glmfit =</span> mod2_glm, <span class="at">K =</span> <span class="dv">10</span>)</span>
+<span id="cb25-407"><a href="#cb25-407" aria-hidden="true" tabindex="-1"></a>cvmod3 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(<span class="at">data =</span> Simu_data_complete, <span class="at">glmfit =</span> mod3_glm, <span class="at">K =</span> <span class="dv">10</span>)</span>
+<span id="cb25-408"><a href="#cb25-408" aria-hidden="true" tabindex="-1"></a>cvmod4 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(<span class="at">data =</span> Simu_data_complete, <span class="at">glmfit =</span> mod4_glm, <span class="at">K =</span> <span class="dv">10</span>) </span>
+<span id="cb25-409"><a href="#cb25-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-410"><a href="#cb25-410" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb25-411"><a href="#cb25-411" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> model_names,</span>
+<span id="cb25-412"><a href="#cb25-412" aria-hidden="true" tabindex="-1"></a>  <span class="at">CV_Mean =</span> <span class="fu">round</span>( <span class="fu">c</span>(<span class="fu">mean</span>(cvmod1<span class="sc">$</span>delta), <span class="fu">mean</span>(cvmod2<span class="sc">$</span>delta), <span class="fu">mean</span>(cvmod3<span class="sc">$</span>delta), <span class="fu">mean</span>(cvmod4<span class="sc">$</span>delta)), <span class="dv">3</span>),</span>
+<span id="cb25-413"><a href="#cb25-413" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOO2 =</span> <span class="fu">c</span>(<span class="fu">loo2</span>(mod1), <span class="fu">loo2</span>(mod2), <span class="fu">loo2</span>(mod3), <span class="fu">loo2</span>(mod4))</span>
+<span id="cb25-414"><a href="#cb25-414" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-415"><a href="#cb25-415" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-416"><a href="#cb25-416" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-417"><a href="#cb25-417" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-418"><a href="#cb25-418" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-417"><a href="#cb25-417" aria-hidden="true" tabindex="-1"></a>results <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
+<span id="cb25-418"><a href="#cb25-418" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb25-419"><a href="#cb25-419" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-420"><a href="#cb25-420" aria-hidden="true" tabindex="-1"></a><span class="fu"># Ajustement du meilleur modèle</span></span>
+<span id="cb25-420"><a href="#cb25-420" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-421"><a href="#cb25-421" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-422"><a href="#cb25-422" aria-hidden="true" tabindex="-1"></a>D'après tout ce que l'on a pu voir durant cette étude, jusqu'à présent le meilleut modèle semble être mod2.</span>
-<span id="cb25-425"><a href="#cb25-425" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb25-426"><a href="#cb25-426" aria-hidden="true" tabindex="-1"></a>mod2 <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
-<span id="cb25-427"><a href="#cb25-427" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb25-428"><a href="#cb25-428" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-429"><a href="#cb25-429" aria-hidden="true" tabindex="-1"></a>De manière naturelle, l'*intercept* ne semblant pas significatif il conviendrait de tester sans.</span>
+<span id="cb25-422"><a href="#cb25-422" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
+<span id="cb25-423"><a href="#cb25-423" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
+<span id="cb25-424"><a href="#cb25-424" aria-hidden="true" tabindex="-1"></a>::: </span>
+<span id="cb25-425"><a href="#cb25-425" aria-hidden="true" tabindex="-1"></a>Résultats</span>
+<span id="cb25-426"><a href="#cb25-426" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-427"><a href="#cb25-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-428"><a href="#cb25-428" aria-hidden="true" tabindex="-1"></a>::: success</span>
+<span id="cb25-429"><a href="#cb25-429" aria-hidden="true" tabindex="-1"></a>On voit qu'en moyenne *cv.glm* nous donne des résultats qui sont du même ordre de grandeur que notre fonction *loo2*.</span>
 <span id="cb25-430"><a href="#cb25-430" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-431"><a href="#cb25-431" aria-hidden="true" tabindex="-1"></a>Ainsi nous allons essayer le modèle $y \sim x + x^2$.</span>
-<span id="cb25-434"><a href="#cb25-434" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb25-435"><a href="#cb25-435" aria-hidden="true" tabindex="-1"></a>mod2_without_intercept <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> x1 <span class="sc">+</span> x2, Simu_data_complete)</span>
-<span id="cb25-436"><a href="#cb25-436" aria-hidden="true" tabindex="-1"></a>mod2_without_intercept <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
-<span id="cb25-437"><a href="#cb25-437" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-431"><a href="#cb25-431" aria-hidden="true" tabindex="-1"></a>Et en terme de qualité de modèle, c'est bien mod2 qui minimise l'erreur de la *cross validation*.</span>
+<span id="cb25-432"><a href="#cb25-432" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-433"><a href="#cb25-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-434"><a href="#cb25-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-435"><a href="#cb25-435" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-436"><a href="#cb25-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-437"><a href="#cb25-437" aria-hidden="true" tabindex="-1"></a><span class="fu"># Ajustement du meilleur modèle</span></span>
 <span id="cb25-438"><a href="#cb25-438" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-439"><a href="#cb25-439" aria-hidden="true" tabindex="-1"></a>On voit un modèle avec de très bon résultats et qui à toutes ces variables significatives. Comparons le avec *mod2* : </span>
-<span id="cb25-440"><a href="#cb25-440" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-443"><a href="#cb25-443" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb25-444"><a href="#cb25-444" aria-hidden="true" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">list</span>(mod2, mod2_without_intercept)</span>
-<span id="cb25-445"><a href="#cb25-445" aria-hidden="true" tabindex="-1"></a>model_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"mod2"</span>, <span class="st">"mod2_without_intercept"</span>)</span>
-<span id="cb25-446"><a href="#cb25-446" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-447"><a href="#cb25-447" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb25-448"><a href="#cb25-448" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> model_names,</span>
-<span id="cb25-449"><a href="#cb25-449" aria-hidden="true" tabindex="-1"></a>  <span class="at">R2 =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m)</span>
-<span id="cb25-450"><a href="#cb25-450" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">summary</span>(m)<span class="sc">$</span>r.squared, <span class="dv">3</span>))),</span>
-<span id="cb25-451"><a href="#cb25-451" aria-hidden="true" tabindex="-1"></a>  <span class="at">R2adj =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m)</span>
-<span id="cb25-452"><a href="#cb25-452" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">summary</span>(m)<span class="sc">$</span>adj.r.squared, <span class="dv">3</span>))),</span>
-<span id="cb25-453"><a href="#cb25-453" aria-hidden="true" tabindex="-1"></a>  <span class="at">AIC =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m)</span>
-<span id="cb25-454"><a href="#cb25-454" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">AIC</span>(</span>
-<span id="cb25-455"><a href="#cb25-455" aria-hidden="true" tabindex="-1"></a>      m</span>
-<span id="cb25-456"><a href="#cb25-456" aria-hidden="true" tabindex="-1"></a>    ), <span class="dv">1</span>))),</span>
-<span id="cb25-457"><a href="#cb25-457" aria-hidden="true" tabindex="-1"></a>  <span class="at">BIC =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m)</span>
-<span id="cb25-458"><a href="#cb25-458" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">BIC</span>(</span>
-<span id="cb25-459"><a href="#cb25-459" aria-hidden="true" tabindex="-1"></a>      m</span>
-<span id="cb25-460"><a href="#cb25-460" aria-hidden="true" tabindex="-1"></a>    ), <span class="dv">1</span>))),</span>
-<span id="cb25-461"><a href="#cb25-461" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOO2 =</span> <span class="fu">c</span>(<span class="fu">loo2</span>(mod2), <span class="fu">loo2</span>(mod2_without_intercept)),</span>
-<span id="cb25-462"><a href="#cb25-462" aria-hidden="true" tabindex="-1"></a>  <span class="at">CV_Mean =</span> <span class="fu">round</span>(<span class="fu">c</span>(</span>
-<span id="cb25-463"><a href="#cb25-463" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mean</span>(<span class="fu">cv.glm</span>(</span>
-<span id="cb25-464"><a href="#cb25-464" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> Simu_data_complete,</span>
-<span id="cb25-465"><a href="#cb25-465" aria-hidden="true" tabindex="-1"></a>      <span class="at">glmfit =</span> <span class="fu">glm</span>(</span>
-<span id="cb25-466"><a href="#cb25-466" aria-hidden="true" tabindex="-1"></a>        <span class="at">formula =</span> <span class="fu">formula</span>(mod2) ,</span>
-<span id="cb25-467"><a href="#cb25-467" aria-hidden="true" tabindex="-1"></a>        <span class="at">family =</span> gaussian,</span>
-<span id="cb25-468"><a href="#cb25-468" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> Simu_data_complete</span>
-<span id="cb25-469"><a href="#cb25-469" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb25-470"><a href="#cb25-470" aria-hidden="true" tabindex="-1"></a>      <span class="at">K =</span> <span class="dv">10</span></span>
-<span id="cb25-471"><a href="#cb25-471" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">$</span>delta), <span class="fu">mean</span>(<span class="fu">cv.glm</span>(</span>
-<span id="cb25-472"><a href="#cb25-472" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> Simu_data_complete,</span>
-<span id="cb25-473"><a href="#cb25-473" aria-hidden="true" tabindex="-1"></a>      <span class="at">glmfit =</span> <span class="fu">glm</span>(</span>
-<span id="cb25-474"><a href="#cb25-474" aria-hidden="true" tabindex="-1"></a>        <span class="at">formula =</span> <span class="fu">formula</span>(mod2_without_intercept) ,</span>
-<span id="cb25-475"><a href="#cb25-475" aria-hidden="true" tabindex="-1"></a>        <span class="at">family =</span> gaussian,</span>
-<span id="cb25-476"><a href="#cb25-476" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> Simu_data_complete</span>
-<span id="cb25-477"><a href="#cb25-477" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb25-478"><a href="#cb25-478" aria-hidden="true" tabindex="-1"></a>      <span class="at">K =</span> <span class="dv">10</span></span>
-<span id="cb25-479"><a href="#cb25-479" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">$</span>delta)</span>
-<span id="cb25-480"><a href="#cb25-480" aria-hidden="true" tabindex="-1"></a>  ), <span class="dv">3</span>)</span>
-<span id="cb25-481"><a href="#cb25-481" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-482"><a href="#cb25-482" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-483"><a href="#cb25-483" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-484"><a href="#cb25-484" aria-hidden="true" tabindex="-1"></a>results <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
-<span id="cb25-485"><a href="#cb25-485" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb25-486"><a href="#cb25-486" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-487"><a href="#cb25-487" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
-<span id="cb25-488"><a href="#cb25-488" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
-<span id="cb25-489"><a href="#cb25-489" aria-hidden="true" tabindex="-1"></a>::: </span>
-<span id="cb25-490"><a href="#cb25-490" aria-hidden="true" tabindex="-1"></a>Résultats</span>
-<span id="cb25-491"><a href="#cb25-491" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb25-492"><a href="#cb25-492" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-493"><a href="#cb25-493" aria-hidden="true" tabindex="-1"></a>::: success</span>
-<span id="cb25-494"><a href="#cb25-494" aria-hidden="true" tabindex="-1"></a>On voit bien avec tout nos critère qu'enlever l'*intercept* à apporté une amélioration à notre modèle.</span>
-<span id="cb25-495"><a href="#cb25-495" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-496"><a href="#cb25-496" aria-hidden="true" tabindex="-1"></a>Ainsi, si l'on se base sur les résultat de ce nouveau modèle, on obtient la relation linéaire suivante :</span>
+<span id="cb25-439"><a href="#cb25-439" aria-hidden="true" tabindex="-1"></a>D'après tout ce que l'on a pu voir durant cette étude, jusqu'à présent le meilleur modèle semble être mod2.</span>
+<span id="cb25-442"><a href="#cb25-442" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-443"><a href="#cb25-443" aria-hidden="true" tabindex="-1"></a>mod2 <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb25-444"><a href="#cb25-444" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-445"><a href="#cb25-445" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-446"><a href="#cb25-446" aria-hidden="true" tabindex="-1"></a>De manière naturelle, l'*intercept* ne semblant pas significatif il conviendrait de tester sans.</span>
+<span id="cb25-447"><a href="#cb25-447" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-448"><a href="#cb25-448" aria-hidden="true" tabindex="-1"></a>Ainsi nous allons essayer le modèle $y \sim x + x^2$.</span>
+<span id="cb25-451"><a href="#cb25-451" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-452"><a href="#cb25-452" aria-hidden="true" tabindex="-1"></a>mod2_without_intercept <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> x1 <span class="sc">+</span> x2, Simu_data_complete)</span>
+<span id="cb25-453"><a href="#cb25-453" aria-hidden="true" tabindex="-1"></a>mod2_without_intercept <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb25-454"><a href="#cb25-454" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-455"><a href="#cb25-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-456"><a href="#cb25-456" aria-hidden="true" tabindex="-1"></a>On voit un modèle avec de très bon résultats et qui à toutes ces variables significatives. Comparons le avec *mod2* : </span>
+<span id="cb25-457"><a href="#cb25-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-460"><a href="#cb25-460" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-461"><a href="#cb25-461" aria-hidden="true" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">list</span>(mod2, mod2_without_intercept)</span>
+<span id="cb25-462"><a href="#cb25-462" aria-hidden="true" tabindex="-1"></a>model_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"mod2"</span>, <span class="st">"mod2_without_intercept"</span>)</span>
+<span id="cb25-463"><a href="#cb25-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-464"><a href="#cb25-464" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb25-465"><a href="#cb25-465" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> model_names,</span>
+<span id="cb25-466"><a href="#cb25-466" aria-hidden="true" tabindex="-1"></a>  <span class="at">R2 =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m)</span>
+<span id="cb25-467"><a href="#cb25-467" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">summary</span>(m)<span class="sc">$</span>r.squared, <span class="dv">3</span>))),</span>
+<span id="cb25-468"><a href="#cb25-468" aria-hidden="true" tabindex="-1"></a>  <span class="at">R2adj =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m)</span>
+<span id="cb25-469"><a href="#cb25-469" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">summary</span>(m)<span class="sc">$</span>adj.r.squared, <span class="dv">3</span>))),</span>
+<span id="cb25-470"><a href="#cb25-470" aria-hidden="true" tabindex="-1"></a>  <span class="at">AIC =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m)</span>
+<span id="cb25-471"><a href="#cb25-471" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">AIC</span>(</span>
+<span id="cb25-472"><a href="#cb25-472" aria-hidden="true" tabindex="-1"></a>      m</span>
+<span id="cb25-473"><a href="#cb25-473" aria-hidden="true" tabindex="-1"></a>    ), <span class="dv">1</span>))),</span>
+<span id="cb25-474"><a href="#cb25-474" aria-hidden="true" tabindex="-1"></a>  <span class="at">BIC =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(models, <span class="cf">function</span>(m)</span>
+<span id="cb25-475"><a href="#cb25-475" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">BIC</span>(</span>
+<span id="cb25-476"><a href="#cb25-476" aria-hidden="true" tabindex="-1"></a>      m</span>
+<span id="cb25-477"><a href="#cb25-477" aria-hidden="true" tabindex="-1"></a>    ), <span class="dv">1</span>))),</span>
+<span id="cb25-478"><a href="#cb25-478" aria-hidden="true" tabindex="-1"></a>  <span class="at">LOO2 =</span> <span class="fu">c</span>(<span class="fu">loo2</span>(mod2), <span class="fu">loo2</span>(mod2_without_intercept)),</span>
+<span id="cb25-479"><a href="#cb25-479" aria-hidden="true" tabindex="-1"></a>  <span class="at">CV_Mean =</span> <span class="fu">round</span>(<span class="fu">c</span>(</span>
+<span id="cb25-480"><a href="#cb25-480" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mean</span>(<span class="fu">cv.glm</span>(</span>
+<span id="cb25-481"><a href="#cb25-481" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> Simu_data_complete,</span>
+<span id="cb25-482"><a href="#cb25-482" aria-hidden="true" tabindex="-1"></a>      <span class="at">glmfit =</span> <span class="fu">glm</span>(</span>
+<span id="cb25-483"><a href="#cb25-483" aria-hidden="true" tabindex="-1"></a>        <span class="at">formula =</span> <span class="fu">formula</span>(mod2),</span>
+<span id="cb25-484"><a href="#cb25-484" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> Simu_data_complete</span>
+<span id="cb25-485"><a href="#cb25-485" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb25-486"><a href="#cb25-486" aria-hidden="true" tabindex="-1"></a>      <span class="at">K =</span> <span class="dv">10</span></span>
+<span id="cb25-487"><a href="#cb25-487" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">$</span>delta), <span class="fu">mean</span>(<span class="fu">cv.glm</span>(</span>
+<span id="cb25-488"><a href="#cb25-488" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> Simu_data_complete,</span>
+<span id="cb25-489"><a href="#cb25-489" aria-hidden="true" tabindex="-1"></a>      <span class="at">glmfit =</span> <span class="fu">glm</span>(</span>
+<span id="cb25-490"><a href="#cb25-490" aria-hidden="true" tabindex="-1"></a>        <span class="at">formula =</span> <span class="fu">formula</span>(mod2_without_intercept),</span>
+<span id="cb25-491"><a href="#cb25-491" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> Simu_data_complete</span>
+<span id="cb25-492"><a href="#cb25-492" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb25-493"><a href="#cb25-493" aria-hidden="true" tabindex="-1"></a>      <span class="at">K =</span> <span class="dv">10</span></span>
+<span id="cb25-494"><a href="#cb25-494" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">$</span>delta)</span>
+<span id="cb25-495"><a href="#cb25-495" aria-hidden="true" tabindex="-1"></a>  ), <span class="dv">3</span>)</span>
+<span id="cb25-496"><a href="#cb25-496" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb25-497"><a href="#cb25-497" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-498"><a href="#cb25-498" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$y =$ <span class="in">`r round(mod2_without_intercept$coefficients,3)[1]`</span>$x$ + <span class="in">`r round(mod2_without_intercept$coefficients,3)[2]`</span>$x^2 + \mathcal{E}$</span>
-<span id="cb25-499"><a href="#cb25-499" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-500"><a href="#cb25-500" aria-hidden="true" tabindex="-1"></a>Alors que pour rappel, on a le lien linéaire théorique qui est:</span>
+<span id="cb25-498"><a href="#cb25-498" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-499"><a href="#cb25-499" aria-hidden="true" tabindex="-1"></a>results <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
+<span id="cb25-500"><a href="#cb25-500" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb25-501"><a href="#cb25-501" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-502"><a href="#cb25-502" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$y = x - 2x^2 + \mathcal{E}$.</span>
-<span id="cb25-503"><a href="#cb25-503" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-504"><a href="#cb25-504" aria-hidden="true" tabindex="-1"></a>Donc à la vue de ces résulats je pense que l'on peut dire sans prendre trop de risques que notre estimation est bonne.</span>
-<span id="cb25-505"><a href="#cb25-505" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb25-506"><a href="#cb25-506" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-502"><a href="#cb25-502" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
+<span id="cb25-503"><a href="#cb25-503" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
+<span id="cb25-504"><a href="#cb25-504" aria-hidden="true" tabindex="-1"></a>::: </span>
+<span id="cb25-505"><a href="#cb25-505" aria-hidden="true" tabindex="-1"></a>Résultats</span>
+<span id="cb25-506"><a href="#cb25-506" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-507"><a href="#cb25-507" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-508"><a href="#cb25-508" aria-hidden="true" tabindex="-1"></a><span class="fu"># Conclusion</span></span>
-<span id="cb25-509"><a href="#cb25-509" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-510"><a href="#cb25-510" aria-hidden="true" tabindex="-1"></a>On voit qu'on a bien réussi à retrouver le lien théorique via le test d pluseurs modèle et l'utilisation de plusieurqs critères couplé à de la validation croisée pour affiner notre recherche du modèle le mieux ajusté.</span>
-<span id="cb25-511"><a href="#cb25-511" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-512"><a href="#cb25-512" aria-hidden="true" tabindex="-1"></a><span class="fu"># Session info</span></span>
-<span id="cb25-513"><a href="#cb25-513" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-516"><a href="#cb25-516" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb25-517"><a href="#cb25-517" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">pkgs =</span> <span class="st">"attached"</span>)</span>
-<span id="cb25-518"><a href="#cb25-518" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb25-519"><a href="#cb25-519" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-520"><a href="#cb25-520" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-508"><a href="#cb25-508" aria-hidden="true" tabindex="-1"></a>::: success</span>
+<span id="cb25-509"><a href="#cb25-509" aria-hidden="true" tabindex="-1"></a>On voit bien avec tout nos critère qu'enlever l'*intercept* à apporté une amélioration à notre modèle.</span>
+<span id="cb25-510"><a href="#cb25-510" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-511"><a href="#cb25-511" aria-hidden="true" tabindex="-1"></a>Ainsi, si l'on se base sur les résultat de ce nouveau modèle, on obtient la relation linéaire suivante :</span>
+<span id="cb25-512"><a href="#cb25-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-513"><a href="#cb25-513" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$y =$ <span class="in">`r round(mod2_without_intercept$coefficients,3)[1]`</span>$x$ + <span class="in">`r round(mod2_without_intercept$coefficients,3)[2]`</span>$x^2 + \mathcal{E}$</span>
+<span id="cb25-514"><a href="#cb25-514" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-515"><a href="#cb25-515" aria-hidden="true" tabindex="-1"></a>Alors que pour rappel, on a le lien linéaire théorique qui est:</span>
+<span id="cb25-516"><a href="#cb25-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-517"><a href="#cb25-517" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$y = x - 2x^2 + \mathcal{E}$.</span>
+<span id="cb25-518"><a href="#cb25-518" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-519"><a href="#cb25-519" aria-hidden="true" tabindex="-1"></a>Donc je pense que l'on peut dire sans prendre trop de risques que notre estimation et notre méthode de sélection est bonne.</span>
+<span id="cb25-520"><a href="#cb25-520" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-521"><a href="#cb25-521" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-522"><a href="#cb25-522" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-523"><a href="#cb25-523" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-523"><a href="#cb25-523" aria-hidden="true" tabindex="-1"></a><span class="fu"># Conclusion</span></span>
 <span id="cb25-524"><a href="#cb25-524" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-525"><a href="#cb25-525" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-525"><a href="#cb25-525" aria-hidden="true" tabindex="-1"></a>On voit qu'on a bien réussi à retrouver le lien théorique via le test de pluseurs modèle et l'utilisation de plusieurs critères couplés à de la validation croisée pour affiner notre recherche du modèle le mieux ajusté.</span>
+<span id="cb25-526"><a href="#cb25-526" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-527"><a href="#cb25-527" aria-hidden="true" tabindex="-1"></a>Ainsi, il est important d'avancer étape par étape car ici chaques étapes était importante pour trouver le meilleur modèle. Et ici on se basait sur un modèle généré par nous même et possédant un lien linéaire bien défini ce qui nous permettait tout de même si bien orienter nos recherche. La réalité nous offre souvent des situations plus compliquées et tout ces outils deviennent donc cruciaux pour bien avancer.</span>
+<span id="cb25-528"><a href="#cb25-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-529"><a href="#cb25-529" aria-hidden="true" tabindex="-1"></a><span class="fu"># Session info</span></span>
+<span id="cb25-530"><a href="#cb25-530" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-533"><a href="#cb25-533" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-534"><a href="#cb25-534" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">pkgs =</span> <span class="st">"attached"</span>)</span>
+<span id="cb25-535"><a href="#cb25-535" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-536"><a href="#cb25-536" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-537"><a href="#cb25-537" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-538"><a href="#cb25-538" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-539"><a href="#cb25-539" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-540"><a href="#cb25-540" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-541"><a href="#cb25-541" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-542"><a href="#cb25-542" aria-hidden="true" tabindex="-1"></a></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

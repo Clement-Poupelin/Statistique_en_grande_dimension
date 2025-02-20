@@ -16,7 +16,7 @@ toc: true
 number-sections: false
 editor: visual
 categories: ["TP"]
-image: "/img/validation.png"
+image: "/img/approuver.png"
 description: "Première essais de techniques de validations croisées sur des données générées manuellement"
 ---
 
@@ -44,7 +44,7 @@ library(gridExtra)
 
 
 
-## fonctions 
+## Fonctions 
 
 ::: panel-tabset
 
@@ -172,10 +172,11 @@ pour des raisons de repouctibilité, une graine ou seed a été défini dans le 
 :::
 
 
-On va ainsi supposer avoir observé les deux vecteurs $x$ et $y$ précédents, sans connaître le lien théorique précédent qui lie $x$ et $y$. Et on cherchera donc à l'estimer.
+On va ainsi supposer avoir observé les deux vecteurs $x$ et $y$ précédents, sans connaître le lien théorique précédent qui lie $x$ et $y$. \
+Et donc on cherchera à estimer ce lien.
 
 
-# Ananlyse descriptive
+# Analyse descriptive
 
 ::: panel-tabset
 
@@ -194,7 +195,9 @@ Résultats
 :::
 
 ::: success
-On voit bien que notre variable $x$ a une distribution normale centré réduite et que $y$, de manière logique avec le modèle simulé, a d'avantages de valeurs négatives.
+On voit bien que notre variable $x$ a une distribution normale centré réduite mais quelle n'est pas non plus parfaitement symétrique (forcément entre la "perfection" de la théorie et la génération par ordinateur il y a toujours une légère différence).
+
+Et concernant $y$, de manière logique avec le modèle simulé, on peut voir d'avantages de valeurs négatives.
 :::
 
 
@@ -214,9 +217,9 @@ Résultats
 :::
 
 ::: success
-On voit que la corrélation est faible. Pourtant le nuage de point semble quand à lui témoigner d'une influence de $x$ sur $y$
+Tout d'abord, on peut remarquer une corrélation faible de `r round(cor(x,y), 2)*100`% entre $x$ et $y$. Pourtant le nuage de point semble quand à lui témoigner d'une influence de $x$ sur $y$ pouvant justifier d'un lien linéaire.
 
-Puis on retrouve un belle histogramme de distibution $\mathcal{N}(0, 1)$ pour notre variable $x$.
+Aussi on retrouve un belle histogramme de distibution $\mathcal{N}(0, 1)$ pour notre variable $x$.
 :::
 
 :::
@@ -258,7 +261,7 @@ Théoriquement, on est dans une situation où le $R^2$ pour le modèle 1 est ég
 - $\rho^2 =$ `r round(cor(x,y)^2, 3)`
 :::
 
-A partir du *summary()* de ces différents modèles et de différentes fonctions *R*, on est capable ensuite capable d'obtenir différents critères de sélection.
+Ensuite, partir du *summary()* et de différentes fonctions *R*, on est capable capable d'obtenir différents critères permettant de comparer la qualité de nos modèles.
 
 ```{r}
 models <- list(mod1, mod2, mod3, mod4)
@@ -276,7 +279,7 @@ results <- data.frame(
 results %>% DT::datatable()
 ```
 
-Ainsi, on peut voir que c'est *mod2* qui ressort comme étant le meilleur modèle avec de forte valeur de $R^2$ et $R^2_{adjusted}$ puis des critères AIC et BIC minimisé.
+On peut voir ici que c'est *mod2* qui ressort comme étant le meilleur modèle avec de forte valeur de $R^2$ et $R^2_{adjusted}$ puis des critères AIC et BIC minimisés.
 
 ```{r}
 mod2 %>% summary()
@@ -288,32 +291,43 @@ On constate en plus avec le *summary()* que toutes nos variables sont significat
 
 ::: panel-tabset 
 
-## Rappels validation croisée 
+## Rappel validation croisée 
 
-texte avec dedans le principe du LOO !!!!
+Le principe de la validation croisée (*cross validation*) est d’estimer le risque de prédiction en confrontant notre modèle à un échantillon test qui n’a pas été utilisé pour l’ajustement de celui ci.\
+La validation croisée possède ainsi de nombreux avantages mais a comme principal inconvénient son temps de calcul qui peut rapidement devenir important.\
+
+Dans le cas du K-fold, on coupe l’échantillon de taille $n$ en environ K parties égales. Ensuite, on fait l'ajustement du modèle sur K-1 échantillons et on garde le K-ième comme échantillon test pour calculer l'erreur de prédiction. On répète alors le procédé de telle sorte à ce que chaque échantillon serve une fois de test. Cela nous fait donc calculer K erreurs.
+
+A savoir que selon la valeur de K, on peut se retrouver dans des cas particuliers très utilisés.
+
+- Lorsque K = n, il s’agit de la procédure Leave One Out (LOO).
+
+- Lorsque K = 2, on est sur une procédure Hold out ou testset 
+
+La validation croisée par K-fold est donc un outil couramment utilisé. Le choix de K est quant à lui très important et il faut penser que si K est trop grand, le biais sera faible mais à contrario, la variance deviendra très grande. Par contre, si K est trop petit, l’estimation risque de posséder un grand biais puisque notre taille d’échantillon test sera beaucoup plus grande que celle de l’échantillon d’apprentissage. On a donc ici un bel exemple de compromis entre biais et variance pour trouver le K le plus judicieux.
 
 ## Validation "manuelle"
 
-Dans un premier temps et pour bien comprendre la méthode, on va utiliser deux fonctions permettant d’estimer l’erreur test par une validation
+Dans un premier temps et pour bien comprendre la méthode, on va utiliser deux fonctions (construite pour l'occasion et dont le code se trouve dans la partie **fonction** du **Setup**) permettant d’estimer l’erreur test par une validation
 croisée *LOO* (*Leave-one-out*) pour un modèle ajusté par la fonction *lm* :
 
-- la première, *loo* (qui se trouve dans les fonctions du setup), en utilisant le principe général de cette méthode qui nécessite donc l’estimation de n modèles différents 
+- la première, *loo*, en utilisant le principe général de cette méthode qui nécessite donc l’estimation de n modèles différents 
 
 
-- a seconde, *loo2* (qui se trouve dans les fonctions du setup), en utilisant la formule adaptée à la régression linéaire donnant directement le risque LOO à partir de la seule estimation du modèle complet (on pourra utiliser la fonction *hatvalues*)
+- la seconde, *loo2*, en utilisant la formule adaptée à la régression linéaire donnant directement le risque LOO à partir de la seule estimation du modèle complet (on pourra utiliser la fonction *hatvalues*)
 
 
-AInsi, en testant sur nos quatre modèle, on obtient les résultats suivants : 
+Ainsi, en testant sur nos quatre modèle, on obtient les résultats suivants : 
 ```{r}
 loo_results <- lapply(models, function(m) get_loo_results(m, loo))
 loo2_results <- lapply(models, function(m) get_loo_results(m, loo2))
 
 results <- data.frame(
   Model = model_names,
-  LOO = unlist(lapply(loo_results, function(x) x$result)),       # Résultat de loo()
-  Time_LOO = unlist(lapply(loo_results, function(x) x$time)),    # Temps d'exécution de loo()
-  LOO2 = unlist(lapply(loo2_results, function(x) x$result)),     # Résultat de loo2()
-  Time_LOO2 = unlist(lapply(loo2_results, function(x) x$time))   # Temps d'exécution de loo2()
+  LOO = unlist(lapply(loo_results, function(x) x$result)),       
+  Time_LOO = unlist(lapply(loo_results, function(x) x$time)),    
+  LOO2 = unlist(lapply(loo2_results, function(x) x$result)),     
+  Time_LOO2 = unlist(lapply(loo2_results, function(x) x$time))   
 )
 
 results %>% DT::datatable()
@@ -330,7 +344,7 @@ Résultats
 ::: success
 On voit que les résultats donnés par nos deux fonctions coincident bien. Mais la première semble tout de même plus lente pour le calcul.
 
-Et en terme de qualité de modèle, c'est bien mod2 qui minimise le *loo*
+Et en terme de qualité de modèle, c'est bien mod2 qui minimise l'erreur de la *cross validation* par *loo*.
 :::
 
 
@@ -339,11 +353,14 @@ Et en terme de qualité de modèle, c'est bien mod2 qui minimise le *loo*
 
 ## Library *boot*
 
-La fonction cv.glm de la librairie boot permet d’estimer l’erreur test par validation croisée K-fold
 
+On va donc maintenant utiliser la fonction *cv.glm* de la library \{ boot \} permettant d’estimer l’erreur test par validation croisée *K-fold*. Cela va nécessité de recalculer le modèle mais cette fois ci avec la fonction *glm* en spécifiant que l'on veut un modèle gaussien (ce qui nous donnera le même résultat qu'avec *lm*).
 
-On va donc maintenant utiliser la fonction *cv.glm* de la library \{ boot \}. Cela va nécessité de recalculer le modèle mais cette fois ci avec la fonction *glm* en spécifiant que l'on veut un modèle gaussien (ce qui nous donnera le même résultat qu'avec *lm*).
+::: callout-note
+On spécifi ici dans *glm* que le modèle est gaussien mais dans la pratique ce n'est pas nécéssaire pusiqu'il s'agit de la valeur par défaut de la fonction.
+:::
 
+De plus, nous utiliserons $K=10$ qui est une valeurs assez communément utilisé sachant que si on voulait reproduire la procédure *LOO* il faudrait utiliser $K=n$ (cf rappel).
 ```{r}
 mod1_glm <- glm(formula = formula(mod1) ,
                 family = gaussian,
@@ -383,9 +400,9 @@ Résultats
 :::
 
 ::: success
-On voit qu'en moyenne *cv.glm* nous donne des résultats qui sont du même ordre de grandeur que notre fonction *loo2*
+On voit qu'en moyenne *cv.glm* nous donne des résultats qui sont du même ordre de grandeur que notre fonction *loo2*.
 
-Et en terme de qualité de modèle, c'est bien mod2 qui minimise la *cv*.
+Et en terme de qualité de modèle, c'est bien mod2 qui minimise l'erreur de la *cross validation*.
 :::
 
 
@@ -393,7 +410,7 @@ Et en terme de qualité de modèle, c'est bien mod2 qui minimise la *cv*.
 
 # Ajustement du meilleur modèle
 
-D'après tout ce que l'on a pu voir durant cette étude, jusqu'à présent le meilleut modèle semble être mod2.
+D'après tout ce que l'on a pu voir durant cette étude, jusqu'à présent le meilleur modèle semble être mod2.
 ```{r}
 mod2 %>% summary()
 ```
@@ -431,16 +448,14 @@ results <- data.frame(
     mean(cv.glm(
       data = Simu_data_complete,
       glmfit = glm(
-        formula = formula(mod2) ,
-        family = gaussian,
+        formula = formula(mod2),
         data = Simu_data_complete
       ),
       K = 10
     )$delta), mean(cv.glm(
       data = Simu_data_complete,
       glmfit = glm(
-        formula = formula(mod2_without_intercept) ,
-        family = gaussian,
+        formula = formula(mod2_without_intercept),
         data = Simu_data_complete
       ),
       K = 10
@@ -469,13 +484,15 @@ Alors que pour rappel, on a le lien linéaire théorique qui est:
 
 - $y = x - 2x^2 + \mathcal{E}$.
 
-Donc à la vue de ces résulats je pense que l'on peut dire sans prendre trop de risques que notre estimation est bonne.
+Donc je pense que l'on peut dire sans prendre trop de risques que notre estimation et notre méthode de sélection est bonne.
 :::
 
 
 # Conclusion
 
-On voit qu'on a bien réussi à retrouver le lien théorique via le test d pluseurs modèle et l'utilisation de plusieurqs critères couplé à de la validation croisée pour affiner notre recherche du modèle le mieux ajusté.
+On voit qu'on a bien réussi à retrouver le lien théorique via le test de pluseurs modèle et l'utilisation de plusieurs critères couplés à de la validation croisée pour affiner notre recherche du modèle le mieux ajusté.
+
+Ainsi, il est important d'avancer étape par étape car ici chaques étapes était importante pour trouver le meilleur modèle. Et ici on se basait sur un modèle généré par nous même et possédant un lien linéaire bien défini ce qui nous permettait tout de même si bien orienter nos recherche. La réalité nous offre souvent des situations plus compliquées et tout ces outils deviennent donc cruciaux pour bien avancer.
 
 # Session info
 
