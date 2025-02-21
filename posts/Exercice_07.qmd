@@ -15,7 +15,130 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["TP"]
-image: ""
-description: "Description"
+categories: ["regression Ridge", "regression Lasso", "Validation croisée"]
+image: "/img/baseball.png"
+description: "Ici, on continu sur des données de baseball en mettant en pratique les techniques de PCR et PLS avec de la validation croisée"
 ---
+
+
+# Intervenant.e.s
+
+### Rédaction
+
+-   **Clément Poupelin**, [clementjc.poupelin\@gmail.com](mailto:clementjc.poupelin@gmail.com){.email}\
+
+### Relecture
+
+-   
+
+
+Cette exercice est la continuité de l'exercice 6 (lien) où l'on a pu utiliser les méthodes de regressions avec reduction de dimension PCR et PLS.
+
+
+
+
+
+# Setup
+
+:::: panel-tabset
+## Packages
+
+```{r, setup, warning=FALSE, message=FALSE}
+# Données
+library(ISLR)         # Hitters data 
+library(dplyr)        # manipulation des données
+
+# Inférence
+library(leaps)        # regsubsets 
+library(car)          # pour VIF
+
+# Plots
+## ggplot
+library(ggplot2)
+library(gridExtra)
+```
+
+## Fonctions
+
+::: panel-tabset
+
+:::
+
+## Seed
+
+```{r}
+set.seed(140400)
+```
+
+::::
+
+
+# Données
+
+
+intro rapide sur les données car on connait deja hitters. pas d'analyse descriptive (renvoyé vers exo1)
+
+puis faire le decoupage train 
+
+
+
+NOtre objectif ici sera donc de compléter l'analyse de l'exercice 6 (lien)en utilisant cette fois ci les méthodes de regression pénalisée Ridge et Lasso (méthodes détaillées dans le 6 bonus lien).
+
+# Analyse inférentielle
+
+::: panel-tabset
+
+
+## Ridge 
+
+
+
+## Lasso
+
+
+
+:::
+
+
+
+# Prédiction
+
+
+
+
+
+
+
+
+
+
+# Conclusion
+
+
+
+
+
+
+
+
+
+
+
+# Session info
+
+```{r}
+sessioninfo::session_info(pkgs = "attached")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/about.html</loc>
-    <lastmod>2025-02-19T22:44:55.598Z</lastmod>
-  </url>
-  <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_06.html</loc>
-    <lastmod>2025-02-20T12:27:53.281Z</lastmod>
-  </url>
-  <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_09.html</loc>
-    <lastmod>2025-02-20T12:28:25.590Z</lastmod>
-  </url>
-  <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_03.html</loc>
-    <lastmod>2025-02-21T11:11:34.502Z</lastmod>
-  </url>
-  <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_02.html</loc>
-    <lastmod>2025-02-21T15:20:51.147Z</lastmod>
-  </url>
-  <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_09Bonus.html</loc>
-    <lastmod>2025-02-21T17:06:05.951Z</lastmod>
-  </url>
-  <url>
     <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_12.html</loc>
-    <lastmod>2025-02-20T11:14:00.016Z</lastmod>
-  </url>
-  <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_07.html</loc>
-    <lastmod>2025-02-20T12:28:12.143Z</lastmod>
-  </url>
-  <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_08.html</loc>
-    <lastmod>2025-02-20T12:28:19.000Z</lastmod>
+    <lastmod>2025-02-21T22:12:08.496Z</lastmod>
   </url>
   <url>
     <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_10.html</loc>
-    <lastmod>2025-02-20T11:13:19.652Z</lastmod>
+    <lastmod>2025-02-21T22:12:07.243Z</lastmod>
   </url>
   <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_01.html</loc>
-    <lastmod>2025-02-21T11:06:58.295Z</lastmod>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_09.html</loc>
+    <lastmod>2025-02-21T22:12:05.374Z</lastmod>
   </url>
   <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_05.html</loc>
-    <lastmod>2025-02-21T11:03:43.622Z</lastmod>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_07.html</loc>
+    <lastmod>2025-02-21T22:12:01.558Z</lastmod>
   </url>
   <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_06Bonus.html</loc>
-    <lastmod>2025-02-21T14:18:02.265Z</lastmod>
-  </url>
-  <url>
-    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_11.html</loc>
-    <lastmod>2025-02-20T11:13:42.295Z</lastmod>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_06.html</loc>
+    <lastmod>2025-02-21T22:13:03.923Z</lastmod>
   </url>
   <url>
     <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_04.html</loc>
-    <lastmod>2025-02-20T12:27:34.696Z</lastmod>
+    <lastmod>2025-02-21T22:11:49.893Z</lastmod>
+  </url>
+  <url>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_02.html</loc>
+    <lastmod>2025-02-21T22:11:44.211Z</lastmod>
   </url>
   <url>
     <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/index.html</loc>
-    <lastmod>2025-02-21T10:54:38.169Z</lastmod>
+    <lastmod>2025-02-21T22:13:09.514Z</lastmod>
+  </url>
+  <url>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/about.html</loc>
+    <lastmod>2025-02-21T22:11:31.610Z</lastmod>
+  </url>
+  <url>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_01.html</loc>
+    <lastmod>2025-02-21T22:11:42.226Z</lastmod>
+  </url>
+  <url>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_03.html</loc>
+    <lastmod>2025-02-21T22:11:46.837Z</lastmod>
+  </url>
+  <url>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_05.html</loc>
+    <lastmod>2025-02-21T22:11:53.068Z</lastmod>
+  </url>
+  <url>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_06Bonus.html</loc>
+    <lastmod>2025-02-21T22:12:00.316Z</lastmod>
+  </url>
+  <url>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_08.html</loc>
+    <lastmod>2025-02-21T22:12:02.216Z</lastmod>
+  </url>
+  <url>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_09Bonus.html</loc>
+    <lastmod>2025-02-21T22:12:06.641Z</lastmod>
+  </url>
+  <url>
+    <loc>https://clement-poupelin.github.io/Statistique_en_grande_dimension/posts/Exercice_11.html</loc>
+    <lastmod>2025-02-21T22:12:07.832Z</lastmod>
   </url>
 </urlset>
