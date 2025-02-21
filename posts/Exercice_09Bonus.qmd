@@ -1,0 +1,105 @@
+---
+title: "Exercice 09 Bonus : régression logistique pénélisée"
+author: "Clément Poupelin"
+date: "2025-xx-xx"
+date-modified: "`r Sys.Date()`"
+format: 
+  html:
+    embed-resources: false
+    toc: true
+    code-fold: true
+    code-summary: "Show the code"
+    code-tools: true
+    toc-location: right
+    page-layout: article
+    code-overflow: wrap
+toc: true
+number-sections: false
+editor: visual
+categories: ["regression logistique", "regression Ridge", "regression Lasso", "validation croisée"]
+image: "/img/regression.png"
+description: "Régression logistique pénélisée via le github de Laurent Rouvière"
+---
+
+Dans cette partie et avant de passer à l'exercice 10, nous allons faire la section 3.3 sur la régression logistique pénélisée du [tutoriel de Laurent Rouvière](https://lrouviere.github.io/TUTO_GRANDE_DIM/correction/03-ridge-lasso.html)
+
+
+
+```{r}
+library(dplyr)
+library(glmnet)
+
+ad.data <- readr::read_delim(
+  "~/Documents/1_Projet/Perso/Statistique_en_grande_dimension/data/internet+advertisements/ad.data",
+  delim = ",",
+  col_names = FALSE,
+  na = c("?"),
+  trim_ws = TRUE,
+  col_types = readr::cols(X1559 = readr::col_factor())
+) |>
+  rename(Y = X1559)  
+
+```
+
+
+
+```{r}
+summary(ad.data$Y)
+```
+```{r}
+sum(is.na(ad.data))
+```
+
+
+```{r}
+var.na <- apply(is.na(ad.data),2,any)
+names(ad.data)[var.na]
+```
+
+
+```{r}
+ind.na <- apply(is.na(ad.data),1,any)
+sum(ind.na)
+```
+
+
+```{r}
+ad.data1 <- ad.data[,var.na==FALSE]
+dim(ad.data1)
+```
+
+
+
+```{r}
+sum(is.na(ad.data1))
+```
+
+```{r}
+X.ad <- model.matrix(Y~.,data=ad.data1)[,-1]
+Y.ad <- ad.data1$Y
+```
+
+
+
+
+```{r}
+set.seed(1234)
+lasso.cv <- cv.glmnet(X.ad,Y.ad,family="binomial",alpha=1)
+plot(lasso.cv)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
