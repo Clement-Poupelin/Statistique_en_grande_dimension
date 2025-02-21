@@ -81,7 +81,7 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-image','listing-title','listing-categories','listing-description','listing-reading-time','listing-author','listing-date',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-image','listing-title','listing-categories','listing-description','listing-reading-time','listing-author','listing-date','listing-file-modified',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
       searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
     };
@@ -244,7 +244,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(13)</span></div><div class="category" data-category="Bonus">Bonus <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Correlations fortuites">Correlations fortuites <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TP">TP <span class="quarto-category-count">(9)</span></div><div class="category" data-category="biais de sélection">biais de sélection <span class="quarto-category-count">(1)</span></div><div class="category" data-category="regression">regression <span class="quarto-category-count">(2)</span></div><div class="category" data-category="regression logistique">regression logistique <span class="quarto-category-count">(1)</span></div><div class="category" data-category="selection de variable">selection de variable <span class="quarto-category-count">(2)</span></div><div class="category" data-category="validation croisée">validation croisée <span class="quarto-category-count">(1)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(13)</span></div><div class="category" data-category="Bonus">Bonus <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Correlations fortuites">Correlations fortuites <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TP">TP <span class="quarto-category-count">(8)</span></div><div class="category" data-category="biais de sélection">biais de sélection <span class="quarto-category-count">(1)</span></div><div class="category" data-category="regression linéaire">regression linéaire <span class="quarto-category-count">(3)</span></div><div class="category" data-category="regression logistique">regression logistique <span class="quarto-category-count">(1)</span></div><div class="category" data-category="selection de variable">selection de variable <span class="quarto-category-count">(2)</span></div><div class="category" data-category="validation croisée">validation croisée <span class="quarto-category-count">(2)</span></div></div></div>
 <!-- main -->
 <main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
@@ -275,6 +275,12 @@ window.Quarto = {
          <option value="listing-author" data-direction="asc">
           Author
         </option>
+         <option value="listing-file-modified-sort" data-direction="asc">
+          Modified - Oldest
+        </option>
+         <option value="listing-file-modified-sort" data-direction="desc">
+          Modified - Newest
+        </option>
      </select>
   </div>
     <div class="input-group input-group-sm quarto-listing-filter">
@@ -283,7 +289,7 @@ window.Quarto = {
     </div>
 </div>
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-categories="regression,selection de variable" data-listing-date-sort="1740092400000" data-listing-file-modified-sort="1740066366215" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="33" data-listing-word-count-sort="6541">
+<div class="g-col-1" data-index="0" data-categories="regression linéaire,selection de variable" data-listing-date-sort="1739746800000" data-listing-file-modified-sort="1740136018295" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="33" data-listing-word-count-sort="6541">
 <a href="./posts/Exercice_01.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -297,8 +303,8 @@ Exercice 01
 33 min
 </div>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('regression'); return false;">
-regression
+<div class="listing-category" onclick="window.quartoListingCategory('regression linéaire'); return false;">
+regression linéaire
 </div>
 <div class="listing-category" onclick="window.quartoListingCategory('selection de variable'); return false;">
 selection de variable
@@ -312,14 +318,19 @@ Il s’agit d’une première utilisation des méthodes de regression avec selec
 Clément Poupelin
 </div>
 <div class="listing-date">
-Feb 21, 2025
+Feb 17, 2025
 </div>
+</div>
+</div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/21/25, 12:06:58 PM</p>
 </div>
 </div>
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="1" data-categories="regression,selection de variable" data-listing-date-sort="1740092400000" data-listing-file-modified-sort="1740070558586" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1537">
+<div class="g-col-1" data-index="1" data-categories="regression linéaire,selection de variable" data-listing-date-sort="1739746800000" data-listing-file-modified-sort="1740136041009" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1537">
 <a href="./posts/Exercice_02.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -333,8 +344,8 @@ Exercice 02
 8 min
 </div>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('regression'); return false;">
-regression
+<div class="listing-category" onclick="window.quartoListingCategory('regression linéaire'); return false;">
+regression linéaire
 </div>
 <div class="listing-category" onclick="window.quartoListingCategory('selection de variable'); return false;">
 selection de variable
@@ -348,14 +359,19 @@ Ici, on continu sur des données de baseball à utilser des méthodes de regress
 Clément Poupelin
 </div>
 <div class="listing-date">
-Feb 21, 2025
+Feb 17, 2025
 </div>
+</div>
+</div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/21/25, 12:07:21 PM</p>
 </div>
 </div>
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="2" data-categories="TP" data-listing-date-sort="NaN" data-listing-file-modified-sort="1740054440466" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2296">
+<div class="g-col-1" data-index="2" data-categories="regression linéaire,validation croisée" data-listing-date-sort="1739746800000" data-listing-file-modified-sort="1740136138844" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2296">
 <a href="./posts/Exercice_03.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -369,8 +385,11 @@ Exercice 03
 12 min
 </div>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('TP'); return false;">
-TP
+<div class="listing-category" onclick="window.quartoListingCategory('regression linéaire'); return false;">
+regression linéaire
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('validation croisée'); return false;">
+validation croisée
 </div>
 </div>
 <div class="card-text listing-description">
@@ -381,8 +400,13 @@ Première essais de techniques de validations croisées sur des données génér
 Clément Poupelin
 </div>
 <div class="listing-date">
-Invalid Date
+Feb 17, 2025
 </div>
+</div>
+</div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/21/25, 12:08:58 PM</p>
 </div>
 </div>
 </div>
@@ -418,10 +442,15 @@ Invalid Date
 </div>
 </div>
 </div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/20/25, 1:27:34 PM</p>
+</div>
+</div>
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="4" data-categories="regression logistique,biais de sélection,Correlations fortuites,validation croisée" data-listing-date-sort="1740092400000" data-listing-file-modified-sort="1740133978900" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2734">
+<div class="g-col-1" data-index="4" data-categories="regression logistique,biais de sélection,Correlations fortuites,validation croisée" data-listing-date-sort="1740092400000" data-listing-file-modified-sort="1740135823622" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2734">
 <a href="./posts/Exercice_05.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -460,6 +489,11 @@ Feb 21, 2025
 </div>
 </div>
 </div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/21/25, 12:03:43 PM</p>
+</div>
+</div>
 </div>
 </a>
 </div>
@@ -491,6 +525,11 @@ Clément Poupelin
 <div class="listing-date">
 Invalid Date
 </div>
+</div>
+</div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/20/25, 1:27:53 PM</p>
 </div>
 </div>
 </div>
@@ -526,6 +565,11 @@ Invalid Date
 </div>
 </div>
 </div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/20/25, 1:27:59 PM</p>
+</div>
+</div>
 </div>
 </a>
 </div>
@@ -557,6 +601,11 @@ Clément Poupelin
 <div class="listing-date">
 Invalid Date
 </div>
+</div>
+</div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/20/25, 1:28:12 PM</p>
 </div>
 </div>
 </div>
@@ -592,6 +641,11 @@ Invalid Date
 </div>
 </div>
 </div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/20/25, 1:28:19 PM</p>
+</div>
+</div>
 </div>
 </a>
 </div>
@@ -623,6 +677,11 @@ Clément Poupelin
 <div class="listing-date">
 Invalid Date
 </div>
+</div>
+</div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/20/25, 1:28:25 PM</p>
 </div>
 </div>
 </div>
@@ -658,6 +717,11 @@ Invalid Date
 </div>
 </div>
 </div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/20/25, 12:13:19 PM</p>
+</div>
+</div>
 </div>
 </a>
 </div>
@@ -691,6 +755,11 @@ Invalid Date
 </div>
 </div>
 </div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/20/25, 12:13:42 PM</p>
+</div>
+</div>
 </div>
 </a>
 </div>
@@ -722,6 +791,11 @@ Clément Poupelin
 <div class="listing-date">
 Invalid Date
 </div>
+</div>
+</div>
+<div class="card-footer">
+<div class="card-file-modified listing-file-modified">
+<p>2/20/25, 12:14:00 PM</p>
 </div>
 </div>
 </div>

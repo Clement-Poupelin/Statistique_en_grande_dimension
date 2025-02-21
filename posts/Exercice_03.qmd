@@ -1,7 +1,8 @@
 ---
 title: "Exercice 03"
 author: "Clément Poupelin"
-date: "`r Sys.Date()`"
+date: "2025-02-17"
+date-modified: "`r Sys.Date()`"
 format: 
   html:
     embed-resources: false
@@ -15,7 +16,7 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["TP"]
+categories: ["regression linéaire", "validation croisée"]
 image: "/img/approuver.png"
 description: "Première essais de techniques de validations croisées sur des données générées manuellement"
 ---

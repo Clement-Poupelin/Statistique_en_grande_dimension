@@ -1,7 +1,8 @@
 ---
 title: "Exercice 01"
 author: "Clément Poupelin"
-date: today
+date: "2025-02-17"
+date-modified: "`r Sys.Date()`"
 format: 
   html:
     embed-resources: false
@@ -15,7 +16,7 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["regression", "selection de variable"]
+categories: ["regression linéaire", "selection de variable"]
 image: "/img/baseball.png"
 description: "Il s'agit d'une première utilisation des méthodes de regression avec selection de variable via des approches stepwise sur des données de baseball"
 ---

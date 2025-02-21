@@ -1,7 +1,8 @@
 ---
 title: "Exercice 05"
 author: "Clément Poupelin"
-date: today
+date: "2025-02-21"
+date-modified: "`r Sys.Date()`"
 format: 
   html:
     embed-resources: false

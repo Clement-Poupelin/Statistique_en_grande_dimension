@@ -2,7 +2,7 @@
 title: "Statistique en grande dimension"
 listing:
   contents: posts
-  fields: [image, title, categories, description, reading-time, author, date]
+  fields: [image, title, categories, description, reading-time, author, date, file-modified]
   sort: "title"
   type: grid
   image-height: 6cm

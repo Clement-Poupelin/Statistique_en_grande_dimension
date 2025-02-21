@@ -1,7 +1,8 @@
 ---
 title: "Exercice 02"
 author: "Clément Poupelin"
-date: today
+date: "2025-02-17"
+date-modified: "`r Sys.Date()`"
 format: 
   html:
     embed-resources: false
@@ -15,7 +16,7 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["regression", "selection de variable"]
+categories: ["regression linéaire", "selection de variable"]
 image: "/img/baseball.png"
 description: "Ici, on continu sur des données de baseball à utilser des méthodes de regression avec selection de variable en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"
 ---
