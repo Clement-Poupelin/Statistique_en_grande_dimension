@@ -18,21 +18,18 @@ number-sections: false
 editor: visual
 categories: ["regression linéaire", "selection de variable"]
 image: "/img/baseball.png"
-description: "Ici, on continu sur des données de baseball à utilser des méthodes de regression avec selection de variable en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"
+description: "Ici, on continu sur des données de baseball en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"
 ---
 
 # Intervenant.e.s
 
 ### Rédaction
 
-- **Clément Poupelin**, [clementjc.poupelin\@gmail.com](mailto:clementjc.poupelin@gmail.com){.email}\
-
+-   **Clément Poupelin**, [clementjc.poupelin\@gmail.com](mailto:clementjc.poupelin@gmail.com){.email}\
 
 ### Relecture
 
-- 
-
-
+-   
 
 # Setup
 
@@ -52,7 +49,6 @@ library(dplyr)        # manipulation des données
 ```{r}
 set.seed(140400)
 ```
-
 :::
 
 # Données
@@ -82,6 +78,7 @@ tibble(
 ```
 
 Comme pour l'[Exercice 1](../posts/Exercice_01.qmd), on va commencer par se débarasser des variables manquantes.
+
 ```{r}
 Hitters_Without_NA <- Hitters %>% na.omit()
 ```
@@ -113,16 +110,16 @@ mod1 <- lm(formula = Salary ~ .,
 mod1 %>% summary()
 ```
 
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 On peut clairement constater que ce modèle brut ne fonctionne pas avec pourtant un $R^2 = 1$. On retrouve donc le problème typique de l'analyse en grande dimension lorsque $p>n$ (fléau de la dimensionalité).
 :::
-
 
 On peut aussi s'amuser à regarder les critères *AIC* et *BIC* de ce modèles qui théoriquement se retrouve à tendre vers l'infini.
 
@@ -140,12 +137,11 @@ Salary_hat <- predict(mod1, Hitters_Without_NA_18)
 Salary <- Hitters_Without_NA_18$Salary
 ```
 
-- $\widehat{Salary^{(1:18)}} - Salary^{(1:18)} =$ `r round(mean(Salary_hat - Salary), 2)`
+-   $\widehat{Salary^{(1:18)}} - Salary^{(1:18)} =$ `r round(mean(Salary_hat - Salary), 2)`
 
 Ce que l'on constate c'est qu'effectivement nous sommes avec un résultat qui pourrait nous faire penser que le modèle est bien ajusté avec une prédiction quasiment égale à la variable à prédire.
- 
- 
-Pourtant si nous regardons la prédiction obtenue par le modèle pour les autres joueurs et que nous effectuons la même soustraction pour comparer la qualité de prediction, nous voyons bien l'inéfficacité du modèle. 
+
+Pourtant si nous regardons la prédiction obtenue par le modèle pour les autres joueurs et que nous effectuons la même soustraction pour comparer la qualité de prediction, nous voyons bien l'inéfficacité du modèle.
 
 ```{r, warning=FALSE, message=FALSE}
 Hitters_Without_NA_No18 <- Hitters_Without_NA[19:nrow(Hitters_Without_NA),]
@@ -153,17 +149,15 @@ Salary_hat_No18 <- predict(mod1, Hitters_Without_NA_No18)
 Salary_No18 <- Hitters_Without_NA_No18$Salary
 ```
 
-- $\widehat{Salary^{(\neg 1:18)}} - Salary^{(\neg 1:18)} =$ `r round(mean(Salary_hat_No18 - Salary_No18), 2)`
+-   $\widehat{Salary^{(\neg 1:18)}} - Salary^{(\neg 1:18)} =$ `r round(mean(Salary_hat_No18 - Salary_No18), 2)`
 
 En effet on voit bien au dessus que les valeurs ne sont en moyennes pas proche de 0.
-
 
 ## Modèles parcimonieux
 
 On va maintenant mettre un oeuvre une méthode de sélection automatique classique pour réduire le nombre de variable explicative et tenter d'éviter les problèmes de grande dimension.
 
-Pour cela nous allons donc partir du plus petit modèle (celui avec seulement l'*intercept*) puis faire grandir le nombre de variable. Il va donc s'agir d'une méthode de sélection automatique *forward*. 
-
+Pour cela nous allons donc partir du plus petit modèle (celui avec seulement l'*intercept*) puis faire grandir le nombre de variable. Il va donc s'agir d'une méthode de sélection automatique *forward*.
 
 ```{r}
 mod0 <- lm(Salary~1, Hitters_Without_NA_18)
@@ -174,12 +168,12 @@ mod_forw <- step(mod0,
 mod_forw %>% summary()
 ```
 
-
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 Nous obtenons maintenant un modèle avec 2 variable dont une significative. Puis nous pouvons constater des valeurs assez élevés pour le $R^2$ et $R^2_{adjusted}$.
@@ -188,8 +182,6 @@ Et on a *AIC* = `r round(AIC(mod_forw), 3)` et *BIC* = `r round(BIC(mod_forw), 3
 
 Donc sans aller tester si c'est un bon modèle prédictif, on constate déjà qu'il va s'agir d'un modèle descriptif fonctionnel avec $n<p$
 :::
-
-
 
 # Permutations
 
@@ -200,22 +192,24 @@ pour des raisons de repouctibilité, une graine ou seed a été défini dans le 
 :::
 
 Faisons à nouveau le modèle brute sur nos 18 joueurs.
+
 ```{r}
 Hitters_Without_NA_18$Salary_permute <- sample(Salary)
 
 mod1_permute <- lm(Salary_permute~., subset(Hitters_Without_NA_18, select = -Salary))
 mod1_permute %>% summary()
 ```
-::: success-header
+
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 A nouveau on peut constater l'inéfficacité d'un modèle avec toutes les variables du fait d'avoir $p>n$.
 :::
-
 
 Utilisons maintenant la sélection automatique en testant à nouveau l'approche *forward*.
 
@@ -228,16 +222,16 @@ mod_forw_permute <- step(mod0_permute,
 mod_forw_permute %>% summary()
 ```
 
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 On constate que plusieurs variables son significatives. Pourtant, on trouve ici un modèle avec de très mauvais $R^2$ et $R^2_{adjusted}$. Donc un modèle de mauvaise qualité avec en plus une variance assez grande.
 :::
-
 
 Pour finir, on va maintenant reprendre le jeu de données **Hitters** complet et permuter tous les salaires de façon aléatoire. Ensuite, on va ajuster le meilleur modèle de régression possible pour expliquer les salaires en fonction des autres variables.
 
@@ -269,16 +263,13 @@ mod_permute_both <- step(mod0_permute,
 ```
 
 ::: panel-tabset
-
 ## *Backward*
 
 ```{r}
 mod_permute_back %>% summary()
 ```
 
-
 ## *Forward*
-
 
 ```{r}
 mod_permute_forw %>% summary()
@@ -289,20 +280,18 @@ mod_permute_forw %>% summary()
 ```{r}
 mod_permute_both %>% summary()
 ```
-
-
 :::
 
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 On constate qu'aucune méthode de sélection de variable ne permet d'avoir ne serait-ce qu'un modèle correct ce qui montre bien qu'avec la permutation aléatoire de la variable *Salary*, le lien linéaire qui existait à disparu.
 :::
-
 
 # Conclusion
 

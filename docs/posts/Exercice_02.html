@@ -8,7 +8,7 @@
 
 <meta name="author" content="Clément Poupelin">
 <meta name="dcterms.date" content="2025-02-17">
-<meta name="description" content="Ici, on continu sur des données de baseball à utilser des méthodes de regression avec selection de variable en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité">
+<meta name="description" content="Ici, on continu sur des données de baseball en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité">
 
 <title>Exercice 02 – Statistique en grande dimension</title>
 <style>
@@ -237,7 +237,7 @@ window.Quarto = {
       <div class="quarto-title-block"><div><h1 class="title">Exercice 02</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
                   <div>
         <div class="description">
-          Ici, on continu sur des données de baseball à utilser des méthodes de regression avec selection de variable en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité
+          Ici, on continu sur des données de baseball en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité
         </div>
       </div>
                           <div class="quarto-categories">
@@ -1591,303 +1591,292 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> visual</span></span>
 <span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> ["regression linéaire", "selection de variable"]</span></span>
 <span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> "/img/baseball.png"</span></span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Ici, on continu sur des données de baseball à utilser des méthodes de regression avec selection de variable en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Ici, on continu sur des données de baseball en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"</span></span>
 <span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a><span class="fu"># Intervenant.e.s</span></span>
 <span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a><span class="fu">### Rédaction</span></span>
 <span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Clément Poupelin**, <span class="co">[</span><span class="ot">clementjc.poupelin\@gmail.com</span><span class="co">](mailto:clementjc.poupelin@gmail.com)</span>{.email}\</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Clément Poupelin**, <span class="co">[</span><span class="ot">clementjc.poupelin\@gmail.com</span><span class="co">](mailto:clementjc.poupelin@gmail.com)</span>{.email}\</span>
 <span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a><span class="fu">### Relecture</span></span>
-<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span></span>
-<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a><span class="fu">### Relecture</span></span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span></span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a><span class="fu"># Setup</span></span>
 <span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a><span class="fu"># Setup</span></span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a><span class="fu">## Packages</span></span>
 <span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
-<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a><span class="fu">## Packages</span></span>
-<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, setup, warning=FALSE, message=FALSE}</span></span>
-<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a><span class="in"># Données</span></span>
-<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a><span class="in">library(ISLR)         # Hitters data </span></span>
-<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)        # manipulation des données</span></span>
-<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fonctions</span></span>
-<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a><span class="fu">## Seed</span></span>
-<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">140400</span>)</span>
-<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, setup, warning=FALSE, message=FALSE}</span></span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a><span class="in"># Données</span></span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a><span class="in">library(ISLR)         # Hitters data </span></span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)        # manipulation des données</span></span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fonctions</span></span>
+<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## Seed</span></span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">140400</span>)</span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a><span class="fu"># Données</span></span>
 <span id="cb27-57"><a href="#cb27-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-58"><a href="#cb27-58" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-58"><a href="#cb27-58" aria-hidden="true" tabindex="-1"></a>On étudie toujours le jeu de données <span class="co">[</span><span class="ot">**Hitters**</span><span class="co">](https://rdrr.io/cran/ISLR/man/Hitters.html)</span> disponible dans la libraire *`{ISLR}`* de *`R`*. Il s'agit d'un jeu de données de la *Major League Baseball* provenant des saisons de 1986 et 1987.</span>
 <span id="cb27-59"><a href="#cb27-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-60"><a href="#cb27-60" aria-hidden="true" tabindex="-1"></a><span class="fu"># Données</span></span>
-<span id="cb27-61"><a href="#cb27-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-62"><a href="#cb27-62" aria-hidden="true" tabindex="-1"></a>On étudie toujours le jeu de données <span class="co">[</span><span class="ot">**Hitters**</span><span class="co">](https://rdrr.io/cran/ISLR/man/Hitters.html)</span> disponible dans la libraire *`{ISLR}`* de *`R`*. Il s'agit d'un jeu de données de la *Major League Baseball* provenant des saisons de 1986 et 1987.</span>
-<span id="cb27-63"><a href="#cb27-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-64"><a href="#cb27-64" aria-hidden="true" tabindex="-1"></a>Le jeu de données possède <span class="in">`r dim(Hitters)[1]`</span> lignes/individus pour les différents joueurs et <span class="in">`r dim(Hitters)[2]`</span> variables.\</span>
-<span id="cb27-65"><a href="#cb27-65" aria-hidden="true" tabindex="-1"></a>Parmi les variables, on trouve les informations suivantes :</span>
-<span id="cb27-66"><a href="#cb27-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-67"><a href="#cb27-67" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, echo=FALSE, message=FALSE, warning=FALSE}</span></span>
-<span id="cb27-68"><a href="#cb27-68" aria-hidden="true" tabindex="-1"></a><span class="in">library(tidyverse)</span></span>
-<span id="cb27-69"><a href="#cb27-69" aria-hidden="true" tabindex="-1"></a><span class="in">library(kableExtra)</span></span>
-<span id="cb27-70"><a href="#cb27-70" aria-hidden="true" tabindex="-1"></a><span class="in">identity_keys &lt;- cell_spec(</span></span>
-<span id="cb27-71"><a href="#cb27-71" aria-hidden="true" tabindex="-1"></a><span class="in">  x = colnames(Hitters), format = "html", bold = TRUE)</span></span>
-<span id="cb27-72"><a href="#cb27-72" aria-hidden="true" tabindex="-1"></a><span class="in">identity_values &lt;- c("Number of times at bat in 1986", "Number of hits in 1986", "Number of home runs in 1986", "Number of runs in 1986", "Number of runs batted in in 1986", "Number of walks in 1986", "Number of years in the major leagues", "Number of times at bat during his career", "Number of hits during his career", "Number of home runs during his career", "Number of runs during his career", "Number of runs batted in during his career", "Number of walks during his career", "A factor with levels A and N indicating player's league at the end of 1986", "A factor with levels E and W indicating player's division at the end of 1986", "Number of put outs in 1986", "Number of assists in 1986", "Number of errors in 1986", "1987 annual salary on opening day in thousands of dollars", "A factor with levels A and N indicating player's league at the beginning of 1987")</span></span>
-<span id="cb27-73"><a href="#cb27-73" aria-hidden="true" tabindex="-1"></a><span class="in">tibble(</span></span>
-<span id="cb27-74"><a href="#cb27-74" aria-hidden="true" tabindex="-1"></a><span class="in">  keys = identity_keys, </span></span>
-<span id="cb27-75"><a href="#cb27-75" aria-hidden="true" tabindex="-1"></a><span class="in">  values = identity_values, </span></span>
-<span id="cb27-76"><a href="#cb27-76" aria-hidden="true" tabindex="-1"></a><span class="in">) %&gt;% </span></span>
-<span id="cb27-77"><a href="#cb27-77" aria-hidden="true" tabindex="-1"></a><span class="in">  kbl(</span></span>
-<span id="cb27-78"><a href="#cb27-78" aria-hidden="true" tabindex="-1"></a><span class="in">    format = "html", </span></span>
-<span id="cb27-79"><a href="#cb27-79" aria-hidden="true" tabindex="-1"></a><span class="in">    booktabs = TRUE, </span></span>
-<span id="cb27-80"><a href="#cb27-80" aria-hidden="true" tabindex="-1"></a><span class="in">    escape = FALSE, </span></span>
-<span id="cb27-81"><a href="#cb27-81" aria-hidden="true" tabindex="-1"></a><span class="in">    col.names = NULL</span></span>
-<span id="cb27-82"><a href="#cb27-82" aria-hidden="true" tabindex="-1"></a><span class="in">  ) %&gt;% </span></span>
-<span id="cb27-83"><a href="#cb27-83" aria-hidden="true" tabindex="-1"></a><span class="in">  kable_styling(bootstrap_options = c("hover", "condensed"))</span></span>
-<span id="cb27-84"><a href="#cb27-84" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-85"><a href="#cb27-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-86"><a href="#cb27-86" aria-hidden="true" tabindex="-1"></a>Comme pour l'<span class="co">[</span><span class="ot">Exercice 1</span><span class="co">](../posts/Exercice_01.qmd)</span>, on va commencer par se débarasser des variables manquantes.</span>
-<span id="cb27-89"><a href="#cb27-89" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-90"><a href="#cb27-90" aria-hidden="true" tabindex="-1"></a>Hitters_Without_NA <span class="ot">&lt;-</span> Hitters <span class="sc">%&gt;%</span> <span class="fu">na.omit</span>()</span>
-<span id="cb27-91"><a href="#cb27-91" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-92"><a href="#cb27-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-93"><a href="#cb27-93" aria-hidden="true" tabindex="-1"></a>Puis cette fois ci nous allons dans un premier temps nous concentrer sur un sous jeu de données composé des 18 premières lignes sans valeurs manquantes.</span>
-<span id="cb27-94"><a href="#cb27-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-97"><a href="#cb27-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-98"><a href="#cb27-98" aria-hidden="true" tabindex="-1"></a>Hitters_Without_NA_18 <span class="ot">&lt;-</span> Hitters_Without_NA[<span class="dv">1</span><span class="sc">:</span><span class="dv">18</span>, ]</span>
-<span id="cb27-99"><a href="#cb27-99" aria-hidden="true" tabindex="-1"></a>Hitters_Without_NA_18 <span class="sc">%&gt;%</span> <span class="fu">dim</span>()</span>
-<span id="cb27-100"><a href="#cb27-100" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-101"><a href="#cb27-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-102"><a href="#cb27-102" aria-hidden="true" tabindex="-1"></a>::: callout-warning</span>
-<span id="cb27-103"><a href="#cb27-103" aria-hidden="true" tabindex="-1"></a>Attention, on peut remarquer ici que le nombre de variable est supérieur au nombre d'individus. On est donc dans un cas classique de grandes dimension avec $p&gt;n$.</span>
-<span id="cb27-104"><a href="#cb27-104" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb27-105"><a href="#cb27-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-106"><a href="#cb27-106" aria-hidden="true" tabindex="-1"></a>Maintenant, il conviendrait dans ce genre de situation d'effectuer de premières analyses descritptives. Mais celle ci ayant déjà été faite sur le jeu de données complet pendant l'<span class="co">[</span><span class="ot">Exercice 1</span><span class="co">](../posts/Exercice_01.qmd)</span>, on se permettra de ne pas les refaires.</span>
-<span id="cb27-107"><a href="#cb27-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-108"><a href="#cb27-108" aria-hidden="true" tabindex="-1"></a><span class="fu"># Analyse inférentielle</span></span>
-<span id="cb27-109"><a href="#cb27-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-110"><a href="#cb27-110" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modèle brut</span></span>
-<span id="cb27-111"><a href="#cb27-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-112"><a href="#cb27-112" aria-hidden="true" tabindex="-1"></a>On désire modéliser le salaire *Salary* en fonction des variables disponibles.</span>
-<span id="cb27-113"><a href="#cb27-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-114"><a href="#cb27-114" aria-hidden="true" tabindex="-1"></a>On va donc ajuster un modèle de régression linéaire en utilisant toutes les variables à disposition et analyser la qualité de cet ajustement.</span>
-<span id="cb27-115"><a href="#cb27-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-118"><a href="#cb27-118" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-119"><a href="#cb27-119" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> Salary <span class="sc">~</span> .,</span>
-<span id="cb27-120"><a href="#cb27-120" aria-hidden="true" tabindex="-1"></a>           Hitters_Without_NA_18) </span>
-<span id="cb27-121"><a href="#cb27-121" aria-hidden="true" tabindex="-1"></a>mod1 <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
-<span id="cb27-122"><a href="#cb27-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-123"><a href="#cb27-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-124"><a href="#cb27-124" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
-<span id="cb27-125"><a href="#cb27-125" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
-<span id="cb27-126"><a href="#cb27-126" aria-hidden="true" tabindex="-1"></a>::: </span>
-<span id="cb27-127"><a href="#cb27-127" aria-hidden="true" tabindex="-1"></a>Résultats</span>
-<span id="cb27-128"><a href="#cb27-128" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb27-129"><a href="#cb27-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-130"><a href="#cb27-130" aria-hidden="true" tabindex="-1"></a>::: success</span>
-<span id="cb27-131"><a href="#cb27-131" aria-hidden="true" tabindex="-1"></a>On peut clairement constater que ce modèle brut ne fonctionne pas avec pourtant un $R^2 = 1$. On retrouve donc le problème typique de l'analyse en grande dimension lorsque $p&gt;n$ (fléau de la dimensionalité).</span>
-<span id="cb27-132"><a href="#cb27-132" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-60"><a href="#cb27-60" aria-hidden="true" tabindex="-1"></a>Le jeu de données possède <span class="in">`r dim(Hitters)[1]`</span> lignes/individus pour les différents joueurs et <span class="in">`r dim(Hitters)[2]`</span> variables.\</span>
+<span id="cb27-61"><a href="#cb27-61" aria-hidden="true" tabindex="-1"></a>Parmi les variables, on trouve les informations suivantes :</span>
+<span id="cb27-62"><a href="#cb27-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-63"><a href="#cb27-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, echo=FALSE, message=FALSE, warning=FALSE}</span></span>
+<span id="cb27-64"><a href="#cb27-64" aria-hidden="true" tabindex="-1"></a><span class="in">library(tidyverse)</span></span>
+<span id="cb27-65"><a href="#cb27-65" aria-hidden="true" tabindex="-1"></a><span class="in">library(kableExtra)</span></span>
+<span id="cb27-66"><a href="#cb27-66" aria-hidden="true" tabindex="-1"></a><span class="in">identity_keys &lt;- cell_spec(</span></span>
+<span id="cb27-67"><a href="#cb27-67" aria-hidden="true" tabindex="-1"></a><span class="in">  x = colnames(Hitters), format = "html", bold = TRUE)</span></span>
+<span id="cb27-68"><a href="#cb27-68" aria-hidden="true" tabindex="-1"></a><span class="in">identity_values &lt;- c("Number of times at bat in 1986", "Number of hits in 1986", "Number of home runs in 1986", "Number of runs in 1986", "Number of runs batted in in 1986", "Number of walks in 1986", "Number of years in the major leagues", "Number of times at bat during his career", "Number of hits during his career", "Number of home runs during his career", "Number of runs during his career", "Number of runs batted in during his career", "Number of walks during his career", "A factor with levels A and N indicating player's league at the end of 1986", "A factor with levels E and W indicating player's division at the end of 1986", "Number of put outs in 1986", "Number of assists in 1986", "Number of errors in 1986", "1987 annual salary on opening day in thousands of dollars", "A factor with levels A and N indicating player's league at the beginning of 1987")</span></span>
+<span id="cb27-69"><a href="#cb27-69" aria-hidden="true" tabindex="-1"></a><span class="in">tibble(</span></span>
+<span id="cb27-70"><a href="#cb27-70" aria-hidden="true" tabindex="-1"></a><span class="in">  keys = identity_keys, </span></span>
+<span id="cb27-71"><a href="#cb27-71" aria-hidden="true" tabindex="-1"></a><span class="in">  values = identity_values, </span></span>
+<span id="cb27-72"><a href="#cb27-72" aria-hidden="true" tabindex="-1"></a><span class="in">) %&gt;% </span></span>
+<span id="cb27-73"><a href="#cb27-73" aria-hidden="true" tabindex="-1"></a><span class="in">  kbl(</span></span>
+<span id="cb27-74"><a href="#cb27-74" aria-hidden="true" tabindex="-1"></a><span class="in">    format = "html", </span></span>
+<span id="cb27-75"><a href="#cb27-75" aria-hidden="true" tabindex="-1"></a><span class="in">    booktabs = TRUE, </span></span>
+<span id="cb27-76"><a href="#cb27-76" aria-hidden="true" tabindex="-1"></a><span class="in">    escape = FALSE, </span></span>
+<span id="cb27-77"><a href="#cb27-77" aria-hidden="true" tabindex="-1"></a><span class="in">    col.names = NULL</span></span>
+<span id="cb27-78"><a href="#cb27-78" aria-hidden="true" tabindex="-1"></a><span class="in">  ) %&gt;% </span></span>
+<span id="cb27-79"><a href="#cb27-79" aria-hidden="true" tabindex="-1"></a><span class="in">  kable_styling(bootstrap_options = c("hover", "condensed"))</span></span>
+<span id="cb27-80"><a href="#cb27-80" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-81"><a href="#cb27-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-82"><a href="#cb27-82" aria-hidden="true" tabindex="-1"></a>Comme pour l'<span class="co">[</span><span class="ot">Exercice 1</span><span class="co">](../posts/Exercice_01.qmd)</span>, on va commencer par se débarasser des variables manquantes.</span>
+<span id="cb27-83"><a href="#cb27-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-86"><a href="#cb27-86" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-87"><a href="#cb27-87" aria-hidden="true" tabindex="-1"></a>Hitters_Without_NA <span class="ot">&lt;-</span> Hitters <span class="sc">%&gt;%</span> <span class="fu">na.omit</span>()</span>
+<span id="cb27-88"><a href="#cb27-88" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-89"><a href="#cb27-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-90"><a href="#cb27-90" aria-hidden="true" tabindex="-1"></a>Puis cette fois ci nous allons dans un premier temps nous concentrer sur un sous jeu de données composé des 18 premières lignes sans valeurs manquantes.</span>
+<span id="cb27-91"><a href="#cb27-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-94"><a href="#cb27-94" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-95"><a href="#cb27-95" aria-hidden="true" tabindex="-1"></a>Hitters_Without_NA_18 <span class="ot">&lt;-</span> Hitters_Without_NA[<span class="dv">1</span><span class="sc">:</span><span class="dv">18</span>, ]</span>
+<span id="cb27-96"><a href="#cb27-96" aria-hidden="true" tabindex="-1"></a>Hitters_Without_NA_18 <span class="sc">%&gt;%</span> <span class="fu">dim</span>()</span>
+<span id="cb27-97"><a href="#cb27-97" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-98"><a href="#cb27-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-99"><a href="#cb27-99" aria-hidden="true" tabindex="-1"></a>::: callout-warning</span>
+<span id="cb27-100"><a href="#cb27-100" aria-hidden="true" tabindex="-1"></a>Attention, on peut remarquer ici que le nombre de variable est supérieur au nombre d'individus. On est donc dans un cas classique de grandes dimension avec $p&gt;n$.</span>
+<span id="cb27-101"><a href="#cb27-101" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-102"><a href="#cb27-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-103"><a href="#cb27-103" aria-hidden="true" tabindex="-1"></a>Maintenant, il conviendrait dans ce genre de situation d'effectuer de premières analyses descritptives. Mais celle ci ayant déjà été faite sur le jeu de données complet pendant l'<span class="co">[</span><span class="ot">Exercice 1</span><span class="co">](../posts/Exercice_01.qmd)</span>, on se permettra de ne pas les refaires.</span>
+<span id="cb27-104"><a href="#cb27-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-105"><a href="#cb27-105" aria-hidden="true" tabindex="-1"></a><span class="fu"># Analyse inférentielle</span></span>
+<span id="cb27-106"><a href="#cb27-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-107"><a href="#cb27-107" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modèle brut</span></span>
+<span id="cb27-108"><a href="#cb27-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-109"><a href="#cb27-109" aria-hidden="true" tabindex="-1"></a>On désire modéliser le salaire *Salary* en fonction des variables disponibles.</span>
+<span id="cb27-110"><a href="#cb27-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-111"><a href="#cb27-111" aria-hidden="true" tabindex="-1"></a>On va donc ajuster un modèle de régression linéaire en utilisant toutes les variables à disposition et analyser la qualité de cet ajustement.</span>
+<span id="cb27-112"><a href="#cb27-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-115"><a href="#cb27-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-116"><a href="#cb27-116" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> Salary <span class="sc">~</span> .,</span>
+<span id="cb27-117"><a href="#cb27-117" aria-hidden="true" tabindex="-1"></a>           Hitters_Without_NA_18) </span>
+<span id="cb27-118"><a href="#cb27-118" aria-hidden="true" tabindex="-1"></a>mod1 <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb27-119"><a href="#cb27-119" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-120"><a href="#cb27-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-121"><a href="#cb27-121" aria-hidden="true" tabindex="-1"></a>:::: success-header</span>
+<span id="cb27-122"><a href="#cb27-122" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
+<span id="cb27-123"><a href="#cb27-123" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-124"><a href="#cb27-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-125"><a href="#cb27-125" aria-hidden="true" tabindex="-1"></a>Résultats</span>
+<span id="cb27-126"><a href="#cb27-126" aria-hidden="true" tabindex="-1"></a>::::</span>
+<span id="cb27-127"><a href="#cb27-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-128"><a href="#cb27-128" aria-hidden="true" tabindex="-1"></a>::: success</span>
+<span id="cb27-129"><a href="#cb27-129" aria-hidden="true" tabindex="-1"></a>On peut clairement constater que ce modèle brut ne fonctionne pas avec pourtant un $R^2 = 1$. On retrouve donc le problème typique de l'analyse en grande dimension lorsque $p&gt;n$ (fléau de la dimensionalité).</span>
+<span id="cb27-130"><a href="#cb27-130" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-131"><a href="#cb27-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-132"><a href="#cb27-132" aria-hidden="true" tabindex="-1"></a>On peut aussi s'amuser à regarder les critères *AIC* et *BIC* de ce modèles qui théoriquement se retrouve à tendre vers l'infini.</span>
 <span id="cb27-133"><a href="#cb27-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-134"><a href="#cb27-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-135"><a href="#cb27-135" aria-hidden="true" tabindex="-1"></a>On peut aussi s'amuser à regarder les critères *AIC* et *BIC* de ce modèles qui théoriquement se retrouve à tendre vers l'infini.</span>
-<span id="cb27-136"><a href="#cb27-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-139"><a href="#cb27-139" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-140"><a href="#cb27-140" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>( <span class="st">"AIC = "</span>, <span class="fu">AIC</span>(mod1), <span class="st">"et BIC = "</span>, <span class="fu">BIC</span>(mod1))</span>
-<span id="cb27-141"><a href="#cb27-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-142"><a href="#cb27-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-143"><a href="#cb27-143" aria-hidden="true" tabindex="-1"></a><span class="fu">### Prediction</span></span>
+<span id="cb27-136"><a href="#cb27-136" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-137"><a href="#cb27-137" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>( <span class="st">"AIC = "</span>, <span class="fu">AIC</span>(mod1), <span class="st">"et BIC = "</span>, <span class="fu">BIC</span>(mod1))</span>
+<span id="cb27-138"><a href="#cb27-138" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-139"><a href="#cb27-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-140"><a href="#cb27-140" aria-hidden="true" tabindex="-1"></a><span class="fu">### Prediction</span></span>
+<span id="cb27-141"><a href="#cb27-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-142"><a href="#cb27-142" aria-hidden="true" tabindex="-1"></a>On va maintenant tenter de prédire la variable *Salary* pour les autres joueurs.\</span>
+<span id="cb27-143"><a href="#cb27-143" aria-hidden="true" tabindex="-1"></a>Déjà on peut regarder sur les 18 joueurs si la prédiction via le modèle nous donne des bonnes valeur.</span>
 <span id="cb27-144"><a href="#cb27-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-145"><a href="#cb27-145" aria-hidden="true" tabindex="-1"></a>On va maintenant tenter de prédire la variable *Salary* pour les autres joueurs.\</span>
-<span id="cb27-146"><a href="#cb27-146" aria-hidden="true" tabindex="-1"></a>Déjà on peut regarder sur les 18 joueurs si la prédiction via le modèle nous donne des bonnes valeur.</span>
-<span id="cb27-147"><a href="#cb27-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-148"><a href="#cb27-148" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE, message=FALSE}</span></span>
-<span id="cb27-149"><a href="#cb27-149" aria-hidden="true" tabindex="-1"></a><span class="in">Salary_hat &lt;- predict(mod1, Hitters_Without_NA_18)</span></span>
-<span id="cb27-150"><a href="#cb27-150" aria-hidden="true" tabindex="-1"></a><span class="in">Salary &lt;- Hitters_Without_NA_18$Salary</span></span>
-<span id="cb27-151"><a href="#cb27-151" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-152"><a href="#cb27-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-153"><a href="#cb27-153" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\widehat{Salary^{(1:18)}} - Salary^{(1:18)} =$ <span class="in">`r round(mean(Salary_hat - Salary), 2)`</span></span>
-<span id="cb27-154"><a href="#cb27-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-155"><a href="#cb27-155" aria-hidden="true" tabindex="-1"></a>Ce que l'on constate c'est qu'effectivement nous sommes avec un résultat qui pourrait nous faire penser que le modèle est bien ajusté avec une prédiction quasiment égale à la variable à prédire.</span>
-<span id="cb27-156"><a href="#cb27-156" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb27-157"><a href="#cb27-157" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb27-158"><a href="#cb27-158" aria-hidden="true" tabindex="-1"></a>Pourtant si nous regardons la prédiction obtenue par le modèle pour les autres joueurs et que nous effectuons la même soustraction pour comparer la qualité de prediction, nous voyons bien l'inéfficacité du modèle. </span>
-<span id="cb27-159"><a href="#cb27-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-160"><a href="#cb27-160" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE, message=FALSE}</span></span>
-<span id="cb27-161"><a href="#cb27-161" aria-hidden="true" tabindex="-1"></a><span class="in">Hitters_Without_NA_No18 &lt;- Hitters_Without_NA[19:nrow(Hitters_Without_NA),]</span></span>
-<span id="cb27-162"><a href="#cb27-162" aria-hidden="true" tabindex="-1"></a><span class="in">Salary_hat_No18 &lt;- predict(mod1, Hitters_Without_NA_No18)</span></span>
-<span id="cb27-163"><a href="#cb27-163" aria-hidden="true" tabindex="-1"></a><span class="in">Salary_No18 &lt;- Hitters_Without_NA_No18$Salary</span></span>
-<span id="cb27-164"><a href="#cb27-164" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-145"><a href="#cb27-145" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE, message=FALSE}</span></span>
+<span id="cb27-146"><a href="#cb27-146" aria-hidden="true" tabindex="-1"></a><span class="in">Salary_hat &lt;- predict(mod1, Hitters_Without_NA_18)</span></span>
+<span id="cb27-147"><a href="#cb27-147" aria-hidden="true" tabindex="-1"></a><span class="in">Salary &lt;- Hitters_Without_NA_18$Salary</span></span>
+<span id="cb27-148"><a href="#cb27-148" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-149"><a href="#cb27-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-150"><a href="#cb27-150" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>$\widehat{Salary^{(1:18)}} - Salary^{(1:18)} =$ <span class="in">`r round(mean(Salary_hat - Salary), 2)`</span></span>
+<span id="cb27-151"><a href="#cb27-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-152"><a href="#cb27-152" aria-hidden="true" tabindex="-1"></a>Ce que l'on constate c'est qu'effectivement nous sommes avec un résultat qui pourrait nous faire penser que le modèle est bien ajusté avec une prédiction quasiment égale à la variable à prédire.</span>
+<span id="cb27-153"><a href="#cb27-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-154"><a href="#cb27-154" aria-hidden="true" tabindex="-1"></a>Pourtant si nous regardons la prédiction obtenue par le modèle pour les autres joueurs et que nous effectuons la même soustraction pour comparer la qualité de prediction, nous voyons bien l'inéfficacité du modèle.</span>
+<span id="cb27-155"><a href="#cb27-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-156"><a href="#cb27-156" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE, message=FALSE}</span></span>
+<span id="cb27-157"><a href="#cb27-157" aria-hidden="true" tabindex="-1"></a><span class="in">Hitters_Without_NA_No18 &lt;- Hitters_Without_NA[19:nrow(Hitters_Without_NA),]</span></span>
+<span id="cb27-158"><a href="#cb27-158" aria-hidden="true" tabindex="-1"></a><span class="in">Salary_hat_No18 &lt;- predict(mod1, Hitters_Without_NA_No18)</span></span>
+<span id="cb27-159"><a href="#cb27-159" aria-hidden="true" tabindex="-1"></a><span class="in">Salary_No18 &lt;- Hitters_Without_NA_No18$Salary</span></span>
+<span id="cb27-160"><a href="#cb27-160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-161"><a href="#cb27-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-162"><a href="#cb27-162" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>$\widehat{Salary^{(\neg 1:18)}} - Salary^{(\neg 1:18)} =$ <span class="in">`r round(mean(Salary_hat_No18 - Salary_No18), 2)`</span></span>
+<span id="cb27-163"><a href="#cb27-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-164"><a href="#cb27-164" aria-hidden="true" tabindex="-1"></a>En effet on voit bien au dessus que les valeurs ne sont en moyennes pas proche de 0.</span>
 <span id="cb27-165"><a href="#cb27-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-166"><a href="#cb27-166" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\widehat{Salary^{(\neg 1:18)}} - Salary^{(\neg 1:18)} =$ <span class="in">`r round(mean(Salary_hat_No18 - Salary_No18), 2)`</span></span>
+<span id="cb27-166"><a href="#cb27-166" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modèles parcimonieux</span></span>
 <span id="cb27-167"><a href="#cb27-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-168"><a href="#cb27-168" aria-hidden="true" tabindex="-1"></a>En effet on voit bien au dessus que les valeurs ne sont en moyennes pas proche de 0.</span>
+<span id="cb27-168"><a href="#cb27-168" aria-hidden="true" tabindex="-1"></a>On va maintenant mettre un oeuvre une méthode de sélection automatique classique pour réduire le nombre de variable explicative et tenter d'éviter les problèmes de grande dimension.</span>
 <span id="cb27-169"><a href="#cb27-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-170"><a href="#cb27-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-171"><a href="#cb27-171" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modèles parcimonieux</span></span>
-<span id="cb27-172"><a href="#cb27-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-173"><a href="#cb27-173" aria-hidden="true" tabindex="-1"></a>On va maintenant mettre un oeuvre une méthode de sélection automatique classique pour réduire le nombre de variable explicative et tenter d'éviter les problèmes de grande dimension.</span>
-<span id="cb27-174"><a href="#cb27-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-175"><a href="#cb27-175" aria-hidden="true" tabindex="-1"></a>Pour cela nous allons donc partir du plus petit modèle (celui avec seulement l'*intercept*) puis faire grandir le nombre de variable. Il va donc s'agir d'une méthode de sélection automatique *forward*. </span>
-<span id="cb27-176"><a href="#cb27-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-177"><a href="#cb27-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-180"><a href="#cb27-180" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-181"><a href="#cb27-181" aria-hidden="true" tabindex="-1"></a>mod0 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary<span class="sc">~</span><span class="dv">1</span>, Hitters_Without_NA_18)</span>
-<span id="cb27-182"><a href="#cb27-182" aria-hidden="true" tabindex="-1"></a>mod_forw <span class="ot">&lt;-</span> <span class="fu">step</span>(mod0,</span>
-<span id="cb27-183"><a href="#cb27-183" aria-hidden="true" tabindex="-1"></a>                 <span class="at">scope =</span> <span class="fu">formula</span>(mod1),</span>
-<span id="cb27-184"><a href="#cb27-184" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb27-185"><a href="#cb27-185" aria-hidden="true" tabindex="-1"></a>                 <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">"forward"</span>))</span>
-<span id="cb27-186"><a href="#cb27-186" aria-hidden="true" tabindex="-1"></a>mod_forw <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
-<span id="cb27-187"><a href="#cb27-187" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-188"><a href="#cb27-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-170"><a href="#cb27-170" aria-hidden="true" tabindex="-1"></a>Pour cela nous allons donc partir du plus petit modèle (celui avec seulement l'*intercept*) puis faire grandir le nombre de variable. Il va donc s'agir d'une méthode de sélection automatique *forward*.</span>
+<span id="cb27-171"><a href="#cb27-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-174"><a href="#cb27-174" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-175"><a href="#cb27-175" aria-hidden="true" tabindex="-1"></a>mod0 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary<span class="sc">~</span><span class="dv">1</span>, Hitters_Without_NA_18)</span>
+<span id="cb27-176"><a href="#cb27-176" aria-hidden="true" tabindex="-1"></a>mod_forw <span class="ot">&lt;-</span> <span class="fu">step</span>(mod0,</span>
+<span id="cb27-177"><a href="#cb27-177" aria-hidden="true" tabindex="-1"></a>                 <span class="at">scope =</span> <span class="fu">formula</span>(mod1),</span>
+<span id="cb27-178"><a href="#cb27-178" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb27-179"><a href="#cb27-179" aria-hidden="true" tabindex="-1"></a>                 <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">"forward"</span>))</span>
+<span id="cb27-180"><a href="#cb27-180" aria-hidden="true" tabindex="-1"></a>mod_forw <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb27-181"><a href="#cb27-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-182"><a href="#cb27-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-183"><a href="#cb27-183" aria-hidden="true" tabindex="-1"></a>:::: success-header</span>
+<span id="cb27-184"><a href="#cb27-184" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
+<span id="cb27-185"><a href="#cb27-185" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-186"><a href="#cb27-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-187"><a href="#cb27-187" aria-hidden="true" tabindex="-1"></a>Résultats</span>
+<span id="cb27-188"><a href="#cb27-188" aria-hidden="true" tabindex="-1"></a>::::</span>
 <span id="cb27-189"><a href="#cb27-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-190"><a href="#cb27-190" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
-<span id="cb27-191"><a href="#cb27-191" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
-<span id="cb27-192"><a href="#cb27-192" aria-hidden="true" tabindex="-1"></a>::: </span>
-<span id="cb27-193"><a href="#cb27-193" aria-hidden="true" tabindex="-1"></a>Résultats</span>
-<span id="cb27-194"><a href="#cb27-194" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb27-195"><a href="#cb27-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-196"><a href="#cb27-196" aria-hidden="true" tabindex="-1"></a>::: success</span>
-<span id="cb27-197"><a href="#cb27-197" aria-hidden="true" tabindex="-1"></a>Nous obtenons maintenant un modèle avec 2 variable dont une significative. Puis nous pouvons constater des valeurs assez élevés pour le $R^2$ et $R^2_{adjusted}$.</span>
-<span id="cb27-198"><a href="#cb27-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-199"><a href="#cb27-199" aria-hidden="true" tabindex="-1"></a>Et on a *AIC* = `r round(AIC(mod_forw), 3)` et *BIC* = <span class="in">`r round(BIC(mod_forw), 3)`</span>.</span>
-<span id="cb27-200"><a href="#cb27-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-201"><a href="#cb27-201" aria-hidden="true" tabindex="-1"></a>Donc sans aller tester si c'est un bon modèle prédictif, on constate déjà qu'il va s'agir d'un modèle descriptif fonctionnel avec $n&lt;p$</span>
-<span id="cb27-202"><a href="#cb27-202" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb27-203"><a href="#cb27-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-204"><a href="#cb27-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-190"><a href="#cb27-190" aria-hidden="true" tabindex="-1"></a>::: success</span>
+<span id="cb27-191"><a href="#cb27-191" aria-hidden="true" tabindex="-1"></a>Nous obtenons maintenant un modèle avec 2 variable dont une significative. Puis nous pouvons constater des valeurs assez élevés pour le $R^2$ et $R^2_{adjusted}$.</span>
+<span id="cb27-192"><a href="#cb27-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-193"><a href="#cb27-193" aria-hidden="true" tabindex="-1"></a>Et on a *AIC* = `r round(AIC(mod_forw), 3)` et *BIC* = <span class="in">`r round(BIC(mod_forw), 3)`</span>.</span>
+<span id="cb27-194"><a href="#cb27-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-195"><a href="#cb27-195" aria-hidden="true" tabindex="-1"></a>Donc sans aller tester si c'est un bon modèle prédictif, on constate déjà qu'il va s'agir d'un modèle descriptif fonctionnel avec $n&lt;p$</span>
+<span id="cb27-196"><a href="#cb27-196" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-197"><a href="#cb27-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-198"><a href="#cb27-198" aria-hidden="true" tabindex="-1"></a><span class="fu"># Permutations</span></span>
+<span id="cb27-199"><a href="#cb27-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-200"><a href="#cb27-200" aria-hidden="true" tabindex="-1"></a>Maintenant, nous allons permuter de façon aléatoire les salaires des 18 joueurs et refaire la même analyse inférentielle. Ainsi, le lien linéaire devrait disparaitre et nous donner de mauvais résultats.</span>
+<span id="cb27-201"><a href="#cb27-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-202"><a href="#cb27-202" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb27-203"><a href="#cb27-203" aria-hidden="true" tabindex="-1"></a>pour des raisons de repouctibilité, une graine ou seed a été défini dans le setup afin que la génération aléatoire reste identique.</span>
+<span id="cb27-204"><a href="#cb27-204" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb27-205"><a href="#cb27-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-206"><a href="#cb27-206" aria-hidden="true" tabindex="-1"></a><span class="fu"># Permutations</span></span>
+<span id="cb27-206"><a href="#cb27-206" aria-hidden="true" tabindex="-1"></a>Faisons à nouveau le modèle brute sur nos 18 joueurs.</span>
 <span id="cb27-207"><a href="#cb27-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-208"><a href="#cb27-208" aria-hidden="true" tabindex="-1"></a>Maintenant, nous allons permuter de façon aléatoire les salaires des 18 joueurs et refaire la même analyse inférentielle. Ainsi, le lien linéaire devrait disparaitre et nous donner de mauvais résultats.</span>
-<span id="cb27-209"><a href="#cb27-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-210"><a href="#cb27-210" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb27-211"><a href="#cb27-211" aria-hidden="true" tabindex="-1"></a>pour des raisons de repouctibilité, une graine ou seed a été défini dans le setup afin que la génération aléatoire reste identique.</span>
-<span id="cb27-212"><a href="#cb27-212" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb27-213"><a href="#cb27-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-214"><a href="#cb27-214" aria-hidden="true" tabindex="-1"></a>Faisons à nouveau le modèle brute sur nos 18 joueurs.</span>
-<span id="cb27-217"><a href="#cb27-217" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-218"><a href="#cb27-218" aria-hidden="true" tabindex="-1"></a>Hitters_Without_NA_18<span class="sc">$</span>Salary_permute <span class="ot">&lt;-</span> <span class="fu">sample</span>(Salary)</span>
-<span id="cb27-219"><a href="#cb27-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-220"><a href="#cb27-220" aria-hidden="true" tabindex="-1"></a>mod1_permute <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary_permute<span class="sc">~</span>., <span class="fu">subset</span>(Hitters_Without_NA_18, <span class="at">select =</span> <span class="sc">-</span>Salary))</span>
-<span id="cb27-221"><a href="#cb27-221" aria-hidden="true" tabindex="-1"></a>mod1_permute <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
-<span id="cb27-222"><a href="#cb27-222" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-223"><a href="#cb27-223" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
-<span id="cb27-224"><a href="#cb27-224" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
-<span id="cb27-225"><a href="#cb27-225" aria-hidden="true" tabindex="-1"></a>::: </span>
-<span id="cb27-226"><a href="#cb27-226" aria-hidden="true" tabindex="-1"></a>Résultats</span>
-<span id="cb27-227"><a href="#cb27-227" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb27-228"><a href="#cb27-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-229"><a href="#cb27-229" aria-hidden="true" tabindex="-1"></a>::: success</span>
-<span id="cb27-230"><a href="#cb27-230" aria-hidden="true" tabindex="-1"></a>A nouveau on peut constater l'inéfficacité d'un modèle avec toutes les variables du fait d'avoir $p&gt;n$.</span>
-<span id="cb27-231"><a href="#cb27-231" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb27-232"><a href="#cb27-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-233"><a href="#cb27-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-234"><a href="#cb27-234" aria-hidden="true" tabindex="-1"></a>Utilisons maintenant la sélection automatique en testant à nouveau l'approche *forward*.</span>
-<span id="cb27-235"><a href="#cb27-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-238"><a href="#cb27-238" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-239"><a href="#cb27-239" aria-hidden="true" tabindex="-1"></a>mod0_permute <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary_permute<span class="sc">~</span><span class="dv">1</span>, <span class="fu">subset</span>(Hitters_Without_NA_18, <span class="at">select =</span> <span class="sc">-</span>Salary))</span>
-<span id="cb27-240"><a href="#cb27-240" aria-hidden="true" tabindex="-1"></a>mod_forw_permute <span class="ot">&lt;-</span> <span class="fu">step</span>(mod0_permute, </span>
-<span id="cb27-241"><a href="#cb27-241" aria-hidden="true" tabindex="-1"></a>                         <span class="at">scope =</span> <span class="fu">formula</span>(mod1_permute),</span>
-<span id="cb27-242"><a href="#cb27-242" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trace =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb27-243"><a href="#cb27-243" aria-hidden="true" tabindex="-1"></a>                         <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">"forward"</span>))</span>
-<span id="cb27-244"><a href="#cb27-244" aria-hidden="true" tabindex="-1"></a>mod_forw_permute <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
-<span id="cb27-245"><a href="#cb27-245" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-246"><a href="#cb27-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-247"><a href="#cb27-247" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
-<span id="cb27-248"><a href="#cb27-248" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
-<span id="cb27-249"><a href="#cb27-249" aria-hidden="true" tabindex="-1"></a>::: </span>
-<span id="cb27-250"><a href="#cb27-250" aria-hidden="true" tabindex="-1"></a>Résultats</span>
-<span id="cb27-251"><a href="#cb27-251" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb27-252"><a href="#cb27-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-253"><a href="#cb27-253" aria-hidden="true" tabindex="-1"></a>::: success</span>
-<span id="cb27-254"><a href="#cb27-254" aria-hidden="true" tabindex="-1"></a>On constate que plusieurs variables son significatives. Pourtant, on trouve ici un modèle avec de très mauvais $R^2$ et $R^2_{adjusted}$. Donc un modèle de mauvaise qualité avec en plus une variance assez grande.</span>
-<span id="cb27-255"><a href="#cb27-255" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb27-256"><a href="#cb27-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-257"><a href="#cb27-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-258"><a href="#cb27-258" aria-hidden="true" tabindex="-1"></a>Pour finir, on va maintenant reprendre le jeu de données **Hitters** complet et permuter tous les salaires de façon aléatoire. Ensuite, on va ajuster le meilleur modèle de régression possible pour expliquer les salaires en fonction des autres variables.</span>
-<span id="cb27-259"><a href="#cb27-259" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-262"><a href="#cb27-262" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-263"><a href="#cb27-263" aria-hidden="true" tabindex="-1"></a>Hitters_Without_NA<span class="sc">$</span>Salary_permute <span class="ot">&lt;-</span> <span class="fu">sample</span>(Hitters_Without_NA<span class="sc">$</span>Salary)</span>
-<span id="cb27-264"><a href="#cb27-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-265"><a href="#cb27-265" aria-hidden="true" tabindex="-1"></a>mod0_permute <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary_permute<span class="sc">~</span>., <span class="fu">subset</span>(Hitters_Without_NA, <span class="at">select =</span> <span class="sc">-</span>Salary))</span>
-<span id="cb27-266"><a href="#cb27-266" aria-hidden="true" tabindex="-1"></a>mod1_permute <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary_permute<span class="sc">~</span><span class="dv">1</span>, <span class="fu">subset</span>(Hitters_Without_NA, <span class="at">select =</span> <span class="sc">-</span>Salary))</span>
+<span id="cb27-210"><a href="#cb27-210" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-211"><a href="#cb27-211" aria-hidden="true" tabindex="-1"></a>Hitters_Without_NA_18<span class="sc">$</span>Salary_permute <span class="ot">&lt;-</span> <span class="fu">sample</span>(Salary)</span>
+<span id="cb27-212"><a href="#cb27-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-213"><a href="#cb27-213" aria-hidden="true" tabindex="-1"></a>mod1_permute <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary_permute<span class="sc">~</span>., <span class="fu">subset</span>(Hitters_Without_NA_18, <span class="at">select =</span> <span class="sc">-</span>Salary))</span>
+<span id="cb27-214"><a href="#cb27-214" aria-hidden="true" tabindex="-1"></a>mod1_permute <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb27-215"><a href="#cb27-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-216"><a href="#cb27-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-217"><a href="#cb27-217" aria-hidden="true" tabindex="-1"></a>:::: success-header</span>
+<span id="cb27-218"><a href="#cb27-218" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
+<span id="cb27-219"><a href="#cb27-219" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-220"><a href="#cb27-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-221"><a href="#cb27-221" aria-hidden="true" tabindex="-1"></a>Résultats</span>
+<span id="cb27-222"><a href="#cb27-222" aria-hidden="true" tabindex="-1"></a>::::</span>
+<span id="cb27-223"><a href="#cb27-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-224"><a href="#cb27-224" aria-hidden="true" tabindex="-1"></a>::: success</span>
+<span id="cb27-225"><a href="#cb27-225" aria-hidden="true" tabindex="-1"></a>A nouveau on peut constater l'inéfficacité d'un modèle avec toutes les variables du fait d'avoir $p&gt;n$.</span>
+<span id="cb27-226"><a href="#cb27-226" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-227"><a href="#cb27-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-228"><a href="#cb27-228" aria-hidden="true" tabindex="-1"></a>Utilisons maintenant la sélection automatique en testant à nouveau l'approche *forward*.</span>
+<span id="cb27-229"><a href="#cb27-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-232"><a href="#cb27-232" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-233"><a href="#cb27-233" aria-hidden="true" tabindex="-1"></a>mod0_permute <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary_permute<span class="sc">~</span><span class="dv">1</span>, <span class="fu">subset</span>(Hitters_Without_NA_18, <span class="at">select =</span> <span class="sc">-</span>Salary))</span>
+<span id="cb27-234"><a href="#cb27-234" aria-hidden="true" tabindex="-1"></a>mod_forw_permute <span class="ot">&lt;-</span> <span class="fu">step</span>(mod0_permute, </span>
+<span id="cb27-235"><a href="#cb27-235" aria-hidden="true" tabindex="-1"></a>                         <span class="at">scope =</span> <span class="fu">formula</span>(mod1_permute),</span>
+<span id="cb27-236"><a href="#cb27-236" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trace =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb27-237"><a href="#cb27-237" aria-hidden="true" tabindex="-1"></a>                         <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">"forward"</span>))</span>
+<span id="cb27-238"><a href="#cb27-238" aria-hidden="true" tabindex="-1"></a>mod_forw_permute <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb27-239"><a href="#cb27-239" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-240"><a href="#cb27-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-241"><a href="#cb27-241" aria-hidden="true" tabindex="-1"></a>:::: success-header</span>
+<span id="cb27-242"><a href="#cb27-242" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
+<span id="cb27-243"><a href="#cb27-243" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-244"><a href="#cb27-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-245"><a href="#cb27-245" aria-hidden="true" tabindex="-1"></a>Résultats</span>
+<span id="cb27-246"><a href="#cb27-246" aria-hidden="true" tabindex="-1"></a>::::</span>
+<span id="cb27-247"><a href="#cb27-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-248"><a href="#cb27-248" aria-hidden="true" tabindex="-1"></a>::: success</span>
+<span id="cb27-249"><a href="#cb27-249" aria-hidden="true" tabindex="-1"></a>On constate que plusieurs variables son significatives. Pourtant, on trouve ici un modèle avec de très mauvais $R^2$ et $R^2_{adjusted}$. Donc un modèle de mauvaise qualité avec en plus une variance assez grande.</span>
+<span id="cb27-250"><a href="#cb27-250" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-251"><a href="#cb27-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-252"><a href="#cb27-252" aria-hidden="true" tabindex="-1"></a>Pour finir, on va maintenant reprendre le jeu de données **Hitters** complet et permuter tous les salaires de façon aléatoire. Ensuite, on va ajuster le meilleur modèle de régression possible pour expliquer les salaires en fonction des autres variables.</span>
+<span id="cb27-253"><a href="#cb27-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-256"><a href="#cb27-256" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-257"><a href="#cb27-257" aria-hidden="true" tabindex="-1"></a>Hitters_Without_NA<span class="sc">$</span>Salary_permute <span class="ot">&lt;-</span> <span class="fu">sample</span>(Hitters_Without_NA<span class="sc">$</span>Salary)</span>
+<span id="cb27-258"><a href="#cb27-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-259"><a href="#cb27-259" aria-hidden="true" tabindex="-1"></a>mod0_permute <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary_permute<span class="sc">~</span>., <span class="fu">subset</span>(Hitters_Without_NA, <span class="at">select =</span> <span class="sc">-</span>Salary))</span>
+<span id="cb27-260"><a href="#cb27-260" aria-hidden="true" tabindex="-1"></a>mod1_permute <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary_permute<span class="sc">~</span><span class="dv">1</span>, <span class="fu">subset</span>(Hitters_Without_NA, <span class="at">select =</span> <span class="sc">-</span>Salary))</span>
+<span id="cb27-261"><a href="#cb27-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-262"><a href="#cb27-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-263"><a href="#cb27-263" aria-hidden="true" tabindex="-1"></a>mod_permute_back <span class="ot">&lt;-</span> <span class="fu">step</span>(mod1_permute,</span>
+<span id="cb27-264"><a href="#cb27-264" aria-hidden="true" tabindex="-1"></a>                         <span class="at">scope =</span> <span class="fu">formula</span>(mod1_permute),</span>
+<span id="cb27-265"><a href="#cb27-265" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trace =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb27-266"><a href="#cb27-266" aria-hidden="true" tabindex="-1"></a>                         <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">"backward"</span>))</span>
 <span id="cb27-267"><a href="#cb27-267" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-268"><a href="#cb27-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-269"><a href="#cb27-269" aria-hidden="true" tabindex="-1"></a>mod_permute_back <span class="ot">&lt;-</span> <span class="fu">step</span>(mod1_permute,</span>
-<span id="cb27-270"><a href="#cb27-270" aria-hidden="true" tabindex="-1"></a>                         <span class="at">scope =</span> <span class="fu">formula</span>(mod1_permute),</span>
-<span id="cb27-271"><a href="#cb27-271" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trace =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb27-272"><a href="#cb27-272" aria-hidden="true" tabindex="-1"></a>                         <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">"backward"</span>))</span>
-<span id="cb27-273"><a href="#cb27-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-269"><a href="#cb27-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-270"><a href="#cb27-270" aria-hidden="true" tabindex="-1"></a>mod_permute_forw <span class="ot">&lt;-</span> <span class="fu">step</span>(mod0_permute,</span>
+<span id="cb27-271"><a href="#cb27-271" aria-hidden="true" tabindex="-1"></a>                         <span class="at">scope =</span> <span class="fu">formula</span>(mod1_permute),</span>
+<span id="cb27-272"><a href="#cb27-272" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trace =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb27-273"><a href="#cb27-273" aria-hidden="true" tabindex="-1"></a>                         <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">"forward"</span>))</span>
 <span id="cb27-274"><a href="#cb27-274" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-275"><a href="#cb27-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-276"><a href="#cb27-276" aria-hidden="true" tabindex="-1"></a>mod_permute_forw <span class="ot">&lt;-</span> <span class="fu">step</span>(mod0_permute,</span>
+<span id="cb27-276"><a href="#cb27-276" aria-hidden="true" tabindex="-1"></a>mod_permute_both <span class="ot">&lt;-</span> <span class="fu">step</span>(mod0_permute,</span>
 <span id="cb27-277"><a href="#cb27-277" aria-hidden="true" tabindex="-1"></a>                         <span class="at">scope =</span> <span class="fu">formula</span>(mod1_permute),</span>
 <span id="cb27-278"><a href="#cb27-278" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trace =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb27-279"><a href="#cb27-279" aria-hidden="true" tabindex="-1"></a>                         <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">"forward"</span>))</span>
+<span id="cb27-279"><a href="#cb27-279" aria-hidden="true" tabindex="-1"></a>                         <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">"both"</span>))</span>
 <span id="cb27-280"><a href="#cb27-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-281"><a href="#cb27-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-282"><a href="#cb27-282" aria-hidden="true" tabindex="-1"></a>mod_permute_both <span class="ot">&lt;-</span> <span class="fu">step</span>(mod0_permute,</span>
-<span id="cb27-283"><a href="#cb27-283" aria-hidden="true" tabindex="-1"></a>                         <span class="at">scope =</span> <span class="fu">formula</span>(mod1_permute),</span>
-<span id="cb27-284"><a href="#cb27-284" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trace =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb27-285"><a href="#cb27-285" aria-hidden="true" tabindex="-1"></a>                         <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">"both"</span>))</span>
-<span id="cb27-286"><a href="#cb27-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-287"><a href="#cb27-287" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-288"><a href="#cb27-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-289"><a href="#cb27-289" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
-<span id="cb27-290"><a href="#cb27-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-291"><a href="#cb27-291" aria-hidden="true" tabindex="-1"></a><span class="fu">## *Backward*</span></span>
-<span id="cb27-292"><a href="#cb27-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-295"><a href="#cb27-295" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-296"><a href="#cb27-296" aria-hidden="true" tabindex="-1"></a>mod_permute_back <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
-<span id="cb27-297"><a href="#cb27-297" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-298"><a href="#cb27-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-281"><a href="#cb27-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-282"><a href="#cb27-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-283"><a href="#cb27-283" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
+<span id="cb27-284"><a href="#cb27-284" aria-hidden="true" tabindex="-1"></a><span class="fu">## *Backward*</span></span>
+<span id="cb27-285"><a href="#cb27-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-288"><a href="#cb27-288" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-289"><a href="#cb27-289" aria-hidden="true" tabindex="-1"></a>mod_permute_back <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb27-290"><a href="#cb27-290" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-291"><a href="#cb27-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-292"><a href="#cb27-292" aria-hidden="true" tabindex="-1"></a><span class="fu">## *Forward*</span></span>
+<span id="cb27-293"><a href="#cb27-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-296"><a href="#cb27-296" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-297"><a href="#cb27-297" aria-hidden="true" tabindex="-1"></a>mod_permute_forw <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb27-298"><a href="#cb27-298" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-299"><a href="#cb27-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-300"><a href="#cb27-300" aria-hidden="true" tabindex="-1"></a><span class="fu">## *Forward*</span></span>
+<span id="cb27-300"><a href="#cb27-300" aria-hidden="true" tabindex="-1"></a><span class="fu">## *Both*</span></span>
 <span id="cb27-301"><a href="#cb27-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-302"><a href="#cb27-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-305"><a href="#cb27-305" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-306"><a href="#cb27-306" aria-hidden="true" tabindex="-1"></a>mod_permute_forw <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
-<span id="cb27-307"><a href="#cb27-307" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-304"><a href="#cb27-304" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-305"><a href="#cb27-305" aria-hidden="true" tabindex="-1"></a>mod_permute_both <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb27-306"><a href="#cb27-306" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-307"><a href="#cb27-307" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb27-308"><a href="#cb27-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-309"><a href="#cb27-309" aria-hidden="true" tabindex="-1"></a><span class="fu">## *Both*</span></span>
-<span id="cb27-310"><a href="#cb27-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-313"><a href="#cb27-313" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-314"><a href="#cb27-314" aria-hidden="true" tabindex="-1"></a>mod_permute_both <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
-<span id="cb27-315"><a href="#cb27-315" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-316"><a href="#cb27-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-317"><a href="#cb27-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-309"><a href="#cb27-309" aria-hidden="true" tabindex="-1"></a>:::: success-header</span>
+<span id="cb27-310"><a href="#cb27-310" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
+<span id="cb27-311"><a href="#cb27-311" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-312"><a href="#cb27-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-313"><a href="#cb27-313" aria-hidden="true" tabindex="-1"></a>Résultats</span>
+<span id="cb27-314"><a href="#cb27-314" aria-hidden="true" tabindex="-1"></a>::::</span>
+<span id="cb27-315"><a href="#cb27-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-316"><a href="#cb27-316" aria-hidden="true" tabindex="-1"></a>::: success</span>
+<span id="cb27-317"><a href="#cb27-317" aria-hidden="true" tabindex="-1"></a>On constate qu'aucune méthode de sélection de variable ne permet d'avoir ne serait-ce qu'un modèle correct ce qui montre bien qu'avec la permutation aléatoire de la variable *Salary*, le lien linéaire qui existait à disparu.</span>
 <span id="cb27-318"><a href="#cb27-318" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb27-319"><a href="#cb27-319" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-320"><a href="#cb27-320" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
-<span id="cb27-321"><a href="#cb27-321" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
-<span id="cb27-322"><a href="#cb27-322" aria-hidden="true" tabindex="-1"></a>::: </span>
-<span id="cb27-323"><a href="#cb27-323" aria-hidden="true" tabindex="-1"></a>Résultats</span>
-<span id="cb27-324"><a href="#cb27-324" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-320"><a href="#cb27-320" aria-hidden="true" tabindex="-1"></a><span class="fu"># Conclusion</span></span>
+<span id="cb27-321"><a href="#cb27-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-322"><a href="#cb27-322" aria-hidden="true" tabindex="-1"></a>Dans un premier temps, on a pu avoir un aperçu de ce qu'il se passe lorsque l'on se retrouve face au fléa de la dimensionalité avec un sous jeu de données où le nombre de variables était supérieur au nombre d'individus.</span>
+<span id="cb27-323"><a href="#cb27-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-324"><a href="#cb27-324" aria-hidden="true" tabindex="-1"></a>Puis, on a aussi pu voir l'importance du lien linéaire dans la construction d'un modèle de regression. Cela renforce par l'exemple la véracité du modèle de régression linéaire (au cas où l'on en doutais encore).</span>
 <span id="cb27-325"><a href="#cb27-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-326"><a href="#cb27-326" aria-hidden="true" tabindex="-1"></a>::: success</span>
-<span id="cb27-327"><a href="#cb27-327" aria-hidden="true" tabindex="-1"></a>On constate qu'aucune méthode de sélection de variable ne permet d'avoir ne serait-ce qu'un modèle correct ce qui montre bien qu'avec la permutation aléatoire de la variable *Salary*, le lien linéaire qui existait à disparu.</span>
-<span id="cb27-328"><a href="#cb27-328" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb27-329"><a href="#cb27-329" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-330"><a href="#cb27-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-331"><a href="#cb27-331" aria-hidden="true" tabindex="-1"></a><span class="fu"># Conclusion</span></span>
-<span id="cb27-332"><a href="#cb27-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-333"><a href="#cb27-333" aria-hidden="true" tabindex="-1"></a>Dans un premier temps, on a pu avoir un aperçu de ce qu'il se passe lorsque l'on se retrouve face au fléa de la dimensionalité avec un sous jeu de données où le nombre de variables était supérieur au nombre d'individus.</span>
-<span id="cb27-334"><a href="#cb27-334" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-335"><a href="#cb27-335" aria-hidden="true" tabindex="-1"></a>Puis, on a aussi pu voir l'importance du lien linéaire dans la construction d'un modèle de regression. Cela renforce par l'exemple la véracité du modèle de régression linéaire (au cas où l'on en doutais encore).</span>
-<span id="cb27-336"><a href="#cb27-336" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-337"><a href="#cb27-337" aria-hidden="true" tabindex="-1"></a><span class="fu"># Session info</span></span>
-<span id="cb27-338"><a href="#cb27-338" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-341"><a href="#cb27-341" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-342"><a href="#cb27-342" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">pkgs =</span> <span class="st">"attached"</span>)</span>
-<span id="cb27-343"><a href="#cb27-343" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-326"><a href="#cb27-326" aria-hidden="true" tabindex="-1"></a><span class="fu"># Session info</span></span>
+<span id="cb27-327"><a href="#cb27-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-330"><a href="#cb27-330" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-331"><a href="#cb27-331" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">pkgs =</span> <span class="st">"attached"</span>)</span>
+<span id="cb27-332"><a href="#cb27-332" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
