@@ -84,6 +84,32 @@ library(gridExtra)
 
 ::: panel-tabset
 
+### Plot de validation
+
+```{r}
+my_validationplot <- function(mod, data) {
+  msep.cv <- MSEP(mod, estimate = c("CV", "adjCV"))
+  rmsep.cv <- RMSEP(mod, estimate = c("CV", "adjCV"))
+  
+  x_msep <- c(msep.cv$val[1, , ], msep.cv$val[2, , ])
+  x_rmsep <- c(rmsep.cv$val[1, , ], rmsep.cv$val[2, , ])
+  y <- c(rep("CV", length(msep.cv$val[2, , ])), rep("adjCV", length(msep.cv$val[2, , ])))
+  
+  z <- c(0:(ncol(data) - 1), 0:(ncol(data) - 1))
+  dt <- data.frame(x_msep, x_rmsep, y, z)
+  colnames(dt) <- c("MSEP", "RMSEP", "sample", "comps")
+  
+  
+  p.msep <- ggplot(dt, aes(x = comps, y = MSEP, col = sample)) + geom_line() +
+    theme_bw()
+  p.rmsep <- ggplot(dt, aes(x = comps, y = RMSEP, col = sample)) + geom_line() +
+    theme_bw()
+  
+  return(list(MSEP = p.msep, RMSEP = p.rmsep))
+}
+```
+
+
 :::
 
 ## Seed
@@ -133,13 +159,11 @@ Ainsi, on va pouvoir tout de suite commencer par faire le découpage de notre je
 
 ```{r}
 percent_to_draw <- 0.75
-index_draw <- sample(nrow(Hitters_Without_NA), size = floor(percent_to_draw * nrow(Hitters_Without_NA)))
+index_train <- sample(nrow(Hitters_Without_NA), size = floor(percent_to_draw * nrow(Hitters_Without_NA)))
 
-Hitters_train <- Hitters_Without_NA[indices_train, ]
-dim(Hitters_train)
+Hitters_train <- Hitters_Without_NA[index_train, ]
 
-Hitters_test <- Hitters_Without_NA[-indices_train, ]
-dim(Hitters_test)
+Hitters_test <- Hitters_Without_NA[-index_train, ]
 ```
 
 
@@ -159,45 +183,54 @@ mod_pcr <- pcr(
   segments = 10
 )
 mod_pcr %>% summary()
+```
 
 
-par(mfrow=c(1,2))
-validationplot(mod_pcr, val.type = "RMSEP") 
-validationplot(mod_pcr, val.type = "MSEP") 
-# validationplot(salary.pcr, val.type = "R2") # inutile car augment tout le temps en fonction des composantes 
-par(mfrow=c(1,1))
+On peut maintenant visualiser l'évolution du MSEP et RMSEP enfonction du nombre de composantes gardées.
+```{r, fig.width=12}
+grid.arrange(my_validationplot(mod_pcr, Hitters_train)$MSEP,
+             my_validationplot(mod_pcr, Hitters_train)$RMSEP,
+             ncol=2)
+```
+
+On peut voir courbe proche entre CV et adjCV avec une valeur minimum qui semble se trouver pour 6 composantes.
 
 
-mod_pcr$coefficients
-
-rmsep.cv_mod_pcr <- min(RMSEP(mod_pcr, "CV")$val[,,])
-rmsep.cv_mod_pcr # 348.3224
-nb.com_rmsep.cv_mod_pcr = which.min(RMSEP(mod_pcr, "CV")$val[,,])
-nb.com_rmsep.cv_mod_pcr # 14 comps (sans compter l'intercept)
+Et on petut alors récupérer le nombre de composantes à garder qui minimsent le MSEP et RMSEP.
+```{r}
+ncomp.rmsep_pcr <- which.min(RMSEP(mod_pcr, estimate = c("CV"))$val["CV",,])-1
 ```
 
 
 ## PLS
 
 ```{r}
-salary.pls <- plsr(Salary ~., scale = TRUE, data = Hitters_train, validation = "CV", segments=10)
-summary(salary.pls)
-
-par(mfrow=c(1,2))
-validationplot(salary.pls, val.type = "RMSEP") 
-validationplot(salary.pls, val.type = "MSEP") 
-# validationplot(salary.pls, val.type = "R2") # inutile car augment tout le temps en fonction des composantes 
-par(mfrow=c(1,1))
-
-
-salary.pls$coefficients
-
-rmsep.cv_salary.pls <- min(RMSEP(salary.pls, "CV")$val[,,])
-rmsep.cv_salary.pls # 348.3051
-nb.com_rmsep.cv_salary.pls = which.min(RMSEP(salary.pls, "CV")$val[,,])
-nb.com_rmsep.cv_salary.pls # 12 comps (sans compter l'intercept)
-
+mod_pls <- plsr(
+  Salary ~ .,
+  scale = TRUE,
+  data = Hitters_train,
+  validation = "CV",
+  segments = 10
+)
+mod_pls %>% summary()
 ```
+
+
+On peut maintenant visualiser l'évolution du MSEP et RMSEP enfonction du nombre de composantes gardées.
+```{r, fig.width=12}
+grid.arrange(my_validationplot(mod_pls, Hitters_train)$MSEP,
+             my_validationplot(mod_pls, Hitters_train)$RMSEP,
+             ncol=2)
+```
+
+On peut voir courbe proche entre CV et adjCV avec une valeur minimum qui semble se trouver pour 6 composantes.
+
+
+Et on petut alors récupérer le nombre de composantes à garder qui minimsent le MSEP et RMSEP.
+```{r}
+ncomp.rmsep_pls <- which.min(RMSEP(mod_pls, estimate = c("CV"))$val["CV",,])-1
+```
+
 
 
 :::
@@ -206,26 +239,31 @@ nb.com_rmsep.cv_salary.pls # 12 comps (sans compter l'intercept)
 
 # Prédiction
 
+On va calculer le RMSEP calculé à partir de la prédiction pour l'échantillon test.
+```{r}
+hat_Hitters_test_mod_pcr <- predict(mod_pcr, Hitters_test, ncomp =  (which.min(RMSEP(
+  mod_pcr, estimate = c("CV")
+)$val["CV", , ]) - 1))
+rmsep_mod_pcr <- sqrt(mean((
+  hat_Hitters_test_mod_pcr - Hitters_test$Salary
+) ** 2))
+
+hat_df_test_salary.pls <- predict(mod_pls, Hitters_test, ncomp =  (which.min(RMSEP(
+  mod_pls, estimate = c("CV")
+)$val["CV", , ]) - 1))
+rmsep_mod_pls <- sqrt(mean((
+  hat_df_test_salary.pls - Hitters_test$Salary
+) ** 2))
+```
 
 ```{r}
-# Calcul à la main entre la prdiction et le df_test
-
-hat_Hitters_test_mod_pcr = predict(mod_pcr, Hitters_test)
-
-rmsep_mod_pcr = sqrt(mean((hat_Hitters_test_mod_pcr - Hitters_test$Salary)**2))
-rmsep_mod_pcr
-# 346.1988
-
-
-hat_df_test_salary.pls = predict(salary.pls, Hitters_test)
-
-rmsep_salary.pls = sqrt(mean((hat_df_test_salary.pls - Hitters_test$Salary)**2))
-rmsep_salary.pls
-# 356.0666
-
-
-# Le rmsep est minimum pour PCR sur les 3 méthodes (PCR->PLS->step)
+rmsep_df <- data.frame("prediction PCR" = rmsep_mod_pcr, "prediction PLS" = rmsep_mod_pls) 
+rownames(rmsep_df) <- "RMSEP"
+rmsep_df 
 ```
+
+
+
 
 
 
