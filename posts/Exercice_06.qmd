@@ -1,7 +1,8 @@
 ---
 title: "Exercice 06"
 author: "Clément Poupelin"
-date: "`r Sys.Date()`"
+date: "2025-02-23"
+date-modified: "`r Sys.Date()`"
 format: 
   html:
     embed-resources: false
@@ -17,7 +18,7 @@ number-sections: false
 editor: visual
 categories: ["Régression sur composantes principales", "Régression des moindres carrés partiels", "Validation croisée"]
 image: "/img/baseball.png"
-description: "Ici, on continu sur des données de baseball en mettant en pratique les techniques de PCR et PLS avec de la validation croisée"
+description: "Ici, on continu sur des données de baseball en mettant en pratique les techniques de PCR et PLSR avec de la validation croisée"
 ---
 
 
@@ -32,27 +33,34 @@ description: "Ici, on continu sur des données de baseball en mettant en pratiqu
 -   
 
 
-# Rappels sur PCR et PLS
+# Rappels sur PCR et PLSR
 
 
-Dans l’analyse des données et la modélisation statistique, la régression linéaire classique peut être limitée lorsque les variables explicatives sont fortement corrélées (problème de colinéarité) ou lorsque leur nombre est supérieur au nombre d’observations (problème de haute dimensionnalité). Pour remédier à ces défis, des méthodes de réduction de dimensionnalité comme la Régression sur Composantes Principales (PCR) et la Régression des Moindres Carrés Partiels (PLS) sont utilisées.
+Dans l’analyse des données et la modélisation statistique, la régression linéaire classique peut être limitée lorsque les variables explicatives sont fortement corrélées (problème de colinéarité) ou lorsque leur nombre est supérieur au nombre d’observations (problème de haute dimensionnalité). Pour remédier à ces défis, des méthodes de réduction de dimensionnalité comme la **Régression sur Composantes Principales** (**PCR**) et la **Régression des Moindres Carrés Partiels** (**PLSR**) sont utilisées.
 
 ::: panel-tabset
 
 ## PCR
 
-Régression sur Composantes Principales (PCR)
-La PCR repose sur une Analyse en Composantes Principales (ACP) pour transformer les variables explicatives en nouvelles variables orthogonales appelées composantes principales. Seules les premières composantes, capturant le plus de variance, sont conservées dans la régression. Cette approche permet de réduire la multicolinéarité et d’éviter le sur-ajustement en limitant la complexité du modèle. Cependant, la PCR ne prend pas en compte la relation entre les variables explicatives et la variable réponse lors de la sélection des composantes.
+
+La **régression sur Composantes Principales** (**PCR**) repose sur une Analyse en Composantes Principales (ACP) pour transformer les variables explicatives en nouvelles variables orthogonales appelées composantes principales. Seules les premières composantes, capturant le plus de variance, sont conservées dans la régression.\
+
+Cette approche permet de réduire la multicolinéarité et d’éviter le sur-ajustement en limitant la complexité du modèle.\
+
+Cependant, la **PCR** ne prend pas en compte la relation entre les variables explicatives et la variable réponse lors de la sélection des composantes.
 
 
-## PLS 
+## PLSR 
 
-Régression des Moindres Carrés Partiels (PLS)
-Contrairement à la PCR, la PLS cherche à maximiser la covariance entre les variables explicatives et la variable réponse. Elle construit des composantes latentes qui capturent non seulement la variance des variables explicatives mais aussi leur corrélation avec la variable à prédire. Cette méthode est souvent plus efficace que la PCR pour les problèmes de prédiction, car elle optimise directement la relation entre les prédicteurs et la réponse.
+Contrairement à la **PCR**, la **régression des Moindres Carrés Partiels** (**PLSR**) cherche à maximiser la covariance entre les variables explicatives et la variable réponse.\
+Elle construit des composantes latentes qui capturent non seulement la variance des variables explicatives mais aussi leur corrélation avec la variable à prédire.\
+
+Cette méthode est souvent plus efficace que la **PCR** pour les problèmes de prédiction, car elle optimise directement la relation entre les prédicteurs et la réponse.
 
 :::
 
-En résumé, la PCR est une approche basée sur la variance des prédicteurs, tandis que la PLS optimise la relation entre les prédicteurs et la réponse. Le choix entre ces deux méthodes dépend du contexte : la PCR est utile pour la réduction de dimensionnalité, tandis que la PLS est souvent plus performante pour la prédiction
+En résumé, la **PCR** est une approche basée sur la variance des prédicteurs, tandis que la **PLSR** optimise la relation entre les prédicteurs et la réponse.\
+Le choix entre ces deux méthodes dépend du contexte : la **PCR** est utile pour la réduction de dimensionnalité, tandis que la **PLSR** est souvent plus performante pour la prédiction
 
 
 
@@ -71,7 +79,7 @@ library(ISLR)         # Hitters data
 library(dplyr)        # manipulation des données
 
 # Infrence
-library(pls) ## PCR et PLS
+library(pls) ## PCR et PLSR
 
 
 # Plots
@@ -99,13 +107,63 @@ my_validationplot <- function(mod, data) {
   dt <- data.frame(x_msep, x_rmsep, y, z)
   colnames(dt) <- c("MSEP", "RMSEP", "sample", "comps")
   
+  ## MSEP
+  p.msep <- ggplot(dt, aes(x = comps, y = MSEP, col = sample)) +
+    geom_line() +
+    theme_bw() +
+    labs(
+      title = "Évolution du MSEP en fonction du nombre de composantes",
+      x = "Nombre de composantes",
+      y = "RMSEP",
+      color = "Échantillon"
+    ) +
+    theme(
+      plot.title = element_text(size = 16, face = "bold"),
+      axis.title = element_text(size = 14, face = "bold"),
+      axis.text = element_text(size = 12),
+      legend.title = element_text(size = 14, face = "bold"),
+      legend.text = element_text(size = 12)
+    )
   
-  p.msep <- ggplot(dt, aes(x = comps, y = MSEP, col = sample)) + geom_line() +
-    theme_bw()
-  p.rmsep <- ggplot(dt, aes(x = comps, y = RMSEP, col = sample)) + geom_line() +
-    theme_bw()
+  ## RMSEP
+  p.rmsep <- ggplot(dt, aes(x = comps, y = RMSEP, col = sample)) +
+    geom_line() +
+    theme_bw() +
+    labs(
+      title = "Évolution du RMSEP en fonction du nombre de composantes",
+      x = "Nombre de composantes",
+      y = "RMSEP",
+      color = "Échantillon"
+    ) +
+    theme(
+      plot.title = element_text(size = 16, face = "bold"),
+      axis.title = element_text(size = 14, face = "bold"),
+      axis.text = element_text(size = 12),
+      legend.title = element_text(size = 14, face = "bold"),
+      legend.text = element_text(size = 12)
+    )
   
-  return(list(MSEP = p.msep, RMSEP = p.rmsep))
+  ## Explain variance
+  explain_variance <- explvar(mod)
+  
+  # Créer un data frame
+  dt_var <- data.frame(comps = seq_along(explain_variance),
+                       variance = explain_variance * 100)
+                       
+  # Tracer le graphique
+  p.variance <- ggplot(dt_var, aes(x = comps, y = variance)) +
+                         geom_line(color = "blue") +
+                         geom_point(color = "red") +
+                         theme_bw() +
+                         labs(title = "Évolution de la Variance Expliquée en Fonction du Nombre de Composantes", x = "Nombre de Composantes", y = "Variance Expliquée (%)") +
+                         theme(
+                           plot.title = element_text(size = 16, face = "bold"),
+                           axis.title = element_text(size = 14, face = "bold"),
+                           axis.text = element_text(size = 12)
+                         )
+                       
+                       
+  return(list(MSEP = p.msep, RMSEP = p.rmsep, Exp_Var = p.variance))
 }
 ```
 
@@ -169,6 +227,8 @@ Hitters_test <- Hitters_Without_NA[-index_train, ]
 
 # Analyse Inférentielle
 
+On va maintenant effectuer une régression **PCR** et une régression **PLSR** sur l’échantillon *train* en sélectionnant le nombre de composantes par une validation croisée *K-fold* où $K = 10$.
+
 
 ::: panel-tabset
 
@@ -186,23 +246,7 @@ mod_pcr %>% summary()
 ```
 
 
-On peut maintenant visualiser l'évolution du MSEP et RMSEP enfonction du nombre de composantes gardées.
-```{r, fig.width=12}
-grid.arrange(my_validationplot(mod_pcr, Hitters_train)$MSEP,
-             my_validationplot(mod_pcr, Hitters_train)$RMSEP,
-             ncol=2)
-```
-
-On peut voir courbe proche entre CV et adjCV avec une valeur minimum qui semble se trouver pour 6 composantes.
-
-
-Et on petut alors récupérer le nombre de composantes à garder qui minimsent le MSEP et RMSEP.
-```{r}
-ncomp.rmsep_pcr <- which.min(RMSEP(mod_pcr, estimate = c("CV"))$val["CV",,])-1
-```
-
-
-## PLS
+## PLSR
 
 ```{r}
 mod_pls <- plsr(
@@ -216,54 +260,92 @@ mod_pls %>% summary()
 ```
 
 
-On peut maintenant visualiser l'évolution du MSEP et RMSEP enfonction du nombre de composantes gardées.
-```{r, fig.width=12}
-grid.arrange(my_validationplot(mod_pls, Hitters_train)$MSEP,
-             my_validationplot(mod_pls, Hitters_train)$RMSEP,
+:::
+
+
+
+On peut maintenant visualiser l'évolution du MSEP et RMSEP en fonction du nombre de composantes gardées.
+
+::: callout-note
+Pour des raisons esthétiques, on à ici construit un graphique à partir de `ggplot2`mais on aurait pu se contenter d'utiliser la fonction `validationplot` de la library `pls`.
+:::
+
+
+::: panel-tabset
+
+## PCR 
+
+```{r, fig.height=8, fig.width=18}
+grid.arrange(my_validationplot(mod_pcr, Hitters_train)$RMSEP,
+             my_validationplot(mod_pcr, Hitters_train)$Exp_Var,
              ncol=2)
 ```
 
-On peut voir courbe proche entre CV et adjCV avec une valeur minimum qui semble se trouver pour 6 composantes.
+## PLS
 
-
-Et on petut alors récupérer le nombre de composantes à garder qui minimsent le MSEP et RMSEP.
-```{r}
-ncomp.rmsep_pls <- which.min(RMSEP(mod_pls, estimate = c("CV"))$val["CV",,])-1
+```{r, fig.height=8, fig.width=18}
+grid.arrange(my_validationplot(mod_pls, Hitters_train)$RMSEP,
+             my_validationplot(mod_pls, Hitters_train)$Exp_Var,
+             ncol=2)
 ```
-
-
 
 :::
 
 
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+Pour la **PCR** on peut voir courbe proche entre CV et adjCV avec une première valeur minimum qui semble se trouver à partir de 5 composantes.\
+Ensuite la courbe remonte à nouveau pour redescendre progressivement. Et concernant le pourcentage de variance expliquée, on voit un coude au niveau de 5 composantes.
+
+Tandus que pour la **PLSR** on voit plutôt que c'est à partir de 5 composantes que la décroissance commence. Et pour le pourcentage de variance expliquée, on voit un coude au niveau de 5 composantes.
+:::
+
+
+Et on peut alors récupérer le nombre de composantes à garder qui minimsent le MSEP et RMSEP.
+```{r}
+ncomp.rmsep_pcr <- which.min(RMSEP(mod_pcr, estimate = c("CV"))$val["CV",,])-1
+ncomp.rmsep_pls <- which.min(RMSEP(mod_pls, estimate = c("CV"))$val["CV",,])-1
+```
+
+
+::: success-header
+::: success-icon
+::: 
+Résultats
+:::
+
+::: success
+On a que le nombre de composante à retenir est de `r ncomp.rmsep_pcr` pour la PCR et `r ncomp.rmsep_pls` pour la PLSR. 
+:::
 
 # Prédiction
 
 On va calculer le RMSEP calculé à partir de la prédiction pour l'échantillon test.
 ```{r}
-hat_Hitters_test_mod_pcr <- predict(mod_pcr, Hitters_test, ncomp =  (which.min(RMSEP(
-  mod_pcr, estimate = c("CV")
-)$val["CV", , ]) - 1))
-rmsep_mod_pcr <- sqrt(mean((
-  hat_Hitters_test_mod_pcr - Hitters_test$Salary
-) ** 2))
+hat_Hitters_test_mod_pcr <- predict(mod_pcr,
+                                    Hitters_test,
+                                    ncomp = (which.min(RMSEP(mod_pcr, estimate = c("CV"))$val["CV", , ]) - 1))
+rmsep_mod_pcr_pred <- sqrt(mean((hat_Hitters_test_mod_pcr - Hitters_test$Salary) ** 2))
 
-hat_df_test_salary.pls <- predict(mod_pls, Hitters_test, ncomp =  (which.min(RMSEP(
-  mod_pls, estimate = c("CV")
-)$val["CV", , ]) - 1))
-rmsep_mod_pls <- sqrt(mean((
-  hat_df_test_salary.pls - Hitters_test$Salary
-) ** 2))
+hat_df_test_salary.pls <- predict(mod_pls,
+                                  Hitters_test,
+                                  ncomp = (which.min(RMSEP(mod_pls, estimate = c("CV"))$val["CV", , ]) - 1))
+rmsep_mod_pls_pred <- sqrt(mean((hat_df_test_salary.pls - Hitters_test$Salary) ** 2))
 ```
 
 ```{r}
-rmsep_df <- data.frame("prediction PCR" = rmsep_mod_pcr, "prediction PLS" = rmsep_mod_pls) 
-rownames(rmsep_df) <- "RMSEP"
-rmsep_df 
+rmsep_pred_df <- data.frame("prediction PCR" = rmsep_mod_pcr_pred, "prediction PLS" = rmsep_mod_pls_pred) 
+rownames(rmsep_pred_df) <- "RMSEP"
+rmsep_pred_df 
 ```
 
 
-
+Le choix final du modèle peut ainsi se reposer sur celui qui minimise la *RMSEP* pour la prediction de notre échantillon *test*.
 
 
 
@@ -271,7 +353,9 @@ rmsep_df
 # Conclusion
 
 
+En conclusion, on a ici 2 méthodes complémentaires permettant de construire des modèles linéaires pour des données de grandes dimension.\
 
+Ce sont des méthodes intuitives et robustes souvent utilisés par les statisticiens.
 
 
 
@@ -285,298 +369,6 @@ rmsep_df
 ```{r}
 sessioninfo::session_info(pkgs = "attached")
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r, error=TRUE}
-df = na.omit(Hitters)
-dim(df)
-set.seed(123)
-pourcentage_a_tirer = 0.75
-indices_train = sample(nrow(df), size = floor(pourcentage_a_tirer * nrow(df)))
-
-df_train = df[indices_train, ]
-dim(df_train)
-
-df_test = df[-indices_train, ] 
-dim(df_test)
-
-
-# Question 1.5 --------------------------------------------------------------
-
-# faire une selec forwise-stepwise avec critere BIC sur train puis rmsep sur test
-mod0=lm(Salary~0, data=df_train)
-mod_full=lm(Salary~., data=df_train)
-mod.step = step(mod0, scope = formula(mod_full), trace = FALSE, direction = "both", k = log(n))
-summary(mod.step)
-# significativité de nos 3 var (CRuns Walks CWalks) + r2 => mod  pas trop mal
-# grosse standard error
-
-hat_df_test_mod.step = predict(mod.step, df_test)
-
-rmsep_mod.step = sqrt(mean((hat_df_test_mod.step - df_test$Salary)**2))
-rmsep_mod.step
-# 357.7089
-
-# Question 2 --------------------------------------------------------------
-
-
-library(pls)
-salary.pcr = pcr(Salary ~., scale = TRUE, data = df_train, validation = "CV", segments=10)
-summary(salary.pcr)
-
-
-par(mfrow=c(1,2))
-validationplot(salary.pcr, val.type = "RMSEP") 
-validationplot(salary.pcr, val.type = "MSEP") 
-# validationplot(salary.pcr, val.type = "R2") # inutile car augment tout le temps en fonction des composantes 
-par(mfrow=c(1,1))
-
-
-salary.pcr$coefficients
-
-rmsep.cv_salary.pcr = min(RMSEP(salary.pcr, "CV")$val[,,])
-rmsep.cv_salary.pcr # 348.3224
-nb.com_rmsep.cv_salary.pcr = which.min(RMSEP(salary.pcr, "CV")$val[,,])
-nb.com_rmsep.cv_salary.pcr # 14 comps (sans compter l'intercept)
-
-# Question 3 --------------------------------------------------------------
-
-salary.pls = plsr(Salary ~., scale = TRUE, data = df_train, validation = "CV", segments=10)
-summary(salary.pls)
-
-par(mfrow=c(1,2))
-validationplot(salary.pls, val.type = "RMSEP") 
-validationplot(salary.pls, val.type = "MSEP") 
-# validationplot(salary.pls, val.type = "R2") # inutile car augment tout le temps en fonction des composantes 
-par(mfrow=c(1,1))
-
-
-salary.pls$coefficients
-
-rmsep.cv_salary.pls = min(RMSEP(salary.pls, "CV")$val[,,])
-rmsep.cv_salary.pls # 348.3051
-nb.com_rmsep.cv_salary.pls = which.min(RMSEP(salary.pls, "CV")$val[,,])
-nb.com_rmsep.cv_salary.pls # 12 comps (sans compter l'intercept)
-
-# Question 4 --------------------------------------------------------------
-
-# Calcul à la main entre la prdiction et le df_test
-
-hat_df_test_salary.pcr = predict(salary.pcr, df_test)
-
-rmsep_salary.pcr = sqrt(mean((hat_df_test_salary.pcr - df_test$Salary)**2))
-rmsep_salary.pcr
-# 346.1988
-
-
-hat_df_test_salary.pls = predict(salary.pls, df_test)
-
-rmsep_salary.pls = sqrt(mean((hat_df_test_salary.pls - df_test$Salary)**2))
-rmsep_salary.pls
-# 356.0666
-
-
-# Le rmsep est minimum pour PCR sur les 3 méthodes (PCR->PLS->step)
-
-
-# Question 5 --------------------------------------------------------------
-
-# refaire les méthodes en faisant le 10-fold 100 fois 
-
-res.pcr = NULL
-for(i in 1:100){
-  
-  # modele PCR
-  pcr.fit = pcr(Salary~.,
-                data = df,
-                scale = TRUE,
-                subset = indices_train,
-                validation = "CV",
-                segments = 10)
-  
-  # RMSEP
-  RMSEP.cv = RMSEP(pcr.fit,'CV')$val[,,]
-  
-  # On stocke les resultats
-  res.pcr = cbind(res.pcr, RMSEP.cv)
-}
-
-matplot(res.pcr, type = 'l', col = 1:100, lty = 1, main = "Evolution RMSEP pour 100 PCR avec CV")
-# On regarde le RMSEP moyen que l'on peut obternir 
-# pour 100 decoupages différents de notre jeu de données
-pcr.mean.cv = apply(res.pcr, MARGIN = 1, FUN = mean) # for a matrix 1 indicates rows
-lines(pcr.mean.cv, col = "darkred", lwd=4)
-
-which.min(pcr.mean.cv) 
-coef(pcr.fit, ncomp = 5)
-
-
-
-res.pls = NULL
-for(i in 1:100){
-  
-  # modele PCR
-  pls.fit = plsr(Salary~.,
-                data = df,
-                scale = TRUE,
-                subset = indices_train,
-                validation = "CV",
-                segments = 10)
-  
-  # RMSEP
-  RMSEP.cv = RMSEP(pls.fit,'CV')$val[,,]
-  
-  # On stocke les resultats
-  res.pls = cbind(res.pls, RMSEP.cv)
-}
-
-matplot(res.pls, type = 'l', col = 1:100, lty = 1, main = "Evolution RMSEP pour 100 PLS avec CV")
-pls.mean.cv = apply(res.pls, MARGIN = 1, FUN = mean) 
-lines(pls.mean.cv, col = "darkred", lwd=4)
-
-
-which.min(pls.mean.cv)
-coef(pls.fit, ncomp = 9)
-
-
-par(mfrow=c(1,2))
-matplot(res.pcr, type = 'l', col = 1:100, lty = 1, main = "Evolution RMSEP pour 100 PCR")
-lines(pcr.mean.cv, col = "darkred", lwd=4)
-abline(v=which.min(pcr.mean.cv) )
-
-matplot(res.pls, type = 'l', col = 1:100, lty = 1, main = "Evolution RMSEP pour 100 PLS")
-lines(pls.mean.cv, col = "darkred", lwd=4)
-abline(v=which.min(pls.mean.cv) )
-par(mfrow=c(1,1))
-
-
-# Question 6 --------------------------------------------------------------
-
-# Faire modèles finaux avec ncomp= which.min(ncomp)
-
-pcr.fit_final = pcr(Salary~.,
-                    data = df, 
-                    ncomp = which.min(pcr.mean.cv)-1,
-                    scale = TRUE,
-                    subset = indices_train,
-                    validation = "CV",
-                    segments = 10 )
-
-
-pls.fit_final = plsr(Salary~.,
-                    data = df, 
-                    ncomp = which.min(pls.mean.cv)-1,
-                    scale = TRUE,
-                    subset = indices_train,
-                    validation = "CV",
-                    segments = 10 )
-
-summary(pcr.fit_final)
-min(RMSEP(pcr.fit_final,'CV')$val[,,])
-#  356.9369
-which.min(RMSEP(pcr.fit_final,'CV')$val[,,])
-# 18 comps
-
-summary(pls.fit_final)
-min(RMSEP(pls.fit_final,'CV')$val[,,])
-# 352.8074
-which.min(RMSEP(pls.fit_final,'CV')$val[,,])
-# 10 comps
-
-
-
-
-# Question 7 (4bis) --------------------------------------------------------------
-
-# Calcul à la main entre la prdiction et le df_test
-rmsep_mod.step
-# 357.7089
-
-
-hat_df_test_salary.pcr = predict(pcr.fit_final, df_test)
-
-rmsep_salary.pcr = sqrt(mean((hat_df_test_salary.pcr - df_test$Salary)**2))
-rmsep_salary.pcr
-# 312.8734
-
-
-hat_df_test_salary.pls = predict(pls.fit_final, df_test)
-
-rmsep_salary.pls = sqrt(mean((hat_df_test_salary.pls - df_test$Salary)**2))
-rmsep_salary.pls
-# 315.9921
-
-# Le rmsep est minimum pour PCR sur les 3 méthodes (PCR->PLS---->step)
-
-
-## FAIRE UNE BELLE CONCLUSION  SUR CHOIX DE MODELE EN GARDANT UN ESPRIT CRITIQUE 
-# LE MODELE STEP N'EST PAS SI MAL CAR NE CONTIENT QUE 3 VAR ET ON EST SUR UN JEU DE DONNEES AVEC NA 
-# DONC PCR ET PLS PREND TOUT LES VAR POUR PRED MAIS NA PEUVENT IMPACTER
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
