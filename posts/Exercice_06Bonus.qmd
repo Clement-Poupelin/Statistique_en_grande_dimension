@@ -16,9 +16,9 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["regression Ridge", "regression Lasso", "validation croisée"]
+categories: ["Régression Ridge", "Régression Lasso", "Validation croisée"]
 image: "/img/gants-de-boxe.png"
-description: "Comparaison de la regression Ridge et Lasso via le github de Laurent Rouvière"
+description: "Comparaison de la régression Ridge et Lasso via le github de Laurent Rouvière"
 ---
 
 Dans cette partie et avant de passer à l'exercice 7, nous allons faire la section 3.1 sur la regression Ridge et Lasso avec *`glmnet`* sous *`R`* du [tutoriel de Laurent Rouvière](https://lrouviere.github.io/TUTO_GRANDE_DIM/correction/03-ridge-lasso.html)
@@ -27,60 +27,52 @@ Dans cette partie et avant de passer à l'exercice 7, nous allons faire la secti
 
 On se base encore ici sur notre modèle classique de régression linéaire :
 
-$$y = X\beta + \mathcal{E} \quad \text{ou} \quad y = \beta_0 + \beta_1X^1 + ... + \beta_pX^p + \mathcal{E}$$ 
+$$y = X\beta + \mathcal{E} \quad \text{ou} \quad y = \beta_0 + \beta_1X^1 + ... + \beta_pX^p + \mathcal{E}$$
 
-- $y \in \mathbb{R}^{n}$ la variable réponse ou variable à expliquer
+-   $y \in \mathbb{R}^{n}$ la variable réponse ou variable à expliquer
 
-- $X \in \mathbb{R}^{n\times (p+1)}$ la matrice déterministe contenant nos $p$ variables explicatives
+-   $X \in \mathbb{R}^{n\times (p+1)}$ la matrice déterministe contenant nos $p$ variables explicatives
 
-- $\beta \in \mathbb{R}^{p+1}$ le vecteur qui contient les coefficients de régression $\beta_0, ..., \beta_p$ que nous cherchons à estimer
+-   $\beta \in \mathbb{R}^{p+1}$ le vecteur qui contient les coefficients de régression $\beta_0, ..., \beta_p$ que nous cherchons à estimer
 
-- $\mathcal{E} \in \mathbb{R}^{n}$ le vecteur d'erreur qui n'est pas corrélé à nos variables explicatives. C'est la part d'aléa que nous n'arrivons pas à déterminer
+-   $\mathcal{E} \in \mathbb{R}^{n}$ le vecteur d'erreur qui n'est pas corrélé à nos variables explicatives. C'est la part d'aléa que nous n'arrivons pas à déterminer
 
+Pour l'estimation des coefficients de regression de ce type de modèle, nous utilisons souvent la méthodes des moindres carrées ordinaire (MCO) qui nous donne
 
-Pour l'estimation des coefficients de regression de ce type de modèle, nous utilisons souvent la méthodes des moindres carrées ordinaire (MCO) qui nous donne  
+$$\hat{\beta} = \underset{\beta}{argmin}||y-X\beta||^2$$ Malheureusement, lorsque $p$ est grand ou que les variables sont linéairement dépendantes, les estimateurs des moindres carrées peuvent être mis en défaut. Les méthodes pénalisées ou sous contraintes consistent alors à restreindre l’espace sur lequel on minimise ce critère.\
 
-$$\hat{\beta} = \underset{\beta}{argmin}||y-X\beta||^2$$
-Malheureusement, lorsque $p$ est grand ou que les variables sont linéairement dépendantes, les estimateurs des moindres carrées peuvent être mis en défaut. Les méthodes pénalisées ou sous contraintes consistent alors à restreindre l’espace sur lequel on minimise ce critère.\
-
-L'idée principale de ces méthodes est de contraindre la valeur des estimateurs MCO pour réduire la variance, quitte à augmenter un peu le biais (d’où la terminologie de "régression biaisée"). Nous obtenons donc, pour un certain $t>0$, des estimations de la forme suivante : 
-$$ \hat{\beta}^{pen} = \underset{\beta}{argmin}||y-X\beta||^2 \quad \text{sous la contrainte} \quad ||\beta||? \leq t$$
+L'idée principale de ces méthodes est de contraindre la valeur des estimateurs MCO pour réduire la variance, quitte à augmenter un peu le biais (d’où la terminologie de "régression biaisée"). Nous obtenons donc, pour un certain $t>0$, des estimations de la forme suivante : $$ \hat{\beta}^{pen} = \underset{\beta}{argmin}||y-X\beta||^2 \quad \text{sous la contrainte} \quad ||\beta||? \leq t$$
 
 ::: panel-tabset
+## Ridge
 
-## Ridge 
-
-La régression Ridge contraint la **norme $\ell^2$** des coefficients $\beta$ à ne pas exploser, i.e $||\beta||_2 = \sum_{j=0}^{p} \beta_j^2 \leq t$. Cela conduit à la solution d'optimisation suivante :
+La régression Ridge contraint la **norme** $\ell^2$ des coefficients $\beta$ à ne pas exploser, i.e $||\beta||_2 = \sum_{j=0}^{p} \beta_j^2 \leq t$. Cela conduit à la solution d'optimisation suivante :
 
 $$
 \hat{\beta}_{Ridge} = \underset{\beta}{\operatorname{argmin}} \ ||y - X\beta||^2 \quad \text{sous la contrainte} \quad \sum_{j=0}^{p} \beta_j^2 \leq t
 $$
 
-où $\hat{\beta}_{Ridge}$ est **unique**, contrairement à Lasso qui peut produire plusieurs solutions.  
+où $\hat{\beta}_{Ridge}$ est **unique**, contrairement à Lasso qui peut produire plusieurs solutions.
 
 Contrairement à Lasso, Ridge ne met pas exactement à zéro certains coefficients, mais réduit leur valeur. Il n'y a donc pas de sélection de variable effectué.\
-Cette méthode est tout de même robuste en grande dimension et particulièrement utile lorsque les variables sont fortement corrélées. Il empêche les coefficients de devenir trop grands, ce qui réduit la variance du modèle. \
+Cette méthode est tout de même robuste en grande dimension et particulièrement utile lorsque les variables sont fortement corrélées. Il empêche les coefficients de devenir trop grands, ce qui réduit la variance du modèle.\
 
-
-## Lasso 
+## Lasso
 
 La régression Lasso (pour Least Absolute Shrinkage and Selection Operator) contraint la norme $\ell^1$ de $\beta$ à ne pas exploser, i.e $||\beta||_1 = \sum_{j=0}^{p} |\beta_j| \leq t$. Nous obtenons donc
 
 $$\hat{\beta}_{Lasso} = \underset{\beta}{argmin}||y-X\beta||^2 \quad \text{sous la contrainte} \quad \sum_{j=0}^{p} |\beta_j| \leq t  $$
 
-
-Où $\hat{\beta}_{Lasso}$ n’est pas nécessairement unique mais la prévision $\hat{y} = X\hat{\beta}_{Lasso}$  est unique.\
+Où $\hat{\beta}_{Lasso}$ n’est pas nécessairement unique mais la prévision $\hat{y} = X\hat{\beta}_{Lasso}$ est unique.\
 
 Cette méthode est principalement caractérisée par le fait qu'elle est robuste à la grande dimension en sélectionnant les variables les plus pertinentes. En effet, elle nous permet de réduire les coefficients MCO des variables sélectionnées en rapprochant leur valeur de 0, ce qui est appelé la propriété de "seuillage doux" du Lasso.
-
-::: 
+:::
 
 Ici, il sera donc présenté les étapes principales qui permettent de faire ce type de régression avec *`R`*. Le package le plus souvent utilisé est *`glmnet`*.
 
 # Setup
 
-::: panel-tabset
-
+:::: panel-tabset
 ## Packages
 
 ```{r, warning=FALSE, message=FALSE}
@@ -95,11 +87,10 @@ library(gridExtra)
 
 ```
 
-## Fonctions 
+## Fonctions
 
 ::: panel-tabset
-
-### boxplot 
+### boxplot
 
 ```{r}
 my_boxplot <- function(data) {
@@ -114,7 +105,8 @@ my_boxplot <- function(data) {
 }
 ```
 
-### pairs.panels 
+### pairs.panels
+
 ```{r}
 my_pairs.panels <- function(data) {
   psych::pairs.panels(
@@ -179,18 +171,14 @@ cv_ridge_vs_lasso <- function(data, fmla) {
   return(err)
 }
 ```
-
-
 :::
-
-:::
-
+::::
 
 # Données
 
 On considère le jeu de données *ozone.txt* où on cherche à expliquer la concentration maximale en ozone relevée sur une journée (variable *maxO3*) par d’autres variables essentiellement météorologiques.
 
-La base de données d'origine *ozone.txt* répertorie ainsi 112 données météorologiques mesurées durant l'été 2001 à Rennes. Celles-ci sont caractérisées par les 13 variables suivantes : 
+La base de données d'origine *ozone.txt* répertorie ainsi 112 données météorologiques mesurées durant l'été 2001 à Rennes. Celles-ci sont caractérisées par les 13 variables suivantes :
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 ozone <-read.table("https://r-stat-sc-donnees.github.io/ozone.txt", header=TRUE)
@@ -220,15 +208,13 @@ ozone <-read.table("https://r-stat-sc-donnees.github.io/ozone.txt", header=TRUE)
 ozone %>% DT::datatable()
 ```
 
-
 ::: callout-note
 Bien évidémment on a vérifié qu'il n'y a pas de valeurs manquantes dans cette base de données avec la fonction *`anyNA`* qui renvoie `r anyNA(ozone)`
 :::
 
 # Analyse descriptive
 
-::: panel-tabset
-
+::::::::::::::::::::: panel-tabset
 ## Boxplot
 
 On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.
@@ -237,11 +223,12 @@ On peut regarder un peu la distribution de nos différents variables quantitativ
 my_boxplot(ozone)
 ```
 
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 On remarque bien que les variabeles qui sont de même nature mais à des points de temps différents sont d'avantages similaires.
@@ -250,16 +237,20 @@ On remarque bien que les variabeles qui sont de même nature mais à des points 
 Pour confirmer cela, on peut faire des boxplot pour uniquement une varibale et ses différents points de temps.
 
 ::: panel-tabset
-
 ### Température
+
 ```{r, message=FALSE, fig.height=6, fig.width=8}
 subset(ozone, select = c("T9", "T12", "T15"))  %>% my_boxplot()
 ```
+
 ### Nébulosité
+
 ```{r, message=FALSE, fig.height=6, fig.width=8}
 subset(ozone, select = c("Ne9", "Ne12", "Ne15"))  %>% my_boxplot()
 ```
-### Vitesse du vent 
+
+### Vitesse du vent
+
 ```{r, message=FALSE, fig.height=6, fig.width=8}
 subset(ozone, select = c("Vx9", "Vx12", "Vx15"))  %>% my_boxplot()
 ```
@@ -267,25 +258,24 @@ subset(ozone, select = c("Vx9", "Vx12", "Vx15"))  %>% my_boxplot()
 
 ## Correlation
 
-
 On regarde ici la corrélation calculée entre chacune de nos variables.
 
 ```{r, fig.height=22, fig.width=28}
 my_pairs.panels(ozone)
 ```
 
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 On voit la présence de plusieurs fortes corrélations qui peut déjà nous alerter si l'on veut faire des modèles de regressions linéaires car on risque d'avoir un problème de colinéarité entre les varibales explicatives.
 
 Cependant ces corrélation fortes sont surtout présentes pour les variables qui sont à différents points de temps ce qui est logique.
 :::
-
 
 ## PCA
 
@@ -305,7 +295,7 @@ res_pca <- FactoMineR::PCA(
 
 Ici, on spécifi nos varibales qualitatives et on décide de mettre la variable *max03* et *max03v* en variable supplémentaire, ce qui veut d'ire qu'elles ne seront pas considérés pour la formation de nos composantes principales (variable que l'on cherchera à estimer plus tard).
 
-::: panel-tabset
+::::::::::::: panel-tabset
 #### Barplot des variances
 
 Tout d'abord, on peut commencer par regarder le pourcentage de variance expliqué par nos différentes composantes principales.
@@ -322,11 +312,12 @@ factoextra::fviz_eig(
 )
 ```
 
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 On voit ainsi que la majorité de la variance est expliquée par nos deux premières composantes principales.
@@ -341,7 +332,8 @@ Ainsi, des individus proches sur le graphique ont des caractéristiques similair
 Puis, le placement d'un individu en fonction des axes peut permettre de savoir comment le jouer se caractérise par rapport aux variables qui contribuent le plus à ces axes.
 
 ::: panel-tabset
-##### Pluie 
+##### Pluie
+
 ```{r, fig.height=6, fig.width=8}
 factoextra::fviz_pca_ind(
   res_pca,
@@ -353,7 +345,8 @@ factoextra::fviz_pca_ind(
 )
 ```
 
-##### vent 
+##### vent
+
 ```{r, fig.height=6, fig.width=8}
 factoextra::fviz_pca_ind(
   res_pca,
@@ -366,11 +359,12 @@ factoextra::fviz_pca_ind(
 ```
 :::
 
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 Ici on voit une repartition plutot uniforme sur le plan qui ne semble pas permettre de distinguer une séparation forte correspodant à nos variables qualitatives.
@@ -400,34 +394,27 @@ factoextra::fviz_pca_var(
 
 ```
 
-
-
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 Dans notre cas, ce que l'on peut voir c'est que la majorité de nos variables sont bien représentées par nos deux axes (cumulant plus de 70% d'explication). Mais beaucoup semblent aussi fortement corrélées avecla formation de trois groupes. Cette corrélation ayant déjà pu être observé précédemment et touours logique du fait du côté longitudinale de nos données.
 
 Ce que l'on peut tout de même ajouté c'est que les variables max03 et surtout max03v semblent plutot corrélées aux variables température. Constat qui peut se confirmer avec le pairs.panels précédent.
 :::
-
-:::
-
-:::
-
-
-
+:::::::::::::
+:::::::::::::::::::::
 
 # Analyse inférentielle
 
-
-Contrairement à la plupart des autres package *`R`* qui permettent de faire de l’apprentissage, le package *`glmnet`* n’autorise pas l’utilisation de formules.\ 
-Il faut donc spécifier explicitement la matrice $X$ et le vecteur $y$.\
+Contrairement à la plupart des autres package *`R`* qui permettent de faire de l’apprentissage, le package *`glmnet`* n’autorise pas l’utilisation de formules.  Il faut donc spécifier explicitement la matrice $X$ et le vecteur $y$.\
 
 On peut obtenir la matrice $X$ et notamment le codage des variables qualitatives avec la fonction *`model.matrix`*.
+
 ```{r}
 ozone.X <- model.matrix(maxO3 ~ ., data = ozone)[, -1]
 ozone.Y <- ozone$maxO3
@@ -435,20 +422,21 @@ ozone.Y <- ozone$maxO3
 
 Et ce n'est qu'après que l'on peut mettre en place la modélisation.
 
-::: panel-tabset
-
-## Ridge 
+::::::::: panel-tabset
+## Ridge
 
 ```{r}
 mod.R <- glmnet(ozone.X, ozone.Y, alpha = 0) 
 ```
 
 La fonction *`glmnet`* calcule tous les estimateurs pour une grille de valeurs de $\lambda$ que l'on peut récupérer.
+
 ```{r}
 mod.R$lambda %>% head()
 ```
 
-Et on peut également récupérer les différentes valeurs de $\beta$ associée aux différents $\lambda$. 
+Et on peut également récupérer les différentes valeurs de $\beta$ associée aux différents $\lambda$.
+
 ```{r}
 beta_values <- mod.R$beta %>% as.matrix() %>% t()
 rownames(beta_values) <- paste0("lambda_", seq(1, length(mod.R$lambda), by = 1))
@@ -462,16 +450,16 @@ Puis on peut visualiser les chemins de régularisation des estimateurs **Ridge**
 plot(mod.R, xvar = "lambda", label = TRUE)
 ```
 
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 Ici on voit l'évolution de nos coefficients $\beta$ en fonction des diffrentes valeurs de $\lambda$. Ainsi, sur la gauche on se retrouve dans la situation où il n'y a pas de pénalisation et donc nos coefficients sont les $\beta$ de l'estimation par moindres carrés. Et donc plus $\lambda$ va augmenter, plus on se retrouvera dans une situation où les coefficients vont tendrent vers 0.
 :::
-
 
 ## Lasso
 
@@ -480,11 +468,13 @@ mod.L <- glmnet(ozone.X, ozone.Y, alpha = 1)
 ```
 
 La fonction *`glmnet`* calcule tous les estimateurs pour une grille de valeurs de $\lambda$ que l'on peut récupérer.
+
 ```{r}
 mod.L$lambda %>% head()
 ```
 
-Et on peut également récupérer les différentes valeurs de $\beta$ associée aux différents $\lambda$. 
+Et on peut également récupérer les différentes valeurs de $\beta$ associée aux différents $\lambda$.
+
 ```{r}
 beta_values <- mod.L$beta %>% as.matrix() %>% t()
 rownames(beta_values) <- paste0("lambda_", seq(1, length(mod.L$lambda), by = 1))
@@ -498,17 +488,17 @@ Puis on peut visualiser les chemins de régularisation des estimateurs **Lasso**
 plot(mod.L, xvar = "lambda", label = TRUE)
 ```
 
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 Ici on voit l'évolution de nos coefficients $\beta$ en fonction des diffrentes valeurs de $\lambda$. Ainsi, sur la gauche on se retrouve dans la situation où il n'y a pas de pénalisation et donc nos coefficients sont les $\beta$ de l'estimation par moindres carrés. Et donc plus $\lambda$ va augmenter, plus on se retrouvera dans une situation où les coefficients vont tendrent vers 0.
 :::
-
-:::
+:::::::::
 
 # Selection des paramètres de régularisation
 
@@ -516,32 +506,27 @@ Maintenant que les modèles sont estimés avec plusieurs valeurs de $\lambda$ po
 Pour cela, on utilise la fonction *`cv.glmnet`* qui, comme son nom le laisse suggérer, permet d'effectuer une validation croisée pour notre modèle avec par défaut *`nfolds=10`* (le nombre de pli pour le découpage de sous ensembles). Puis on peut faire un *`plot`* de l’objet.
 
 ::: panel-tabset
-
-## Ridge 
+## Ridge
 
 ```{r}
 ridgeCV <- cv.glmnet(ozone.X, ozone.Y, alpha = 0)
 plot(ridgeCV)
 ```
 
-
-
 On visualise ici les erreurs quadratiques calculées par validation croisée 10 blocs en fonction de $\lambda$ (échelle logarithmique). Deux traits verticaux sont représentés :
 
-- celui de gauche correspond à la valeur de $\lambda$ qui minimise l’erreur quadratique
+-   celui de gauche correspond à la valeur de $\lambda$ qui minimise l’erreur quadratique
 
-- celui de droite correspond à la plus grande valeur de $\lambda$ telle que l’erreur ne dépasse pas l’erreur minimale + 1 écart-type estimé de cette erreur
+-   celui de droite correspond à la plus grande valeur de $\lambda$ telle que l’erreur ne dépasse pas l’erreur minimale + 1 écart-type estimé de cette erreur
 
 D’un point de vu pratique, cela signifie que l’utilisateur peut choisir n’importe quelle valeur de lambda entre les deux traits verticaux.\
 A savoir que si l'on veut diminuer la complexité du modèle on choisira la valeur de droite.
 
 On peut obtenir ces deux valeurs assez facilement.
+
 ```{r}
 cat(" Valeur minimale : ", ridgeCV$lambda.min, "\n", "Valeur maximale : ", ridgeCV$lambda.1se)
 ```
-
-
-
 
 ## Lasso
 
@@ -550,69 +535,56 @@ lassoCV <- cv.glmnet(ozone.X, ozone.Y, alpha = 1)
 plot(lassoCV)
 ```
 
-
-
 On visualise ici les erreurs quadratiques calculées par validation croisée 10 blocs en fonction de $\lambda$ (échelle logarithmique). Deux traits verticaux sont représentés :
 
-- celui de gauche correspond à la valeur de $\lambda$ qui minimise l’erreur quadratique
+-   celui de gauche correspond à la valeur de $\lambda$ qui minimise l’erreur quadratique
 
-- celui de droite correspond à la plus grande valeur de $\lambda$ telle que l’erreur ne dépasse pas l’erreur minimale + 1 écart-type estimé de cette erreur
+-   celui de droite correspond à la plus grande valeur de $\lambda$ telle que l’erreur ne dépasse pas l’erreur minimale + 1 écart-type estimé de cette erreur
 
 D’un point de vu pratique, cela signifie que l’utilisateur peut choisir n’importe quelle valeur de lambda entre les deux traits verticaux.\
 A savoir que si l'on veut diminuer la complexité du modèle on choisira la valeur de droite.
 
 On peut obtenir ces deux valeurs assez facilement.
+
 ```{r}
 cat(" Valeur minimale : ", lassoCV$lambda.min, "\n", "Valeur maximale : ", lassoCV$lambda.1se)
 ```
-
 :::
 
-# Prédiction 
+# Prédiction
 
 On souhaite maintenant prédire la variable cible pour de nouveaux individus, par exemple les 50ème et 51ème individus du jeu de données.
 
 Une première approche pourrait consister à réajuster le modèle sur toutes les données pour la valeur de $lambda$ sélectionnée.\
-Cette étape est en réalité déjà effectuée par la fonction *`cv.glmnet`*. Il suffit par conséquent d’appliquer la fonction predict à l’objet obtenu avec *`cv.glmnet`* en spécifiant la valeur de $lambda$ souhaitée. 
+Cette étape est en réalité déjà effectuée par la fonction *`cv.glmnet`*. Il suffit par conséquent d’appliquer la fonction predict à l’objet obtenu avec *`cv.glmnet`* en spécifiant la valeur de $lambda$ souhaitée.
 
 ::: panel-tabset
-
-## Ridge 
+## Ridge
 
 ```{r}
 predict(ridgeCV, newx = ozone.X[50:51, ], s = "lambda.min")
 ```
 
-
 ```{r}
 predict(ridgeCV, newx = ozone.X[50:51, ], s = "lambda.1se")
 ```
 
-
-
-
 ## Lasso
-
 
 ```{r}
 predict(lassoCV, newx = ozone.X[50:51, ], s = "lambda.min")
 ```
 
-
 ```{r}
 predict(lassoCV, newx = ozone.X[50:51, ], s = "lambda.1se")
 ```
-
 :::
-
-
 
 # Comparaison
 
-Puisque nous avons 3 méthodes de modélisations (MCO sans pénalisation, Ridge et Lasso), la prochaine étape logique va donc ^tre de comparer les trois méthodes pour déterminer laquelle est la plus approrié pour nos  données.\
+Puisque nous avons 3 méthodes de modélisations (MCO sans pénalisation, Ridge et Lasso), la prochaine étape logique va donc \^tre de comparer les trois méthodes pour déterminer laquelle est la plus approrié pour nos données.\
 
 On peut faire cela l’aide d’une validation croisée et pour cela on utilisera les données *ozone_complet.txt* qui contiennent plus d’individus et de variables.
-
 
 ```{r}
 ozone1 <- read.table("https://lrouviere.github.io/stat_grand_dim/ozone_complet.txt", sep=";") %>%  na.omit()
@@ -620,62 +592,59 @@ ozone1.X <- model.matrix(maxO3 ~ ., data = ozone1)[, -1]
 ozone1.Y <- ozone1$maxO3
 ```
 
-
 ```{r}
 cv_ridge_vs_lasso(ozone1, fmla = formula(maxO3 ~ .)) %>% DT::datatable()
 ```
 
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 On remarque que les approches régularisées n’apportent rien par rapport aux estimateurs MCO ici. Ceci peut s’expliquer par le fait que le nombre de variables n’est pas très important.
 :::
 
-
 Pour changer, considérons toutes les interactions d’ordre 2
+
 ```{r}
 cv_ridge_vs_lasso(ozone1, fmla = formula(maxO3 ~ .^2)) %>% DT::datatable()
 ```
 
-
-
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 Les méthodes régularisées permettent ici de diminuer les erreurs quadratiques de manière intéressante. Cela vient certainement du fait du nombre de variables explicatives qui est beaucoup plus important lorsqu’on prend en compte toutes les interactions d’ordre 2.
+
 ```{r}
 ozone2.X <- model.matrix(maxO3 ~ .^2, data = ozone1)[, -1]
 ```
+
 En effet, à l'ordre 1 on est à `r dim(ozone1.X)[1]` individus pour `r dim(ozone1.X)[2]` variables alors qu'à l'odre 2 on passe à `r dim(ozone2.X)[1]` individus pour `r dim(ozone2.X)[2]`
 :::
-
-
 
 # Conclusion
 
 Dans cette analyse, nous avons exploré l’utilisation des méthodes **Ridge** et **Lasso** sous *`R`*.\
 Ces approches se révèlent particulièrement efficaces en grande dimension, offrant des solutions robustes pour la régression pénalisée.
 
-Par la suite, le choix entre **Lasso** et **Ridge** dépend souvent des objectifs poursuivis : 
+Par la suite, le choix entre **Lasso** et **Ridge** dépend souvent des objectifs poursuivis :
 
--  **Lasso** intègre un mécanisme de sélection de variables, ce qui en fait un excellent outil pour identifier les prédicteurs les plus pertinents. 
+-   **Lasso** intègre un mécanisme de sélection de variables, ce qui en fait un excellent outil pour identifier les prédicteurs les plus pertinents.
 
-- **Ridge** conserve l’ensemble des variables en réduisant leurs coefficients sans les annuler, privilégiant ainsi une approche plus réguliarisée. 
+-   **Ridge** conserve l’ensemble des variables en réduisant leurs coefficients sans les annuler, privilégiant ainsi une approche plus réguliarisée.
 
 (Voir la partie **Rappel sur Ridge et Lasso** pour plus de détails)
-
 
 # Session info
 
 ```{r}
 sessioninfo::session_info(pkgs = "attached")
 ```
-

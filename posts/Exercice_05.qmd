@@ -16,24 +16,20 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["regression logistique", "biais de sélection", "Correlations fortuites", "validation croisée"]
+categories: ["Régression logistique", "Biais de sélection", "Corrélations fortuites", "Validation croisée"]
 image: "/img/oups.png"
 description: "On va illustrer dans ce document les problèmes de biais de séléction et de corrélation fortuite pour des données simulé"
 ---
-
 
 # Intervenant.e.s
 
 ### Rédaction
 
-- **Clément Poupelin**, [clementjc.poupelin\@gmail.com](mailto:clementjc.poupelin@gmail.com){.email}\
-
+-   **Clément Poupelin**, [clementjc.poupelin\@gmail.com](mailto:clementjc.poupelin@gmail.com){.email}\
 
 ### Relecture
 
-- 
-
-
+-   
 
 # Setup
 
@@ -55,7 +51,6 @@ library(ggplot2)
 ## Fonctions
 
 ::: panel-tabset
-
 ### Histogramme
 
 ```{r}
@@ -81,8 +76,6 @@ my_hist <- function(data) {
 }
 ```
 
-
-
 ### Cost
 
 ```{r}
@@ -91,8 +84,6 @@ cost <- function(obs, pi ){
   return(c)
 } 
 ```
-
-
 :::
 
 ## Seed
@@ -242,26 +233,25 @@ mod <- glm(y ~ ., data = Sub_Simu_data, family = 'binomial')
 mod %>% summary()
 ```
 
-
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 On remarque que plusieurs variables du modèles sont significatives. Cela pourrait alors nous faire penser que notre modèle n'est pas mauvais pour expliquer $y$ alors que pourtant nous étions censés n'avoir aucun lien entre les variables
 :::
 
+Estimons maintenant le taux d’erreur de classification associé à ce modèle effectuant une validation croisée K-fold avec $K = 10$.
 
-Estimons maintenant le taux d’erreur de classification associé à ce modèle effectuant une validation
-croisée K-fold avec $K = 10$.
 ```{r}
 err <- cv.glm(Sub_Simu_data, mod, cost, 10)$delta[1] 
 err
 ```
 
-On peut remarquer une erreur faible de `r err` alors que pourtant, comme dit plus haut et démontré, celle ci devrait se situer autour de 0.5. Cela peut donc déjà nous faire douter de notre démarche. \
+On peut remarquer une erreur faible de `r err` alors que pourtant, comme dit plus haut et démontré, celle ci devrait se situer autour de 0.5. Cela peut donc déjà nous faire douter de notre démarche.\
 
 On va alors tenter de recommencer la même procédure 10 fois, obtenir 10 taux d'erreurs, et regarder la moyenne de ses taux.
 
@@ -284,15 +274,15 @@ End_time <- Sys.time()
 cat("Temps de calcul : ", End_time - Start_time, "s","\n" )
 res %>% summary()
 ```
+
 Là aussi, le résultat est loin de tourner autour de 0.5. On a donc bien une erreur dans notre démarche.
 
-
-
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 Ces résultats illustrent donc le problème du **biais de sélection**. En effet, lorsque l’on effectue la validation croisée, l’échantillon test n’est certes pas utilisé pour l’estimation du modèle, mais il a été utilisé initialement pour sélectionner les variables.\
@@ -301,8 +291,8 @@ Ainsi lorsque nous confrontons les prévisions à l’échantillon test, ces der
 Pour estimer convenablement le taux d’erreur, il faut que l’échantillon test ne soit utilisé à aucun moment dans la procédure de modélisation. La séparation de nos données expliquée dans la section précédente est donc cruciale.\
 :::
 
-
 On va cette fois ci corriger ce problème et répéter à nouveau la procédure 10 fois pour voir si on obtient des taux d'erreurs plus logiques.
+
 ```{r}
 
 res2 <- c()
@@ -342,32 +332,26 @@ res2 %>% summary()
 
 On retrouve enfin des taux d'erreurs plus cohérents qui sont en moyenne à `r mean(res2)`. Par contre on remarque que le temps de calcul à cette fois ci été plus important. Cela prouve bien que faire choses biens ca prend du temps.
 
-
-
-
 # Correlations fortuites
 
 ::: panel-tabset
-
-## Texte 
+## Texte
 
 Dans cette partie, nous allons nous intéresser au problème des **corrélations fortuites** qui apparaissent très souvent dans les jeu de données de grande dimension.\
-Pour cela, nous pouvons revenir d'abord sur le fait que notre modèle calculé précédemment possédait toutes ses variables significatives au niveau $\alpha = 5\%$. Et elles semblent aussi être corrélées à $y$, d’après la valeur de $\hat{\rho}$, alors qu’elles sont censées être indépendantes de $y$.\ 
-
+Pour cela, nous pouvons revenir d'abord sur le fait que notre modèle calculé précédemment possédait toutes ses variables significatives au niveau $\alpha = 5\%$. Et elles semblent aussi être corrélées à $y$, d’après la valeur de $\hat{\rho}$, alors qu’elles sont censées être indépendantes de $y$. 
 
 D'après le théorème limite central, nous pouvons déjà admettre que la corrélation de Pearson $\hat{\rho}$ entre deux variables non-corrélées suit approximativement, lorsque $n$ est grand, une loi Normale centrée de variance $\frac{1}{n}$ (explications plus détaillées en **Preuve**). À partir de cela, nous pouvons considérer que deux variables ont une corrélation significativement non nulle a seuil $\alpha=5\%$ à partir de $|\hat{\rho}|>q(1-\frac{\alpha}{2})$ avec $q(1-\frac{\alpha}{2})$ le quantile d'une loi Normale centrée de variance $\frac{1}{n}$.
 
-## Preuve 
-
+## Preuve
 
 Ici, nous souhaitons montrer que le $\hat{\rho}$ de Pearson tend vers une loi normale centrée avec une variance $\frac{1}{n}$ dans le cas où les variables ne sont pas corrélées.\
-On commence par noter 
+On commence par noter
 
-- $S_x = \sqrt{\sum_{i=1}^n (x_i - \bar{x})^2}$
+-   $S_x = \sqrt{\sum_{i=1}^n (x_i - \bar{x})^2}$
 
-- $S_y = \sqrt{\sum_{i=1}^n (y_i - \bar{y})^2}$
+-   $S_y = \sqrt{\sum_{i=1}^n (y_i - \bar{y})^2}$
 
-C'est valeurs représentent les écarts type. Ainsi, on a 
+C'est valeurs représentent les écarts type. Ainsi, on a
 
 $$\hat{\rho} = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y}) }{S_x S_y}$$
 
@@ -377,10 +361,9 @@ Dans notre cas, nous avons nos $x_i$ et $y_i$ qui suivent des lois connues dans 
 
 $$\sqrt{n}(\hat{\rho} -  \mathbb{E}(\hat{\rho})) = \sqrt{n}\hat{\rho} \overset{loi}{\underset{n\to+\infty}{\longrightarrow}} \mathcal{N}_{(0,\tau^2)}$$
 
-où $\tau^2$  représente la variance de $\hat{\rho}$ quand n grand
+où $\tau^2$ représente la variance de $\hat{\rho}$ quand n grand
 
 Maintenant nous savons également que, si nos variables ne sont pas corrélées, $\hat{\rho}=0$. Il est donc possible de déduire que plus $n$ sera grand avec des variables non corrélées, plus la variance va être proche de 0. Nous avons donc bien que $\hat{\rho}\underset{\text{$n$ grand}}{\sim}\mathcal{N}_{(0,\frac{1}{n})}$
-
 :::
 
 Ainsi, en comparant les corrélations des variables que l’on a retenu dans le modèle logistique précédent avec ce seuil, nous obtenons que les cinq variables du modèle ont une corrélation supérieure à ce quantile. Ce qui veut dire que ces variables ont une corrélation avec $y$ significativement non nulle au seuil $\alpha=5\%$.
@@ -400,19 +383,19 @@ Nb_ModVar_quantile_sup <- sum((abs(cor_vect[mod_variables])) > quant)
 Pour les 5, variables de notre modèles on a `r Nb_ModVar_quantile_sup` variables qui ont une corrélation supérieure à notre quantile
 
 Et regardons ce qui se passe si nous prenons toutes nos variables pour comparer leur corrélation à notre quantile.
+
 ```{r}
 Nb_Var_quantile_sup <- sum((abs(cor_vect)) > quant)
 ```
 
-
 On a que `r Nb_Var_quantile_sup` variables sur les `r p` (donc environ `r Nb_Var_quantile_sup*100/p`% de nos variables) ont une corrélation avec $y$ significativement non nulle au seuil $\alpha=5\%$.
 
-
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
 Nous avons donc ici une parfaite illustration du phénomène de **corrélations fortuites**. Plus précisément, les corrélations empiriques précédentes sont appelées "faux positifs" : elles semblent significatives alors qu’en théorie aucune corrélation n’existe.\
@@ -437,4 +420,3 @@ Nous voyons donc qu'il faut comprendre les données sur lesquelles nous travaill
 ```{r}
 sessioninfo::session_info(pkgs = "attached")
 ```
-

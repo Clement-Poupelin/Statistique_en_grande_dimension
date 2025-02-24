@@ -16,7 +16,7 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["regression linéaire", "selection de variable"]
+categories: ["Régression linéaire", "Sélection de variable"]
 image: "/img/baseball.png"
 description: "Ici, on continu sur des données de baseball en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"
 ---

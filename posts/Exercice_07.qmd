@@ -15,11 +15,10 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["regression Ridge", "regression Lasso", "Validation croisée"]
+categories: ["Régression Ridge", "Régression Lasso", "Validation croisée"]
 image: "/img/baseball.png"
 description: "Ici, on continu sur des données de baseball en mettant en pratique les techniques de PCR et PLS avec de la validation croisée"
 ---
-
 
 # Intervenant.e.s
 
@@ -30,8 +29,6 @@ description: "Ici, on continu sur des données de baseball en mettant en pratiqu
 ### Relecture
 
 -   
-
-
 
 # Setup
 
@@ -56,7 +53,6 @@ library(gridExtra)
 ## Fonctions
 
 ::: panel-tabset
-
 :::
 
 ## Seed
@@ -64,9 +60,7 @@ library(gridExtra)
 ```{r}
 set.seed(140400)
 ```
-
 ::::
-
 
 # Données
 
@@ -83,9 +77,6 @@ Hitters_train <- Hitters_Without_NA[index_train, ]
 
 Hitters_test <- Hitters_Without_NA[-index_train, ]
 ```
-
-
-
 
 NOtre objectif ici sera donc de compléter l'analyse de l'exercice 6 (lien)en utilisant cette fois ci les méthodes de regression pénalisée Ridge et Lasso (méthodes détaillées dans le 6 bonus lien).
 
@@ -112,7 +103,6 @@ Et ce n'est qu'après que l'on peut mettre en place la modélisation.
 mod.R <- glmnet(X_train, Y_train, alpha = 0) 
 ```
 
-
 Puis on peut visualiser les chemins de régularisation des estimateurs **Ridge**.
 
 ```{r}
@@ -135,6 +125,7 @@ Ici on voit l'évolution de nos coefficients $\beta$ en fonction des diffrentes 
 ```{r}
 mod.L <- glmnet(X_train, Y_train, alpha = 1) 
 ```
+
 Puis on peut visualiser les chemins de régularisation des estimateurs **Lasso**.
 
 ```{r}
@@ -204,9 +195,7 @@ cat(" Valeur minimale : ", lassoCV$lambda.min, "\n", "Valeur maximale : ", lasso
 ```
 :::
 
-
 # Prédiction
-
 
 # Prédiction
 
@@ -223,17 +212,16 @@ pred.ridge_min <- predict(ridgeCV, newx = X_test, s = "lambda.min")
 err_ridge <- sqrt(mean((pred.ridge_min - Y_test)^2, na.rm=T))
 ```
 
-
 ## Lasso
 
 ```{r}
 pred.lasso_min <- predict(lassoCV, newx = X_test, s = "lambda.min") 
 err_lasso <- sqrt(mean((pred.lasso_min - Y_test)^2, na.rm=T))
 ```
-
 :::
 
 Ainsi on peut obtenir l'erreur de prédiction via le RMSEP pour les 2 modèles et les comparer avec les valeurs obtenues à l'exercice 6 (lien).
+
 ```{r, echo=FALSE}
 library(pls)
 
@@ -285,7 +273,6 @@ rownames(rmsep_pred_df) <- "RMSEP"
 rmsep_pred_df 
 ```
 
-
 ```{r}
 err_vect = c(err_lasso, err_ridge, rmsep_mod.step, min(RMSEP(pls.fit_final,'CV')$val[,,]), min(RMSEP(pcr.fit_final,'CV')$val[,,]))
 plot(err_vect, type = "h", main = "erreur pour les différentes méthodes")
@@ -296,33 +283,13 @@ legend("topright",
        col = 1:6)
 ```
 
-
-
-
 # Conclusion
-
-
-
-
-
-
-
-
-
-
 
 # Session info
 
 ```{r}
 sessioninfo::session_info(pkgs = "attached")
 ```
-
-
-
-
-
-
-
 
 ```{r, error=TRUE}
 
@@ -566,8 +533,3 @@ mean(err_lars)
 
 
 ```
-
-
-
-
-
