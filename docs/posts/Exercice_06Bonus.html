@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2025-02-21">
 <meta name="description" content="Comparaison de la regression Ridge et Lasso via le github de Laurent Rouvière">
 
-<title>Statistique en grande dimension - Exercice 06 Bonus : Ridge vs Lasso</title>
+<title>Exercice 06 Bonus : Ridge vs Lasso – Statistique en grande dimension</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,7 +25,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -36,7 +36,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -85,7 +85,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -94,12 +100,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
-
 <script src="../site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
@@ -113,8 +119,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
 <script src="../site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../custom.css">
 </head>
@@ -122,10 +155,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="../index.html" class="navbar-brand navbar-brand-logo">
     <img src="../img/logo_univ_nantes_complet.png" alt="" class="navbar-logo">
     </a>
@@ -134,76 +167,76 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../TP_StatGdeDim.pdf" rel="" target=""><i class="bi bi-file-earmark-font-fill" role="img">
+    <a class="nav-link" href="../TP_StatGdeDim.pdf"> <i class="bi bi-file-earmark-font-fill" role="img">
 </i> 
- <span class="menu-text">Feuille de TP</span></a>
+<span class="menu-text">Feuille de TP</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-github" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-github" role="link" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-github" role="img">
 </i> 
  <span class="menu-text"></span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-bi-github">    
         <li>
-    <a class="dropdown-item" href="https://github.com/Clement-Poupelin" rel="" target="">
+    <a class="dropdown-item" href="https://github.com/Clement-Poupelin">
  <span class="dropdown-text">Clément Poupelin</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://github.com/nonomtrt" rel="" target="">
+    <a class="dropdown-item" href="https://github.com/nonomtrt">
  <span class="dropdown-text">Noémie Matrat</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-linkedin" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-linkedin" role="link" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-linkedin" role="img">
 </i> 
  <span class="menu-text"></span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-bi-linkedin">    
         <li>
-    <a class="dropdown-item" href="http://www.linkedin.com/in/cl%C3%A9ment-poupelin-7675311a7/" rel="" target="">
+    <a class="dropdown-item" href="http://www.linkedin.com/in/cl%C3%A9ment-poupelin-7675311a7/">
  <span class="dropdown-text">Clément Poupelin</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://www.linkedin.com/in/no%C3%A9mie-matrat-86a34a200/" rel="" target="">
+    <a class="dropdown-item" href="https://www.linkedin.com/in/no%C3%A9mie-matrat-86a34a200/">
  <span class="dropdown-text">Noémie Matrat</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item compact">
-    <a class="nav-link" href="mailto:clementjc.poupelin@gmail.com" rel="" target=""><i class="bi bi-envelope" role="img">
+    <a class="nav-link" href="mailto:clementjc.poupelin@gmail.com"> <i class="bi bi-envelope" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="http://clement-poupelin.github.io/" rel="" target=""><i class="bi bi-person-circle" role="img">
+    <a class="nav-link" href="http://clement-poupelin.github.io/"> <i class="bi bi-person-circle" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.instagram.com/clement__poupelin" rel="" target=""><i class="bi bi-instagram" role="img">
+    <a class="nav-link" href="https://www.instagram.com/clement__poupelin"> <i class="bi bi-instagram" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
+          </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -279,6 +312,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+
 <p>Dans cette partie et avant de passer à l’exercice 7, nous allons faire la section 3.1 sur la regression Ridge et Lasso avec <em><code>glmnet</code></em> sous <em><code>R</code></em> du <a href="https://lrouviere.github.io/TUTO_GRANDE_DIM/correction/03-ridge-lasso.html">tutoriel de Laurent Rouvière</a></p>
 <section id="rappels-sur-ridge-et-lasso" class="level1">
 <h1>Rappels sur Ridge et Lasso</h1>
@@ -325,8 +359,8 @@ Cette méthode est tout de même robuste en grande dimension et particulièremen
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inférence</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet) <span class="do">## regression pénalisée</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -343,8 +377,8 @@ Cette méthode est tout de même robuste en grande dimension et particulièremen
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>my_boxplot <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  data_long <span class="ot">&lt;-</span> reshape2<span class="sc">::</span><span class="fu">melt</span>(data)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -360,8 +394,8 @@ Cette méthode est tout de même robuste en grande dimension et particulièremen
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>my_pairs.panels <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  psych<span class="sc">::</span><span class="fu">pairs.panels</span>(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    data,</span>
@@ -387,8 +421,8 @@ Cette méthode est tout de même robuste en grande dimension et particulièremen
 </div>
 <div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cv_ridge_vs_lasso <span class="ot">&lt;-</span> <span class="cf">function</span>(data, fmla) {</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">140400</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -441,7 +475,7 @@ Cette méthode est tout de même robuste en grande dimension et particulièremen
 <p>La base de données d’origine <em>ozone.txt</em> répertorie ainsi 112 données météorologiques mesurées durant l’été 2001 à Rennes. Celles-ci sont caractérisées par les 13 variables suivantes :</p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-hover table-condensed table-sm table-striped small" data-quarto-postprocess="true">
+<table class="table table-hover table-condensed caption-top table-sm table-striped small" data-quarto-postprocess="true">
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><span style=" font-weight: bold;    ">maxO3</span></td>
@@ -503,13 +537,12 @@ Cette méthode est tout de même robuste en grande dimension et particulièremen
 </div>
 <p>On identifie le regroupement de toutes les données météorologiques récoltées en une journée par la date à laquelle les relevés ont été effectués.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ozone <span class="ot">&lt;-</span><span class="fu">read.table</span>(<span class="st">"https://r-stat-sc-donnees.github.io/ozone.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ozone <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-
 <div class="datatables html-widget html-fill-item" id="htmlwidget-3bb3ba4d93b23a007f6d" style="width:100%;height:auto;"></div>
 <script type="application/json" data-for="htmlwidget-3bb3ba4d93b23a007f6d">{"x":{"filter":"none","vertical":false,"data":[["20010601","20010602","20010603","20010604","20010605","20010606","20010607","20010610","20010611","20010612","20010613","20010614","20010615","20010616","20010617","20010618","20010620","20010621","20010622","20010623","20010624","20010625","20010626","20010627","20010628","20010629","20010630","20010701","20010702","20010703","20010704","20010705","20010706","20010707","20010708","20010709","20010710","20010711","20010712","20010713","20010714","20010715","20010716","20010717","20010718","20010719","20010720","20010721","20010722","20010723","20010724","20010725","20010726","20010727","20010728","20010729","20010730","20010731","20010801","20010802","20010803","20010804","20010805","20010806","20010807","20010808","20010809","20010810","20010811","20010812","20010813","20010814","20010815","20010819","20010820","20010821","20010822","20010823","20010824","20010825","20010826","20010827","20010828","20010829","20010830","20010831","20010901","20010902","20010903","20010904","20010905","20010906","20010907","20010908","20010912","20010913","20010914","20010915","20010916","20010917","20010918","20010919","20010920","20010921","20010922","20010923","20010924","20010925","20010927","20010928","20010929","20010930"],[87,82,92,114,94,80,79,79,101,106,101,90,72,70,83,88,145,81,121,146,121,146,108,83,57,81,67,70,106,139,79,93,97,113,72,88,77,71,56,45,67,67,84,63,69,92,88,66,72,81,83,149,153,159,149,160,156,84,126,116,77,63,54,65,72,60,70,77,98,111,75,116,109,67,76,113,117,131,166,159,100,114,112,101,76,59,78,76,55,71,66,59,68,63,78,74,71,69,71,60,42,65,71,96,98,92,76,84,77,99,83,70],[15.6,17,15.3,16.2,17.4,17.7,16.8,14.9,16.1,18.3,17.3,17.6,18.3,17.1,15.4,15.9,21,16.2,19.7,23.6,20.4,27,24,19.7,20.1,19.6,19.5,18.8,24.1,26.6,19.5,16.8,20.8,17.5,18.1,19.2,19.4,19.2,13.8,14.3,15.6,16.9,17.4,15.1,15.1,16.7,16.9,18,18.6,18.8,19,19.9,23.8,24,23.3,25,24.9,20.5,25.3,21.3,20,18.7,18.6,19.2,19.9,18.7,18.4,17.1,17.8,20.9,18.8,23.5,20.8,18.8,17.8,20.6,21.6,22.7,19.8,25,20.1,21,21,16.9,17.5,16.5,17.7,17.3,15.3,15.9,16.2,18.3,16.9,17.3,14.2,15.8,15.2,17.1,15.4,13.7,12.7,14.8,15.5,11.3,15.2,14.7,13.3,13.3,16.2,16.9,16.9,15.7],[18.5,18.4,17.6,19.7,20.5,19.8,15.6,17.5,19.6,21.9,19.3,20.3,19.6,18.2,17.4,19.1,24.6,22.4,24.2,28.6,25.2,32.7,23.5,22.9,22.4,25.1,23.4,22.7,28.4,30.1,18.8,18.2,23.7,18.2,21.2,22,20.7,21,17.3,14.5,18.6,19.1,20.4,20.5,15.6,19.1,20.3,21.6,21.9,22.5,22.5,26.9,27.7,28.3,27.6,29.6,30.5,26.3,29.5,23.8,18.2,20.6,18.7,23,21.6,21.4,17.1,20,22.8,25.2,20.5,29.8,23.7,21.1,21.3,24.8,26.9,28.4,27.2,33.5,22.9,26.3,24.4,17.8,18.6,20.3,20.2,22.7,16.8,19.2,18.9,18.3,20.8,19.8,22.2,18.7,17.9,17.7,17.7,14,14.3,16.3,18,19.4,19.7,17.6,17.7,17.7,20.8,23,19.8,18.6],[18.4,17.7,19.5,22.5,20.4,18.3,14.9,18.9,21.4,22.9,20.2,17.4,19.4,18,16.6,21.5,26.9,23.4,26.9,28.4,27.7,33.7,25.1,24.8,22.8,27.2,23.7,24.9,30.1,31.9,17.8,22,25,22.7,23.9,25.2,22.5,22.4,18.5,15.2,20.3,19.5,21.4,20.6,15.9,19.3,20.7,23.3,23.6,23.9,24.1,29,29.4,26.5,28.8,31.1,32.2,27.8,31.2,22.1,23.6,20.3,17.8,22.7,20.4,21.7,20.5,20.8,24.3,26.7,26,31.7,26.6,18.9,24,27,28.6,30.1,30.8,35.5,27.6,26.4,26.8,20.6,18.7,20.3,21.5,24.6,19.2,19.5,19.3,19,22.5,19.4,22,19.1,18.6,17.5,16.6,15.8,14.9,15.9,17.4,20.2,20.3,18.2,17.7,17.8,22.1,22.6,22.1,20.7],[4,5,2,1,8,6,7,5,2,5,7,7,7,7,8,6,0,8,2,1,1,0,4,7,7,3,5,5,0,0,8,8,2,8,7,4,7,6,8,8,5,5,3,8,8,7,6,8,4,6,2,3,1,2,4,0,0,1,1,7,5,6,8,8,7,7,3,4,1,1,8,1,8,7,7,1,6,5,4,1,8,7,1,7,7,5,5,4,8,7,2,7,6,7,5,8,6,6,4,4,8,7,7,3,2,1,7,3,6,6,6,7],[4,5,5,1,8,6,8,5,4,6,7,6,5,7,7,5,1,3,1,1,0,0,4,6,6,4,5,2,0,1,8,8,3,8,6,7,8,4,8,8,7,5,4,6,8,6,6,6,7,3,4,4,1,2,6,3,1,0,4,7,7,7,8,7,7,7,6,5,1,5,7,3,5,7,5,1,6,3,0,1,8,4,6,7,7,7,5,5,7,5,5,7,5,8,5,7,5,7,5,5,7,7,7,3,2,4,7,5,5,4,5,7],[8,7,4,0,7,7,8,4,4,8,3,8,6,7,7,4,1,1,0,2,0,0,0,6,7,4,4,1,1,4,8,6,4,5,4,4,7,6,6,8,5,6,6,6,8,4,5,5,6,2,6,3,4,7,3,5,4,2,4,8,6,7,8,7,8,7,3,4,0,2,1,5,4,8,5,2,4,3,1,1,6,5,3,7,7,6,3,6,5,3,6,7,7,8,6,7,1,8,5,4,7,7,6,3,2,6,6,6,5,7,3,7],[0.6946,-4.3301,2.9544,0.9848,-0.5,-5.6382,-4.3301,0,-0.766,1.2856,-1.5,0.6946,-0.8682,-4.3301,-4.3301,0.5209,-0.342,0,1.5321,1,0,2.9544,-2.5712,-2.5981,-5.6382,-1.9284,-1.5321,0.6840000000000001,2.8191,1.8794,0.6946,0,0,-3.7588,-2.5981,-1.9696,-6.5778,-7.8785,1.5,0.6840000000000001,-3.2139,-2.2981,0,2,-4.5963,-2.0521,-2.8191,-3,0.866,0.5209,0,1,0.9397,-0.342,0.866,1.5321,-0.5,-1.3681,3,0,-3.4641,-5,-4.6985,-3.8302,-3,-5.6382,-5.9088,-1.9284,0,-1.0261,-0.866,1.8794,-1.0261,-5.3623,-3.0642,1.3681,1.5321,0.1736,0.6428,1,1.2856,3.0642,4,-2,-3.4641,-4.3301,0,-2.9544,-1.8794,-6.1284,-1.3681,-3.9392,-1.5,-4.5963,-0.866,-4.5963,-1.0419,-5.1962,-3.8302,0,-2.5,-4.3301,-3.9392,-0.1736,4,5.1962,-0.9397,0,-0.6946,1.5,-4,0],[-1.7101,-4,1.8794,0.3473,-2.9544,-5,-1.8794,-1.0419,-1.0261,-2.2981,-1.5,-1.0419,-2.7362,-7.8785,-2.0521,-2.9544,-1.5321,0.3473,1.7321,-1.9284,-0.5209,6.5778,-3.8567,-3.9392,-3.8302,-2.5712,-3.0642,0,3.9392,2,-0.866,0,1.7101,-3.9392,-3.9392,-3.0642,-5.6382,-6.8937,-3.8302,4,-3.7588,-3.7588,0.3473,-5.3623,-3.8302,-4.4995,-3.4641,-3.5,-1.9696,-1,-1.0261,-0.9397,1.5,1.2856,-1.5321,-0.6840000000000001,-1.8794,-0.6946,3.7588,-2.3941,-2.5981,-4.924,-2.5,-4.924,-4.5963,-6.0622,-3.2139,-1.0261,-1.5321,-3,0,1.3681,-1.7101,-5.3623,-2.2981,0.8682,1.9284,-1.9696,-0.866,0.6946,-1.7321,2.8191,4,-0.5209,-4,-5.3623,0.5209,-2.9544,-1.8794,0,-0.8682,-1.9284,-3.4641,-6.0622,-5,-6.8937,-1.3681,-2.7362,0,3.2139,-3.2139,-6.0622,-3.0642,3.7588,5,5.1423,-0.766,-1,-2,0.8682,-3.7588,-1.0419],[-0.6946,-3,0.5209,-0.1736,-4.3301,-6,-3.7588,-1.3892,-2.2981,-3.9392,-0.8682,-0.6946,-6.8944,-5.1962,-3,-1.0261,-0.6840000000000001,-2.5712,2,-1.2155,1.0261,4.3301,-4.6985,-4.924,-4.5963,-4.3301,-0.8682,1.3681,3.4641,1.3681,-1.0261,1.2856,-2.7362,-4.6985,-3.7588,-4,-9,-6.8937,-2.0521,2.9544,-4,0,-2.5981,-6.1284,-4.3301,-2.7362,-3,-3.2139,-1.0261,-2,0.5209,-0.6428,0,-2,-0.1736,2.8191,-1.2856,0,5,-1.3892,-3.7588,-5.6382,-0.8682,-5.6382,-5.1962,-6.8937,-4.4995,0.5209,-1,-2.2981,0,0.6946,-3.2139,-2.5,-3.9392,-2.2981,1.9284,-1.9284,0.6840000000000001,-1.7101,-0.6840000000000001,1.3681,3.7588,1.8794,-1.7321,-4.5,0,-2,-2.3941,-1.3892,1.7101,-1.7101,-3.0642,-4.3301,-5,-7.5175,-1.0419,-1.0419,1.3892,0,-2.5,-5.1962,0,3.8302,4.3301,3.5,-0.5,-1.2856,-1.3681,0.8682,-4,-4],[84,87,82,92,114,94,80,99,79,101,106,101,90,72,70,83,121,145,81,121,146,121,146,108,83,57,81,67,70,106,139,79,93,97,113,72,88,77,71,56,45,67,67,84,63,69,92,88,66,72,81,83,149,153,159,149,160,156,84,126,116,77,63,54,65,72,60,70,77,98,111,75,116,86,67,76,113,117,131,166,159,100,114,112,101,76,59,78,76,55,71,66,59,68,62,78,74,71,69,71,60,42,65,71,96,98,92,76,71,77,99,83],["Nord","Nord","Est","Nord","Ouest","Ouest","Ouest","Nord","Nord","Ouest","Nord","Sud","Sud","Ouest","Nord","Ouest","Ouest","Nord","Est","Sud","Nord","Est","Sud","Ouest","Ouest","Sud","Ouest","Nord","Est","Sud","Ouest","Sud","Nord","Ouest","Ouest","Ouest","Ouest","Ouest","Ouest","Est","Ouest","Ouest","Sud","Ouest","Ouest","Nord","Ouest","Sud","Ouest","Nord","Nord","Ouest","Nord","Nord","Ouest","Sud","Ouest","Nord","Est","Sud","Ouest","Ouest","Sud","Ouest","Ouest","Ouest","Nord","Nord","Ouest","Ouest","Nord","Sud","Sud","Ouest","Ouest","Sud","Sud","Ouest","Ouest","Sud","Ouest","Est","Est","Nord","Ouest","Ouest","Nord","Ouest","Ouest","Nord","Nord","Nord","Ouest","Ouest","Ouest","Ouest","Nord","Nord","Nord","Nord","Nord","Ouest","Ouest","Est","Est","Nord","Ouest","Sud","Sud","Sud","Ouest","Sud"],["Sec","Sec","Sec","Sec","Sec","Pluie","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Pluie","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Pluie","Sec","Sec","Sec","Sec","Sec","Sec","Pluie","Sec","Pluie","Pluie","Sec","Sec","Sec","Pluie","Pluie","Pluie","Pluie","Sec","Pluie","Pluie","Sec","Pluie","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Sec","Pluie","Pluie","Pluie","Pluie","Sec","Pluie","Pluie","Pluie","Sec","Pluie","Sec","Sec","Sec","Sec","Pluie","Pluie","Sec","Pluie","Sec","Sec","Sec","Sec","Sec","Sec","Pluie","Sec","Pluie","Pluie","Pluie","Pluie","Pluie","Pluie","Pluie","Pluie","Sec","Sec","Pluie","Pluie","Pluie","Sec","Pluie","Pluie","Pluie","Sec","Pluie","Sec","Sec","Pluie","Sec","Pluie","Sec","Pluie","Sec"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>maxO3<\/th>\n      <th>T9<\/th>\n      <th>T12<\/th>\n      <th>T15<\/th>\n      <th>Ne9<\/th>\n      <th>Ne12<\/th>\n      <th>Ne15<\/th>\n      <th>Vx9<\/th>\n      <th>Vx12<\/th>\n      <th>Vx15<\/th>\n      <th>maxO3v<\/th>\n      <th>vent<\/th>\n      <th>pluie<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"maxO3","targets":1},{"name":"T9","targets":2},{"name":"T12","targets":3},{"name":"T15","targets":4},{"name":"Ne9","targets":5},{"name":"Ne12","targets":6},{"name":"Ne15","targets":7},{"name":"Vx9","targets":8},{"name":"Vx12","targets":9},{"name":"Vx15","targets":10},{"name":"maxO3v","targets":11},{"name":"vent","targets":12},{"name":"pluie","targets":13}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
@@ -536,12 +569,16 @@ Note
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <p>On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">my_boxplot</span>(ozone)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="768"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="success-header">
@@ -559,34 +596,46 @@ Note
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(ozone, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"T9"</span>, <span class="st">"T12"</span>, <span class="st">"T15"</span>))  <span class="sc">%&gt;%</span> <span class="fu">my_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="768"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(ozone, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"Ne9"</span>, <span class="st">"Ne12"</span>, <span class="st">"Ne15"</span>))  <span class="sc">%&gt;%</span> <span class="fu">my_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="768"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
 <div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(ozone, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"Vx9"</span>, <span class="st">"Vx12"</span>, <span class="st">"Vx15"</span>))  <span class="sc">%&gt;%</span> <span class="fu">my_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="768"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -596,12 +645,16 @@ Note
 <div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <p>On regarde ici la corrélation calculée entre chacune de nos variables.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">my_pairs.panels</span>(ozone)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="2688"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="2688"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="success-header">
@@ -619,8 +672,8 @@ Note
 <p>Avec une Analyse en Composantes Principales (PCA) on peut regarder un peu le comportement de nos données.</p>
 <p>En effet, Cette méthode respose sur la transformation des variables d’origine en nouvelles variables non corrélées, appelées composantes principales, qui capturent successivement la plus grande variance possible des données.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>res_pca <span class="ot">&lt;-</span> FactoMineR<span class="sc">::</span><span class="fu">PCA</span>(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  ozone,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">quali.sup =</span> <span class="fu">c</span>(<span class="fu">which</span>(<span class="fu">colnames</span>(ozone) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"vent"</span>, <span class="st">"pluie"</span>))),</span>
@@ -636,8 +689,8 @@ Note
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <p>Tout d’abord, on peut commencer par regarder le pourcentage de variance expliqué par nos différentes composantes principales.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_eig</span>(</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  res_pca,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ncp =</span> <span class="dv">10</span>,</span>
@@ -649,7 +702,11 @@ Note
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="success-header">
@@ -671,8 +728,8 @@ Note
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_pca_ind</span>(</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  res_pca,</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="st">"none"</span>,</span>
@@ -683,14 +740,18 @@ Note
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="768"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_pca_ind</span>(</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  res_pca,</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="st">"none"</span>,</span>
@@ -701,7 +762,11 @@ Note
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="768"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -727,8 +792,8 @@ Note
 <li><p>Si l’angle est proche de 90°, alors les variables ne sont pas corrélées</p></li>
 </ul>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_pca_var</span>(</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  res_pca,</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.var =</span> <span class="st">"cos2"</span>,</span>
@@ -737,7 +802,11 @@ Note
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="768"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="success-header">
@@ -763,8 +832,8 @@ Note
 </p>
 <p>On peut obtenir la matrice <span class="math inline">\(X\)</span> et notamment le codage des variables qualitatives avec la fonction <em><code>model.matrix</code></em>.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ozone.X <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(maxO3 <span class="sc">~</span> ., <span class="at">data =</span> ozone)[, <span class="sc">-</span><span class="dv">1</span>]</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ozone.Y <span class="ot">&lt;-</span> ozone<span class="sc">$</span>maxO3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -775,15 +844,15 @@ Note
 <div class="tab-content">
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>mod.R <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(ozone.X, ozone.Y, <span class="at">alpha =</span> <span class="dv">0</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>La fonction <em><code>glmnet</code></em> calcule tous les estimateurs pour une grille de valeurs de <span class="math inline">\(\lambda\)</span> que l’on peut récupérer.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>mod.R<span class="sc">$</span>lambda <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -792,27 +861,30 @@ Note
 </div>
 <p>Et on peut également récupérer les différentes valeurs de <span class="math inline">\(\beta\)</span> associée aux différents <span class="math inline">\(\lambda\)</span>.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>beta_values <span class="ot">&lt;-</span> mod.R<span class="sc">$</span>beta <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(beta_values) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"lambda_"</span>, <span class="fu">seq</span>(<span class="dv">1</span>, <span class="fu">length</span>(mod.R<span class="sc">$</span>lambda), <span class="at">by =</span> <span class="dv">1</span>))</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>beta_values <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-
 <div class="datatables html-widget html-fill-item" id="htmlwidget-8fd57f8bf1414e8354e1" style="width:100%;height:auto;"></div>
 <script type="application/json" data-for="htmlwidget-8fd57f8bf1414e8354e1">{"x":{"filter":"none","vertical":false,"data":[["lambda_1","lambda_2","lambda_3","lambda_4","lambda_5","lambda_6","lambda_7","lambda_8","lambda_9","lambda_10","lambda_11","lambda_12","lambda_13","lambda_14","lambda_15","lambda_16","lambda_17","lambda_18","lambda_19","lambda_20","lambda_21","lambda_22","lambda_23","lambda_24","lambda_25","lambda_26","lambda_27","lambda_28","lambda_29","lambda_30","lambda_31","lambda_32","lambda_33","lambda_34","lambda_35","lambda_36","lambda_37","lambda_38","lambda_39","lambda_40","lambda_41","lambda_42","lambda_43","lambda_44","lambda_45","lambda_46","lambda_47","lambda_48","lambda_49","lambda_50","lambda_51","lambda_52","lambda_53","lambda_54","lambda_55","lambda_56","lambda_57","lambda_58","lambda_59","lambda_60","lambda_61","lambda_62","lambda_63","lambda_64","lambda_65","lambda_66","lambda_67","lambda_68","lambda_69","lambda_70","lambda_71","lambda_72","lambda_73","lambda_74","lambda_75","lambda_76","lambda_77","lambda_78","lambda_79","lambda_80","lambda_81","lambda_82","lambda_83","lambda_84","lambda_85","lambda_86","lambda_87","lambda_88","lambda_89","lambda_90","lambda_91","lambda_92","lambda_93","lambda_94","lambda_95","lambda_96","lambda_97","lambda_98","lambda_99","lambda_100"],[6.376767136845531e-36,0.008768318105805901,0.009616184976445542,0.01054531308277929,0.01156332182350544,0.01267853315665772,0.01390001186998903,0.01523762454004342,0.01670210165855812,0.01830510276027827,0.02005928428918484,0.0219783698216961,0.02407722212251403,0.02637191633811675,0.02888035341407421,0.0316203415113226,0.03461245186531227,0.03787834304341974,0.04144123323824138,0.04532595314687764,0.04955898771647102,0.05416850345096349,0.05918435748637689,0.0646380841390433,0.07056285413005252,0.0769934012126961,0.08396591050774335,0.09151786252142398,0.09968782662828464,0.1085151977983737,0.1180398705945232,0.1283018450237918,0.1393407597605868,0.1511953496256357,0.1639028260508085,0.1774981816102807,0.1920134225493119,0.207476736549435,0.223900798923243,0.2413218238966092,0.2597427651846457,0.2791673012182959,0.2995907231353595,0.3209991119971646,0.3433686151219807,0.3666648530822855,0.3908424865425147,0.4158449675836239,0.4416044934813174,0.4680421723614187,0.4950684003487498,0.5225834396880277,0.5504781780702568,0.578568853192539,0.6068428255574839,0.6351207049618641,0.6632679202309009,0.6911470742214143,0.7186193293785674,0.7455457031496847,0.7717882476839402,0.7972111091868227,0.8216814896117187,0.8450705578669658,0.8672543731631023,0.8881148846375517,0.9075410563206677,0.9253190641978246,0.9416436975256984,0.9562815930819162,0.9690037551357993,0.979926744485056,0.9889720102589862,0.9961069949411459,1.001315406615674,1.004592676358196,1.005944761925504,1.005387082805666,1.002943757320601,0.9986471542265062,0.9925376657265664,0.9846635729209507,0.975080895509314,0.9638531619985943,0.9510510777270098,0.9367520944787081,0.9210952275778119,0.9040113382368304,0.8855663188851435,0.8660000041801741,0.845396975195038,0.8238623158818331,0.8015047953358442,0.7784344912604273,0.754762361972938,0.730599508721793,0.7060563716282106,0.6812419124484927,0.6562627916632707,0.6312225525360352],[5.523924108497797e-36,0.00759468599047568,0.008328972338315312,0.00913360993859454,0.0100151955628633,0.01098092914124598,0.0120386523266642,0.01319689923630186,0.01446494987730586,0.01585288610345145,0.01737164986418729,0.01903310340366607,0.02085009094240999,0.02283650122535147,0.02500765706375866,0.02737917094447022,0.02996869243245097,0.03279490824562901,0.03587784248063825,0.03923890013635022,0.04290090067184739,0.04688809871002647,0.05122618858023532,0.05594228896551761,0.06106490349777334,0.06662385274848512,0.07265017272085389,0.07917597469524905,0.08623426115480423,0.09385869256944922,0.1020833000979116,0.1109421398350027,0.1204688851427692,0.1306963549112816,0.1416559773397475,0.1533771910350214,0.1658867878899314,0.1792082052910711,0.1933568526935975,0.2083541381130027,0.2242057834579525,0.2409142628522592,0.258474971107981,0.2768755925838026,0.2960955715058261,0.316105711683377,0.3368679310622041,0.358335192210912,0.3804516237667357,0.4031528404620415,0.4263664612748393,0.4500128173977574,0.4740058351392975,0.4982261894306949,0.5226312815304638,0.5471002957070338,0.5715350424162977,0.5958376183389195,0.6199117509689734,0.6436640860030467,0.667005415277606,0.6898518608143086,0.7121260426379927,0.7337582588077998,0.7546876921976688,0.7748636301178293,0.7942466438234302,0.812948846056914,0.8307337112416424,0.8476799878413671,0.8635059692754083,0.8787819489715152,0.8932984431749003,0.9071013637989783,0.9202449395459462,0.9327898246097918,0.9448020136667005,0.9563521139207725,0.9675148701956573,0.9783687468909209,0.9889953995524471,0.999478947454569,1.009905037604133,1.020359741570019,1.030928346837167,1.041694104434493,1.052195947890578,1.063700284631641,1.07557770113108,1.087948522860017,1.100879932866934,1.114418078726738,1.128601768047797,1.143460772586117,1.159015279186437,1.175275736743529,1.192242831019537,1.209907590474191,1.228251622813948,1.247247474856918],[4.867401837606643e-36,0.006690987249583224,0.007337790344487353,0.00804653689201637,0.008823033745051716,0.009673614605144452,0.01060517654164021,0.01162522429597108,0.0127419168742119,0.01396411627901539,0.01530143815458437,0.01676430402429609,0.01836399468759561,0.02011270420833932,0.02202377979034788,0.02411108784709356,0.02639002608134533,0.02887696894286431,0.03158945191232448,0.03454620667783456,0.0377671869931353,0.04127358259346182,0.04508781816907394,0.04923353401197379,0.05373554457255035,0.05861977080895009,0.06391314190764322,0.06964346172985814,0.07583923523258554,0.08252945016811142,0.08974330963110259,0.09750991154905683,0.1058578720527984,0.1148148908672457,0.1244072584683135,0.1346593067830917,0.145592807667649,0.1572263262492967,0.169573562797688,0.1826465369492598,0.1964492178253556,0.2109805030297215,0.2262326938431432,0.2421909210030641,0.2588326625059081,0.2761273785887763,0.2940362869245367,0.3125122974035014,0.331500120843139,0.3509365599357098,0.3707509842756673,0.3908659850920791,0.4111982000283447,0.4316544553159359,0.4521557466400139,0.4726017438448236,0.4928971639593011,0.512946701906644,0.5326562860060977,0.5519343243947628,0.5706929411842713,0.5888492052336772,0.6063263484025896,0.6230549535432924,0.6389740675676817,0.6540321677059869,0.6681878882986457,0.681496527279184,0.693762404574497,0.705050042891164,0.715324363228934,0.7247081515601194,0.7331473777362556,0.740662992214292,0.7472803932256432,0.7530300422608923,0.7579473801510652,0.7620727226129126,0.7654509297148323,0.7681307321980005,0.7701637143851127,0.7716030393321461,0.7725020374017357,0.7729127751426697,0.7728846982568565,0.7724634165797857,0.7715261425973018,0.7704186503723482,0.7690852915343945,0.767478824589909,0.7656197870356766,0.763517474399385,0.7611741132158253,0.7585864650003674,0.7557465528421671,0.7526426052907097,0.7492601464092985,0.7455831645690204,0.7415953118548863,0.7372810870397638],[-6.821463874216168e-36,-0.009371145912831723,-0.01027639667858214,-0.01126821286359801,-0.01235468313306318,-0.01354462481569706,-0.01484763309491149,-0.01627414083699318,-0.01783548120288557,-0.01954395276042825,-0.0214128866937502,-0.02345671556179258,-0.02569104288535971,-0.02813271263828446,-0.03080014080968121,-0.0337124086232592,-0.03689068502890189,-0.04035742919937881,-0.04413663758684383,-0.0482538778701357,-0.05273630757753649,-0.05761267348465184,-0.06291328737559157,-0.06866997324881766,-0.07491598057226782,-0.08168585777904265,-0.08901527988744237,-0.09694082397946764,-0.1054996863418377,-0.1147293354338625,-0.1246670955749166,-0.1353496574221305,-0.1468125130156929,-0.1590893154749891,-0.1722111663847157,-0.1862058375364453,-0.2010969379643578,-0.2169030420535227,-0.2336364695050322,-0.2513040748121275,-0.2699036909119563,-0.2894252733850162,-0.3098497848508206,-0.3311487229309346,-0.3532838500050222,-0.3762071628411853,-0.3998611342272442,-0.4241792499130888,-0.4490868528363607,-0.4745022934344851,-0.5003383708533687,-0.5265040362478984,-0.5529063173050323,-0.5794503092977532,-0.6060564442182808,-0.6326342727638788,-0.6591057424979669,-0.6854014576194037,-0.7114623700949356,-0.7372412210941783,-0.7627037083283734,-0.7878293620593736,-0.8126121060990906,-0.8370604625571728,-0.8611973367199288,-0.8850593018379709,-0.9086953047504721,-0.9322570294380991,-0.9556171630359291,-0.9789345063383705,-1.00226660482268,-1.025775335536375,-1.049467976277378,-1.073404569336697,-1.097634805305672,-1.122197790135768,-1.147121335521768,-1.172421494729406,-1.198102200487534,-1.224154987970701,-1.250558893420604,-1.277280657596025,-1.304275335240679,-1.331487348072636,-1.358851951689041,-1.386297035278635,-1.413871178581019,-1.441242622500177,-1.468516627950105,-1.495545028001245,-1.522255706499081,-1.54857524589894,-1.574434720952607,-1.599771531205844,-1.624529922027121,-1.648661309595923,-1.67212438114309,-1.694884987397288,-1.716915869586649,-1.738196263648923],[-7.994984136614242e-36,-0.01098049876949722,-0.01204091790724622,-0.0132026759179068,-0.01447523312932105,-0.01586889581714414,-0.01739487634571429,-0.01906536218728166,-0.02089358799099506,-0.0228939103301415,-0.02508188460833224,-0.0274743434276626,-0.03008947551033629,-0.03294690401574914,-0.03606795125062513,-0.03947501460632314,-0.04319260873506306,-0.04724681232411265,-0.05166545875820183,-0.05647816716219237,-0.06171635395289158,-0.06741322008921631,-0.07360370858120814,-0.08032442619406831,-0.08761352269397361,-0.09551052046820335,-0.1040560869642332,-0.1132917421938552,-0.1232594936139293,-0.1340013911109938,-0.1455589956774301,-0.1579727567716818,-0.171281295401997,-0.1855205927495194,-0.2007230877172617,-0.2169166911851057,-0.234123729943707,-0.2523598391793662,-0.2716338787782523,-0.2919433381855399,-0.3132777337568757,-0.3356150073862014,-0.3589212561967041,-0.3831500691089045,-0.4082421011653348,-0.4341249326085695,-0.4607132531845638,-0.4879094023312106,-0.5156042831799797,-0.5436786533659766,-0.5720047795146259,-0.6004484260809791,-0.6288711339706557,-0.6571459257369207,-0.6851164714982846,-0.7126542439983808,-0.7396300571131522,-0.7659231793090343,-0.791423550307193,-0.8160337521374814,-0.8396706837906053,-0.8622668846578027,-0.8837714381227801,-0.9041503714465681,-0.9233864626220262,-0.9414783812642078,-0.9584391372334312,-0.9743360971256264,-0.9890927386195074,-1.002812753684323,-1.015597305072083,-1.02742645960646,-1.038360639797555,-1.048443961627241,-1.057716855890626,-1.066216329617807,-1.07397525863781,-1.081021484232761,-1.087376765091336,-1.093055790588068,-1.098065494698697,-1.102404845972874,-1.106065182325509,-1.109031061456647,-1.111281533534713,-1.112791713675162,-1.114476970224913,-1.114384328164014,-1.113498808377384,-1.111756647099263,-1.109132289852241,-1.105613599206789,-1.101194590526531,-1.095876810036274,-1.089669933407698,-1.082591941535068,-1.074669048214117,-1.06593540282435,-1.056432594720573,-1.04620899265792],[-5.839056910437948e-36,-0.008013519099753898,-0.008786771139921672,-0.009633787432183707,-0.01056142866934163,-0.01157716228261697,-0.0126891055443248,-0.01390607362996318,-0.0152376294562565,-0.0166941349402069,-0.01828680320178321,-0.02002775108645131,-0.02193005121016701,-0.02400778252550046,-0.02627617565560142,-0.02875129589434502,-0.03145058626487524,-0.03439258015136634,-0.03759699477703561,-0.04108473606995354,-0.04487788628867413,-0.0489996704584342,-0.05347439716757192,-0.05832736877853006,-0.06358475564334146,-0.06927342851269984,-0.07542074303228824,-0.08205427008115906,-0.08920146578546324,-0.09688927540648631,-0.1051436660316749,-0.1139890841718175,-0.1234478360661045,-0.133539390790095,-0.1442796092021782,-0.1556799053747242,-0.167746351416701,-0.1804787414284307,-0.1938706828298712,-0.2079050092030435,-0.2225577402883515,-0.2377943113693847,-0.253569524155188,-0.2698269819722117,-0.2864987220666106,-0.3035050841975591,-0.3207548496875784,-0.3381456774591504,-0.355564853580801,-0.3728903589739568,-0.389992246893783,-0.4067343083741988,-0.4229759907311166,-0.4385859775625522,-0.4534040799765317,-0.4672970926357186,-0.4801290347563374,-0.4917706012534342,-0.5021012587332665,-0.5110111848195658,-0.5184030019486753,-0.5241932544372105,-0.52831357455343,-0.5307114864207237,-0.531350812392409,-0.5302116788659689,-0.5272901654961182,-0.5226036612940387,-0.516156585778053,-0.5080079502492226,-0.4982238371714311,-0.4868447521250616,-0.4739596622437685,-0.4596607504374096,-0.444052356806125,-0.4272502438785,-0.4093801961764338,-0.390576183027531,-0.3709782562353897,-0.3507303841575429,-0.3299783753563693,-0.3088679694643592,-0.2875431108578248,-0.2661443892113416,-0.2448076259835451,-0.2236625949694696,-0.2031005009856475,-0.1826797471052889,-0.1627738965219702,-0.143500205079052,-0.1249415958380427,-0.1071737251465566,-0.09026176745366857,-0.07426009489830677,-0.05921246771154726,-0.04515229451950952,-0.03210298046270641,-0.02007835400797941,-0.009083156104032125,0.0008864219946651222],[5.706013931173594e-36,0.007835555984764809,0.008592131941368404,0.009420982246076634,0.01032885052782497,0.01132308058424169,0.01241166058808194,0.01360327191031525,0.01490734004130198,0.0163340873320839,0.01789458717065219,0.01960081907951128,0.02146572406812406,0.02350325939407082,0.02572852800496449,0.02815754610016342,0.03080768514602496,0.03369746266877215,0.036846631674565,0.04027620011185536,0.04400843608687871,0.04806685538775521,0.05247618743580214,0.05726231535419715,0.06245218544728174,0.06807368104892308,0.07415545546378403,0.08072671863794301,0.08781697231043145,0.09545568877805594,0.1036719291213796,0.1124938978615996,0.1219484326155152,0.1320604294486933,0.1428522073366967,0.1543428184428735,0.166547314778979,0.1794759861475814,0.1931349654357556,0.2075206230682118,0.2226254146865929,0.2384332577589651,0.2549199275152128,0.2720526804254818,0.2897900587644451,0.3080819074479016,0.3268696283142544,0.3460866884812642,0.3656593886455594,0.3855078847801567,0.4055474434094189,0.425689897391579,0.4458452567594819,0.4659396747568881,0.4858595902578491,0.505530445444514,0.5248717139711619,0.5438087862092318,0.5622740333087575,0.5802076091881798,0.5975579639646816,0.614282048129367,0.6303451900041406,0.6457206351685314,0.6603887509233327,0.6743359250147617,0.6875532251890548,0.7000990093657666,0.7118353952966238,0.7228274175267627,0.733027559795067,0.74252859966207,0.7512711898843135,0.7592495536026952,0.7664569688754589,0.7728870423339953,0.778534070455239,0.7833932425204362,0.7874607416858725,0.7907338519035395,0.7932111634984826,0.7948929183834552,0.7957814804806306,0.7958818800912995,0.7952023679687458,0.7937549199477322,0.7914149979788837,0.7884215015837529,0.7847124008070598,0.7803250135257054,0.7752926900559991,0.7696540244558917,0.7634517055169118,0.7567318194798253,0.7495433896095725,0.7419378251546257,0.7339683101949778,0.7256891585167754,0.7171551519881303,0.7084208793238492],[4.38734997427591e-36,0.006017633907140897,0.006597919082947303,0.007233482513284161,0.007929451202827177,0.008691401165935617,0.009525389837851788,0.01043799087098604,0.01143633002291628,0.01252812182787701,0.01372170664545005,0.01502608756352977,0.01645096649512269,0.01800677864788764,0.01970475748358436,0.02155683968759558,0.02357586067486054,0.02577546167761143,0.02817012198078307,0.03077515404575639,0.03360668450737896,0.03668161799290169,0.04001758035672279,0.0436328375871735,0.04754618634355574,0.05177681185234861,0.05634410876730305,0.06126746062307681,0.06656597373771861,0.0722581619039795,0.07836157901616719,0.08489239797262456,0.09186493583501382,0.09929112736527793,0.1071799517312227,0.1155368203742521,0.1243629377283899,0.1336546505748034,0.1434036946883592,0.1535934074503685,0.1642025176830041,0.1752020319277958,0.1865555209406267,0.1982189494541402,0.2101406973333642,0.2222618002183648,0.2345164312354754,0.2468326363442176,0.2591333246406148,0.2713375019686924,0.2833617222094845,0.2951217164497249,0.3065341467321616,0.3175280843003918,0.3280109223724721,0.3379195607946843,0.3471913304807661,0.3557723518927499,0.3636185105852368,0.3706961111788183,0.3769821772804812,0.382464376476331,0.3871405649336305,0.391017968888458,0.3941120518614462,0.3964451545360556,0.3980450318854527,0.3989177605577331,0.399137733303168,0.3987301249419454,0.3977843764084087,0.3962392114077999,0.3941811854251069,0.391652382707415,0.3886966426455339,0.3853594420592982,0.3816876570366114,0.3777292750251316,0.3735331722690241,0.3691490320826912,0.3646274015697016,0.3600198198151671,0.3553789232208057,0.350758442193659,0.3462130325720569,0.3417979191328016,0.3373008938836524,0.3333125644408615,0.3296154346964898,0.3262720822206268,0.3233285550017718,0.3208284196635116,0.3188101701498948,0.3173064459571098,0.3163434128271386,0.3159402717410645,0.3161089323676746,0.3168538635698562,0.318172124227137,0.3200535697374335],[3.970583108925521e-36,0.005447495933572625,0.005972963216594259,0.006548518978827264,0.00717881631876717,0.007868916613334147,0.008624319951731805,0.009450997227508303,0.01035542333619199,0.011344611221914,0.01242614643173354,0.01360822173554254,0.01489967125045718,0.01631000336954558,0.01784944165767371,0.01952891511580816,0.02136013453227777,0.02335557666754479,0.02552850214101286,0.02789295577639398,0.03046375500524856,0.03325646370234955,0.03628734852301806,0.03957331452561887,0.04313181661207188,0.04698074313140536,0.0511382678983192,0.05562266691945403,0.06045209634019158,0.06564432857576068,0.07121644432764439,0.07718447926628963,0.08356302563698911,0.09036479096100963,0.09760011838445137,0.1052764760715754,0.1133979263079282,0.1219645885825582,0.1309725523235132,0.1404117924264292,0.1502679318315203,0.1605205376369426,0.1711432057895374,0.1821034744146816,0.1933629100126585,0.2048773905572051,0.2165976034052456,0.2284697674860757,0.2404365786895541,0.2524383651340651,0.2644144256763712,0.2763045113891949,0.2880503966487982,0.2996009335834161,0.3108997082740145,0.3219065936574428,0.3325861263153911,0.3429115720538781,0.3528656225856711,0.362440749322261,0.3716391834356934,0.3804725097988574,0.3889608871846789,0.3971319379944615,0.4050193846458325,0.4126615399992,0.4200997770087908,0.4273478930334776,0.4345091789932902,0.4416008200947644,0.4486742003904867,0.4557316758958659,0.4628323551331559,0.4700092314744742,0.4772916407479518,0.4847041206980248,0.4922657938076355,0.4999899743837909,0.5078840489372419,0.515949602206221,0.524182709412031,0.5325743055629625,0.5411105660380873,0.5497732685484737,0.5585401375778125,0.5673851908622489,0.5764891945049487,0.5854473624255279,0.5943646883219791,0.6032290528337939,0.6120001393621585,0.6206387660980294,0.6291062296327358,0.6373647644052808,0.6453783090042181,0.6531132076911185,0.6605388416217606,0.6676281730167787,0.6743581836974657,0.6807101951344383],[6.892386621781383e-37,0.000948890681067787,0.001040771236243009,0.001141481364498712,0.00125185601228724,0.001372806353300025,0.001505326199933909,0.001650498843423008,0.00180950432781744,0.001983627157314847,0.002174264429118699,0.002382934374890742,0.002611285282714619,0.002861104758009615,0.003134328885958138,0.003433053309389128,0.003759541278717638,0.004116234577689546,0.004505762928033816,0.004930953286338399,0.005394838557956552,0.005900665465728322,0.006451901269457425,0.007052238988737066,0.007705600738301931,0.008416138743556172,0.009188233566848045,0.01002648904565244,0.01093572342598895,0.01192095617271558,0.01298738995792809,0.01414038737506485,0.01538544200501954,0.016728143576745,0.01817413712262192,0.0197290762306219,0.02139857074072161,0.02318812951824769,0.02510316348094363,0.02714868835814126,0.02932958081121385,0.03165031560411308,0.03411495017242644,0.03672706799110505,0.03948972925169326,0.04240543100888917,0.04547607868941776,0.04870297043280621,0.05208679516610527,0.05562764462885308,0.05932503879660129,0.06317796334106206,0.06718491694958981,0.07134512331525131,0.07565423589447366,0.08011046053333909,0.08471081993296614,0.08945207580617176,0.09433075437005523,0.09934315821599742,0.1044853620840731,0.1097531902240385,0.1151421733863995,0.1206474843827618,0.1262638528161988,0.1319854620272788,0.137805834269743,0.143714331471382,0.1497066199750079,0.1557728280986009,0.1619159526130441,0.168102490883671,0.1743296499541893,0.1805843422808182,0.1868525719784222,0.1931196317420752,0.1993702437400242,0.2055887133764532,0.211759095006757,0.217865371437102,0.2238916473247433,0.229822353266632,0.2356424543021842,0.2413376548715494,0.2468945920630529,0.2523010098023559,0.2575515722891784,0.2626239017239681,0.2675213312746855,0.272232639556432,0.2767527847303255,0.2810782219514987,0.2852068222014586,0.2891378735551298,0.2928719895134265,0.2964109997346908,0.2997578294021176,0.3029163706731493,0.3058913505455007,0.30868819909834],[-5.830507383673451e-36,-0.008069008318063408,-0.008854785646393524,-0.009716976572041047,-0.01066299124814126,-0.01170095174643555,-0.01283976110947964,-0.01408917708612256,-0.01545989251045849,-0.01696362284463785,-0.0186132014261297,-0.02042268297475967,-0.02240745592176927,-0.02458436411926616,-0.0269717842218826,-0.02958996739103729,-0.0324609132121959,-0.03560870808545805,-0.03905965951955019,-0.0428424829136792,-0.04698849947270767,-0.05153184466254687,-0.05650968617091483,-0.06196244977452472,-0.06793405080307735,-0.07447212800635195,-0.08162827554464175,-0.08945826750563581,-0.09802226777489068,-0.1073850162288969,-0.1176159800644679,-0.1287894566246827,-0.1409846113496845,-0.1542854315194918,-0.1687805733542976,-0.1845630769346495,-0.2017299205002865,-0.2203813832548385,-0.2406206550457864,-0.2625510106676485,-0.2862767504919551,-0.3119000250082241,-0.339519106385892,-0.3692259691701063,-0.4011035181148969,-0.4352224804627496,-0.4716380009862571,-0.5103860027145162,-0.5514794037304883,-0.5949043095247291,-0.640616329370249,-0.6885371917058195,-0.7385518546331608,-0.7905309462042398,-0.8442392425222196,-0.8994590949548029,-0.955915064606131,-1.013293746789571,-1.071247317802146,-1.12939850241172,-1.187346884824291,-1.244676381059685,-1.300963573208903,-1.355786491819541,-1.408733344193592,-1.459410649871262,-1.507450283098281,-1.552429532398261,-1.594098375111991,-1.632198883741005,-1.66702139522632,-1.697543948332792,-1.723957799042807,-1.74615592274607,-1.764066835065809,-1.777656899365694,-1.786928382606973,-1.791916269605176,-1.792683911710045,-1.789317964820148,-1.781923211881513,-1.770617803335916,-1.755529270854659,-1.736791475650139,-1.714542501678788,-1.688923409170049,-1.659974367051652,-1.627661149270682,-1.592646777889738,-1.554808987122035,-1.514303371959198,-1.471298583139882,-1.425965742779727,-1.378482890821862,-1.329035170475354,-1.277814529077939,-1.225019180171543,-1.170852775383032,-1.115523309420226,-1.059241803770576],[-1.022482893450636e-35,-0.01396210198165701,-0.01530184636689096,-0.01676785961668751,-0.01837157807345766,-0.020125379697054,-0.02204264166674469,-0.02413779745863934,-0.02642639189408334,-0.02892513260932348,-0.0316519360294827,-0.03462596550010804,-0.03786765873054775,-0.04139874112889852,-0.04524222015594689,-0.04942235857673518,-0.05396461801760433,-0.05889556631533797,-0.06424274338203448,-0.07003447536345168,-0.0762996278024046,-0.08306728707154033,-0.09036635832006197,-0.09822506728503759,-0.106670352641951,-0.1157271352277123,-0.1254174506057298,-0.1357594322277,-0.1467661340777472,-0.1584441843807233,-0.1707922659507171,-0.1837994242804953,-0.1974432117391173,-0.2116876854157193,-0.2264812873000686,-0.2417546485748536,-0.2574183745850547,-0.2733608830952408,-0.2894478136378049,-0.305515035966458,-0.3213744540429379,-0.336808627116279,-0.35157152931796,-0.365389029658249,-0.3779602587596165,-0.3889599650983794,-0.3980419321633808,-0.4048434856594871,-0.4089910676784762,-0.4101067947014039,-0.4078158515291309,-0.4017545078860449,-0.3915784834613481,-0.3769832266130442,-0.357666074327501,-0.3333991379038256,-0.3039942405943907,-0.2693177676765788,-0.2292940844077092,-0.183907155985607,-0.1332002756960879,-0.07727392767329229,-0.01628194455334416,0.04957374923491281,0.1200494169569742,0.1948663783796334,0.2737180729246203,0.3562046387451583,0.4421184823625908,0.5310627854321013,0.622752546142653,0.7166831052130566,0.8126067958562746,0.910210265862711,1.009204800434306,1.109328398855329,1.210346676664962,1.312051829769738,1.414260220208577,1.516809306882451,1.619554532579986,1.722366532051991,1.82512878540745,1.927735684586191,2.030090914740475,2.132106047280218,2.235851547161579,2.337223627680592,2.437916585569548,2.538009083673006,2.637414944470598,2.736066550735058,2.833897134717286,2.930838482194571,3.026820633533303,3.121771418741622,3.215616074980526,3.308277011714738,3.399673734763749,3.489722936308234],[1.51922151922152e-35,0.02086453112591683,0.02287940471322253,0.02508679953868288,0.02750469598858398,0.03015266973106305,0.03305201642513048,0.03622588249760025,0.03969940163486087,0.04349983626592781,0.04765672302836815,0.052202020866165,0.05717026000054461,0.06259868953316905,0.06852740519103032,0.07499954102581394,0.08206131686234899,0.08976219224567199,0.09815493959887227,0.1072956983139169,0.1172439906750211,0.1280626902151285,0.1398179318559145,0.1525789519298113,0.1664178449860088,0.1814092232171359,0.1976297635067102,0.2151576266101715,0.234071732989301,0.2544508804893065,0.2763726905678265,0.2999123723565552,0.3251412976619387,0.3521253852800442,0.3809232998653051,0.4115844791441075,0.4441470134996107,0.4786354137444601,0.5150600784807229,0.5534085870379165,0.5936523086996195,0.6357388828679058,0.6795916901465374,0.7251084188663216,0.7721601103393761,0.8205907920752671,0.8702178008730032,0.9208328841218553,0.9722041478545271,1.02407889458591,1.076187363577612,1.128247351923655,1.179969657794313,1.231096121187814,1.281286347219829,1.330292348436601,1.377861299046674,1.423767260866461,1.467818242672092,1.509862853275402,1.549796298274371,1.587565449745512,1.623172704915129,1.65667835604514,1.688201231209196,1.717917442675214,1.74605719767461,1.772777020070083,1.798561332448443,1.823725133831846,1.849026391533506,1.874204603052185,1.899956181126168,1.926693333964142,1.954819653455126,1.984723093102249,2.016767355074769,2.051283374797412,2.088561358856673,2.12884397241923,2.172321177448586,2.219127007196033,2.269338330021041,2.322975475638611,2.380004486721447,2.440340704903246,2.505626527496909,2.572359465414952,2.641924808702322,2.7140757041176,2.788544799422542,2.865055588463425,2.943318312136182,3.023035436914775,3.103906251638636,3.185630781188629,3.267913164546209,3.350464520007412,3.433005331415655,3.515267400559221],[2.772245542720769e-35,0.03809045854612312,0.04177067421863007,0.04580291172094175,0.05022012515036428,0.05505820854319108,0.06035622908678859,0.06615667257657792,0.07250570061812449,0.07945341849921631,0.08705415217980583,0.09536673227198625,0.1044547821941519,0.11438700686912,0.1252374562569405,0.1370858755841045,0.1500178604436889,0.1641251530667923,0.1795058253957383,0.1962644298295136,0.2145120891462493,0.2343665097342039,0.2559519001021887,0.2793987744659128,0.3048436191127956,0.3324283973600314,0.3622998674000619,0.3946086863733623,0.4295082738591037,0.4671534089053313,0.5076985370377064,0.5512957677131893,0.5980925487436825,0.6482290125952357,0.7018350003931496,0.7590267830395291,0.819903515016448,0.884543474918324,0.953001616574613,1.025300209410822,1.101432519239702,1.181354404546368,1.264982090615687,1.352189337617254,1.442805270272948,1.536613019940709,1.633349313001915,1.732705112430866,1.834327382914006,1.93782200526102,2.042757815198621,2.148671687539057,2.255074532028819,2.36148155635331,2.467323566300845,2.572094481588071,2.675268626978763,2.776329659740609,2.874777510025997,2.970134774139128,3.061952378034387,3.149814355303108,3.233341635109352,3.312194816712627,3.386076014444658,3.45472997278848,3.51794474717471,3.575215127821206,3.627001227227828,3.672992905854827,3.713729529176822,3.748141423396977,3.776804859210414,3.799840759971387,3.817420822366392,3.829765101729353,3.837138316632579,3.839845082676541,3.838224406768499,3.832643730321709,3.823492668344389,3.811176495745731,3.796109420575625,3.778707734953715,3.759383002881215,3.738535494234668,3.717115087537804,3.694377057770852,3.671229464073302,3.647939247333619,3.624766236603282,3.601944666388873,3.579672235043288,3.55811163931627,3.537391972144502,3.517610656858818,3.498835944369892,3.481109811888845,3.46445111508095,3.448858860148035]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>T9<\/th>\n      <th>T12<\/th>\n      <th>T15<\/th>\n      <th>Ne9<\/th>\n      <th>Ne12<\/th>\n      <th>Ne15<\/th>\n      <th>Vx9<\/th>\n      <th>Vx12<\/th>\n      <th>Vx15<\/th>\n      <th>maxO3v<\/th>\n      <th>ventNord<\/th>\n      <th>ventOuest<\/th>\n      <th>ventSud<\/th>\n      <th>pluieSec<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"T9","targets":1},{"name":"T12","targets":2},{"name":"T15","targets":3},{"name":"Ne9","targets":4},{"name":"Ne12","targets":5},{"name":"Ne15","targets":6},{"name":"Vx9","targets":7},{"name":"Vx12","targets":8},{"name":"Vx15","targets":9},{"name":"maxO3v","targets":10},{"name":"ventNord","targets":11},{"name":"ventOuest","targets":12},{"name":"ventSud","targets":13},{"name":"pluieSec","targets":14}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Puis on peut visualiser les chemins de régularisation des estimateurs <strong>Ridge</strong>.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mod.R, <span class="at">xvar =</span> <span class="st">"lambda"</span>, <span class="at">label =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="success-header">
@@ -827,15 +899,15 @@ Note
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mod.L <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(ozone.X, ozone.Y, <span class="at">alpha =</span> <span class="dv">1</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>La fonction <em><code>glmnet</code></em> calcule tous les estimateurs pour une grille de valeurs de <span class="math inline">\(\lambda\)</span> que l’on peut récupérer.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mod.L<span class="sc">$</span>lambda <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -844,27 +916,30 @@ Note
 </div>
 <p>Et on peut également récupérer les différentes valeurs de <span class="math inline">\(\beta\)</span> associée aux différents <span class="math inline">\(\lambda\)</span>.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>beta_values <span class="ot">&lt;-</span> mod.L<span class="sc">$</span>beta <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(beta_values) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"lambda_"</span>, <span class="fu">seq</span>(<span class="dv">1</span>, <span class="fu">length</span>(mod.L<span class="sc">$</span>lambda), <span class="at">by =</span> <span class="dv">1</span>))</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>beta_values <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-
 <div class="datatables html-widget html-fill-item" id="htmlwidget-433ce7d85fca0cd7047e" style="width:100%;height:auto;"></div>
 <script type="application/json" data-for="htmlwidget-433ce7d85fca0cd7047e">{"x":{"filter":"none","vertical":false,"data":[["lambda_1","lambda_2","lambda_3","lambda_4","lambda_5","lambda_6","lambda_7","lambda_8","lambda_9","lambda_10","lambda_11","lambda_12","lambda_13","lambda_14","lambda_15","lambda_16","lambda_17","lambda_18","lambda_19","lambda_20","lambda_21","lambda_22","lambda_23","lambda_24","lambda_25","lambda_26","lambda_27","lambda_28","lambda_29","lambda_30","lambda_31","lambda_32","lambda_33","lambda_34","lambda_35","lambda_36","lambda_37","lambda_38","lambda_39","lambda_40","lambda_41","lambda_42","lambda_43","lambda_44","lambda_45","lambda_46","lambda_47","lambda_48","lambda_49","lambda_50","lambda_51","lambda_52","lambda_53","lambda_54","lambda_55","lambda_56","lambda_57","lambda_58","lambda_59","lambda_60","lambda_61","lambda_62","lambda_63","lambda_64","lambda_65","lambda_66","lambda_67","lambda_68","lambda_69","lambda_70","lambda_71"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0001317444384088287,0.0009385218103013691,0.001840155586493028,0.003655491681198563,0.006016371240724805,0.00681174366931621],[0,0.4858228912938862,0.9284866159092191,1.3101948211685,1.467227451051184,1.60500187165101,1.713709956024509,1.81349207255953,1.83143720067021,1.871916818087344,1.905437968363831,1.935044787650842,1.961649772010908,1.98674435139543,2.010020955004963,2.037414132339746,2.063646260557483,2.083237583510009,2.103792849859588,2.121220514773028,2.135303376392917,2.148971677584608,2.161603058703309,2.173171918610321,2.182853490175066,2.185605893431552,2.191185389054641,2.195334248447149,2.198536090307663,2.201131317370472,2.203266105863633,2.205094136071931,2.206762554271955,2.208252823641786,2.20968068839233,2.195207440085444,2.169918981482742,2.148176302255803,2.127571467005376,2.108618445864388,2.091279074475006,2.075770438681086,2.061847838332675,2.049961374646519,2.038538297403882,2.028162445947963,2.018691703567241,2.010040182867146,2.002923888412143,1.995744307995235,1.987100432977156,1.985508543103673,1.984585565615385,1.984429449709988,1.983950057386693,1.983362643666478,1.983275342414851,1.982939504194651,1.98292476022308,1.982688197935037,1.982306438071122,1.982170685047784,1.981998353685511,1.981910906613868,1.982042445849636,1.981995797929353,1.981418971913694,1.980803990739345,1.979440464763687,1.977845438924899,1.977513957718824],[0,0,0,0.02189670748388446,0.1884927104547472,0.2653828209523676,0.3493687316175589,0.425293242572068,0.4815811055132146,0.4914452408064159,0.5023342411591799,0.5129884066493562,0.5229878120289813,0.5242080882265583,0.5227121495592216,0.5158489313533524,0.5087613561163472,0.5000639180832849,0.492018686500445,0.4858363828032522,0.481381321896442,0.4768704915964145,0.4726322317896694,0.4687245476758939,0.4643536502672945,0.4656300190031506,0.4669716099970259,0.4697112897777902,0.4727362580017779,0.4758285143661406,0.4788205471198422,0.4816343318611655,0.4840550413585711,0.486279443391899,0.4883908560358466,0.492358680321249,0.4962156034092029,0.4997710422827339,0.5032954803147252,0.5067093552441114,0.5097906194647764,0.5124404712061101,0.5147464604800155,0.5165970596679365,0.5182779810431792,0.5198545001734374,0.5213230322966592,0.522675808802737,0.5237889942923292,0.5248179735546905,0.5229602620987359,0.5188851540695418,0.5146794976121585,0.5105128864341352,0.5068413859391443,0.503590150196485,0.5004153134450992,0.4976579014053827,0.4949805436513871,0.4926915798830763,0.4907112850102559,0.4887378006443369,0.4870738615522012,0.485412276802848,0.4838005457528333,0.482493028930752,0.4811901597138745,0.4801175262172517,0.4789966322927905,0.4778292957448663,0.4771571666495072],[0,0,0,0,0,0,0,0,-0.2013215373037936,-0.4457800412038607,-0.6693530664036769,-0.8731451935587764,-1.058864279828156,-1.202353387742147,-1.317071986960268,-1.421037153963655,-1.515657987371936,-1.584461473646641,-1.64922776404144,-1.708870054745082,-1.764743592527928,-1.814099103978133,-1.85907729089104,-1.900061477149703,-1.933054393009298,-1.969082376464264,-1.97834889987405,-1.993965819189747,-2.006949649338242,-2.018834562986262,-2.029699499953622,-2.039597446664456,-2.04991403874127,-2.057948390348048,-2.065250882486276,-2.074461835150804,-2.082726013256389,-2.09082315700604,-2.09705024295768,-2.102762482130058,-2.10765674382557,-2.111781474697111,-2.115929525462318,-2.120763387937572,-2.124203885543038,-2.127232988706195,-2.130047850417573,-2.132630570789555,-2.135759903185904,-2.13799221828033,-2.1319333717901,-2.130741953127598,-2.129671463438259,-2.128429384792354,-2.127654305815051,-2.126987622343378,-2.125972932038979,-2.125543819451122,-2.124677009109918,-2.124397280441502,-2.124206230366703,-2.123490278717409,-2.123386623387829,-2.122811793604287,-2.122207042596391,-2.122197843405663,-2.121831395431514,-2.121755793804441,-2.121326609724239,-2.120587850272561,-2.120589216744697],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-0.003721588949966689,-0.03677675146654091,-0.06243884158877245,-0.08530999511208243,-0.1050305210398099,-0.1243153152705933,-0.1418438005560816,-0.1578031684377756,-0.1732637177385165,-0.1775425341298954,-0.1877539567852359,-0.1913435865621871,-0.1956018502606242,-0.1994067324700423,-0.2028815405704843,-0.2060691198470098,-0.2080990999966926,-0.2110138747107794,-0.2135481828401893,-0.2293779011059567,-0.2586308322876385,-0.2835260222099466,-0.307699621542577,-0.3296631880868668,-0.3495302908405989,-0.3673801079623376,-0.3832466892254894,-0.3963545953092071,-0.4096605835077505,-0.4217768899714553,-0.4327528200914548,-0.4427461016110037,-0.45060983963079,-0.4589450532167298,-0.4803396462393183,-0.491354799731018,-0.5014653173118017,-0.5104392458247778,-0.5186381452820611,-0.526158910719999,-0.5329986628905774,-0.5390309991421721,-0.5447090090878719,-0.5496154978064088,-0.5541355014539548,-0.5585658702546127,-0.5621312306964317,-0.5657869450443257,-0.5690291362905771,-0.5715577520966387,-0.5744070387979477,-0.5767777961362475,-0.5796513629406514,-0.5826895031737763,-0.5841916214184477],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0.07086858414017515,0.1764190679401763,0.2730933650584627,0.3595320449415801,0.4388578692577841,0.5104579156030187,0.5755402146448797,0.6347289629448061,0.6887398017223937,0.7379558058498851,0.7828018544921574,0.8204510412730226,0.8496699187382861,0.8456526861536827,0.8431714004378381,0.8399287962549142,0.8367987434895532,0.8339413092738075,0.8313347934142328,0.8302850700330416,0.8282675513732974,0.8261689996524026,0.8101661541299409,0.7905436012570171,0.7724398439035991,0.7544771579134125,0.7379128700235631,0.7217688191780691,0.7054953256947798,0.6906878951332154,0.678729717696579,0.6667668861612635,0.655528538297695,0.6452535207936868,0.6358997669783548,0.6285498817265218,0.6210936452591268,0.6055359468007865,0.593826315806549,0.5837374878592917,0.5737631474074806,0.5654260584110538,0.5579548327701971,0.5503540298805666,0.5441000191783182,0.5377621613959394,0.5325862321919871,0.5280805636558568,0.5233461119910038,0.5194804867445261,0.5155511894128115,0.511701175128789,0.5087366500306071,0.5058925004095057,0.5038302286816967,0.5019897369438938,0.5003338392566027,0.4992177038387627],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.001560938837689138,0.005115382312844566,0.01140766420821948,0.01771265603830931,0.02337565189007035,0.02853538636294619,0.03334403937515707,0.03777527985581852,0.04182107296801509,0.04545325251265083,0.0487249407740566,0.08301427910868782,0.1202175666878762,0.153039774601762,0.1847246579382823,0.2121698428413199,0.2366814961225041,0.2606723522004359,0.2813923317880257,0.301425106818312,0.3186162065232306,0.3336194845753983,0.3484988553620176,0.3612797504282277,0.3737439806403435,0.3857624262220202,0.3956740924534573,0.4051308302637979,0.4129031938407744,0.4203575478640812,0.4275421104022787,0.4325313933733659],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.002907645921106033,0.0491064579278236,0.0890097926185526,0.1260630884341815,0.1598960488557166,0.190710851532062,0.2187852197486551,0.2434606067801566,0.2667181919461451,0.2880543566376031,0.3178516639846506,0.3507753177946661,0.3807313423347451,0.4090821648526843,0.4337064507487412,0.4553204596491103,0.4737447550417206,0.4899879330451825,0.5037228700867383,0.5170820669682483,0.5293902493188798,0.5405736445876311,0.5507476891970705,0.5591952399648169,0.5675135854867198,0.5905763710117786,0.6027590391597023,0.6138525193019786,0.6239785093439157,0.6330102505889104,0.6413095138073759,0.6490478725018142,0.655735385686398,0.6621496637490973,0.6676226430787912,0.6726399601694429,0.6776011592744882,0.6816448483028059,0.6857123858754144,0.6894086766028498,0.6923050417541926,0.6953197883934106,0.6976559754919157,0.7001464917014418,0.7025662960564182,0.7036088752216483],[0,0,0,0,0.008126543304673257,0.03789880857419468,0.06511475879279359,0.08990861654956929,0.1144433565106641,0.1370749886596559,0.1577729092010129,0.1766388302791972,0.1938313603887341,0.2085533416806526,0.2212798615868313,0.2328763794068963,0.2433623143766003,0.2530253589506538,0.2617220232350383,0.2696504128351019,0.2769094275872351,0.2834957217995935,0.28949524922048,0.2949614048381522,0.2996884674649359,0.3036412467793814,0.3072397740462404,0.3105060186799646,0.3134754608989014,0.3161798730368857,0.3186455689015454,0.3208929069703101,0.3229516809595552,0.3248215265022659,0.3265196296309367,0.3285570805098762,0.3308640678199043,0.3329179039403497,0.334806487058705,0.3365164647942774,0.338096285347057,0.3395470392469714,0.3408666767546676,0.3420442444967751,0.3431421764030508,0.3441413260992787,0.3450515200711431,0.3458810697837575,0.3466084986400622,0.3472993572400823,0.3472032238619606,0.3470442916374921,0.346911044315633,0.3467585250373701,0.3466447227527891,0.3465484079515853,0.3464316576540244,0.3463471334488106,0.3462482899436143,0.3461784032413837,0.3461245921992547,0.3460538169951958,0.3460035907121661,0.3459438405279242,0.3458782418528727,0.3458337227029136,0.3457759813954626,0.3457304357335264,0.345668768146683,0.3455913752654834,0.3455713903356649],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-0.1407246246519667,-0.4054897646224819,-0.6429738388734273,-0.8623806606188601,-1.062764526898673,-1.247432118113989,-1.418162350674293,-1.573603013767231,-1.712042036192385,-1.841104286927941,-1.958850731940518,-2.066117725822639,-2.163863671430091,-2.249879641377057,-2.330965360735282,-2.08148708892905,-1.857692925653099,-1.659013028583378,-1.46822943064577,-1.302806939934215,-1.154636391502792,-1.009859270317169,-0.8857381408284932,-0.7649154002905999,-0.6624038456275144,-0.5727292128229219,-0.4823707621189307,-0.4069319032386553,-0.3314733981251375,-0.259094853345011,-0.2016122125125389,-0.144408401941564,-0.09933987098858087,-0.05334107375143813,-0.007908369377980519,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.01545164740391976,0.5092229985928821,0.94249262203314,1.329640509276609,1.695208135381446,2.016938979717077,2.306659570136347,2.583826543965576,2.825663505252844,3.056611656001091,3.256541610191424,3.433682240875797,3.607134872985385,3.755313152638126,3.899927256814001,4.036474748012121,4.148923516403527,4.258755372570556,4.348784422199186,4.438611540688732,4.525633668489617,4.569688013803754],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.1461371184990177,0.2605668404724224,0.3644601795801932,0.4598149752228369,0.5457913098495475,0.6234897851597279,0.6929939836974557,0.7559309768390422,0.8124879853922737,0.8645784052047111,0.9120957613974954,0.9553969467468887,0.9948543474183246,1.030091085267051,1.071272869418583,1.469262166260958,1.812142360652513,2.118582068327347,2.407102158262586,2.661536519007701,2.890918014680518,3.109668861904767,3.300912124700855,3.483112211141435,3.641193894630822,3.781549921762142,3.918547905714431,4.035771575679267,4.149924902053174,4.257421267346852,4.34613416031713,4.432499726575875,4.503227244585895,4.573409760097598,4.640898540590142,4.672150421005952],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.09093164308658871,0.2674486396062391,0.4715734667611774,0.6516579011434052,0.8180311896981416,0.9698849683765179,1.108319207174786,1.234502125175198,1.346838156904117,1.451614471119412,1.547325803315351,1.654801302095809,1.773861258102672,1.8811197130279,1.981975399738697,2.073382923837674,2.157469466842999,2.234788349287903,2.304578434121709,2.364975698548811,2.422553229016509,2.475421710705109,2.523577774636562,2.567438588874907,2.604763063809912,2.643804215085672,2.709864459528907,2.758487131954725,2.801953643864347,2.842300852494112,2.878083408813967,2.910593819058251,2.941243364879965,2.968051183187871,2.99352096326903,3.01563317533814,3.03554748033883,3.054892444525378,3.071360755295401,3.087388982435489,3.102251666365909,3.114526610137896,3.126513749015011,3.136228170600866,3.145740871129441,3.154652501435125,3.1604723394141]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>T9<\/th>\n      <th>T12<\/th>\n      <th>T15<\/th>\n      <th>Ne9<\/th>\n      <th>Ne12<\/th>\n      <th>Ne15<\/th>\n      <th>Vx9<\/th>\n      <th>Vx12<\/th>\n      <th>Vx15<\/th>\n      <th>maxO3v<\/th>\n      <th>ventNord<\/th>\n      <th>ventOuest<\/th>\n      <th>ventSud<\/th>\n      <th>pluieSec<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"T9","targets":1},{"name":"T12","targets":2},{"name":"T15","targets":3},{"name":"Ne9","targets":4},{"name":"Ne12","targets":5},{"name":"Ne15","targets":6},{"name":"Vx9","targets":7},{"name":"Vx12","targets":8},{"name":"Vx15","targets":9},{"name":"maxO3v","targets":10},{"name":"ventNord","targets":11},{"name":"ventOuest","targets":12},{"name":"ventSud","targets":13},{"name":"pluieSec","targets":14}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Puis on peut visualiser les chemins de régularisation des estimateurs <strong>Lasso</strong>.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mod.L, <span class="at">xvar =</span> <span class="st">"lambda"</span>, <span class="at">label =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="success-header">
@@ -889,13 +964,17 @@ Pour cela, on utilise la fonction <em><code>cv.glmnet</code></em> qui, comme son
 <div class="tab-content">
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>ridgeCV <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(ozone.X, ozone.Y, <span class="at">alpha =</span> <span class="dv">0</span>)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ridgeCV)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>On visualise ici les erreurs quadratiques calculées par validation croisée 10 blocs en fonction de <span class="math inline">\(\lambda\)</span> (échelle logarithmique). Deux traits verticaux sont représentés :</p>
@@ -907,8 +986,8 @@ Pour cela, on utilise la fonction <em><code>cv.glmnet</code></em> qui, comme son
 A savoir que si l’on veut diminuer la complexité du modèle on choisira la valeur de droite.</p>
 <p>On peut obtenir ces deux valeurs assez facilement.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" Valeur minimale : "</span>, ridgeCV<span class="sc">$</span>lambda.min, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="st">"Valeur maximale : "</span>, ridgeCV<span class="sc">$</span>lambda<span class="fl">.1</span>se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -919,13 +998,17 @@ A savoir que si l’on veut diminuer la complexité du modèle on choisira la va
 </div>
 <div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>lassoCV <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(ozone.X, ozone.Y, <span class="at">alpha =</span> <span class="dv">1</span>)</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lassoCV)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06Bonus_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>On visualise ici les erreurs quadratiques calculées par validation croisée 10 blocs en fonction de <span class="math inline">\(\lambda\)</span> (échelle logarithmique). Deux traits verticaux sont représentés :</p>
@@ -937,8 +1020,8 @@ A savoir que si l’on veut diminuer la complexité du modèle on choisira la va
 A savoir que si l’on veut diminuer la complexité du modèle on choisira la valeur de droite.</p>
 <p>On peut obtenir ces deux valeurs assez facilement.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" Valeur minimale : "</span>, lassoCV<span class="sc">$</span>lambda.min, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="st">"Valeur maximale : "</span>, lassoCV<span class="sc">$</span>lambda<span class="fl">.1</span>se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -960,8 +1043,8 @@ Cette étape est en réalité déjà effectuée par la fonction <em><code>cv.glm
 <div class="tab-content">
 <div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(ridgeCV, <span class="at">newx =</span> ozone.X[<span class="dv">50</span><span class="sc">:</span><span class="dv">51</span>, ], <span class="at">s =</span> <span class="st">"lambda.min"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -971,8 +1054,8 @@ Cette étape est en réalité déjà effectuée par la fonction <em><code>cv.glm
 </div>
 </div>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(ridgeCV, <span class="at">newx =</span> ozone.X[<span class="dv">50</span><span class="sc">:</span><span class="dv">51</span>, ], <span class="at">s =</span> <span class="st">"lambda.1se"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -984,8 +1067,8 @@ Cette étape est en réalité déjà effectuée par la fonction <em><code>cv.glm
 </div>
 <div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(lassoCV, <span class="at">newx =</span> ozone.X[<span class="dv">50</span><span class="sc">:</span><span class="dv">51</span>, ], <span class="at">s =</span> <span class="st">"lambda.min"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -995,8 +1078,8 @@ Cette étape est en réalité déjà effectuée par la fonction <em><code>cv.glm
 </div>
 </div>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(lassoCV, <span class="at">newx =</span> ozone.X[<span class="dv">50</span><span class="sc">:</span><span class="dv">51</span>, ], <span class="at">s =</span> <span class="st">"lambda.1se"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -1015,20 +1098,19 @@ Cette étape est en réalité déjà effectuée par la fonction <em><code>cv.glm
 </p>
 <p>On peut faire cela l’aide d’une validation croisée et pour cela on utilisera les données <em>ozone_complet.txt</em> qui contiennent plus d’individus et de variables.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>ozone1 <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"https://lrouviere.github.io/stat_grand_dim/ozone_complet.txt"</span>, <span class="at">sep=</span><span class="st">";"</span>) <span class="sc">%&gt;%</span>  <span class="fu">na.omit</span>()</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>ozone1.X <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(maxO3 <span class="sc">~</span> ., <span class="at">data =</span> ozone1)[, <span class="sc">-</span><span class="dv">1</span>]</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>ozone1.Y <span class="ot">&lt;-</span> ozone1<span class="sc">$</span>maxO3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cv_ridge_vs_lasso</span>(ozone1, <span class="at">fmla =</span> <span class="fu">formula</span>(maxO3 <span class="sc">~</span> .)) <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-
 <div class="datatables html-widget html-fill-item" id="htmlwidget-fb7a19d0dff973ab99eb" style="width:100%;height:auto;"></div>
 <script type="application/json" data-for="htmlwidget-fb7a19d0dff973ab99eb">{"x":{"filter":"none","vertical":false,"data":[["1"],[184.5742714590106],[192.0575254957779],[190.1463246192359]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Linéaire (MCO)<\/th>\n      <th>Ridge<\/th>\n      <th>Lasso<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,3]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Linéaire (MCO)","targets":1},{"name":"Ridge","targets":2},{"name":"Lasso","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
@@ -1044,12 +1126,11 @@ Cette étape est en réalité déjà effectuée par la fonction <em><code>cv.glm
 </div>
 <p>Pour changer, considérons toutes les interactions d’ordre 2</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cv_ridge_vs_lasso</span>(ozone1, <span class="at">fmla =</span> <span class="fu">formula</span>(maxO3 <span class="sc">~</span> .<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-
 <div class="datatables html-widget html-fill-item" id="htmlwidget-01fb866407163642616d" style="width:100%;height:auto;"></div>
 <script type="application/json" data-for="htmlwidget-01fb866407163642616d">{"x":{"filter":"none","vertical":false,"data":[["1"],[186.1735615575877],[167.9887499485505],[167.0197198311493]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Linéaire (MCO)<\/th>\n      <th>Ridge<\/th>\n      <th>Lasso<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,3]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Linéaire (MCO)","targets":1},{"name":"Ridge","targets":2},{"name":"Lasso","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
@@ -1063,8 +1144,8 @@ Cette étape est en réalité déjà effectuée par la fonction <em><code>cv.glm
 <div class="success">
 <p>Les méthodes régularisées permettent ici de diminuer les erreurs quadratiques de manière intéressante. Cela vient certainement du fait du nombre de variables explicatives qui est beaucoup plus important lorsqu’on prend en compte toutes les interactions d’ordre 2.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>ozone2.X <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(maxO3 <span class="sc">~</span> .<span class="sc">^</span><span class="dv">2</span>, <span class="at">data =</span> ozone1)[, <span class="sc">-</span><span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
@@ -1085,8 +1166,8 @@ Ces approches se révèlent particulièrement efficaces en grande dimension, off
 <section id="session-info" class="level1">
 <h1>Session info</h1>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">pkgs =</span> <span class="st">"attached"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -1178,6 +1259,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
   }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
   const toggleColorMode = (alternate) => {
     // Switch the stylesheets
     const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
@@ -1244,13 +1352,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -1285,18 +1395,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1328,7 +1427,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -1380,10 +1501,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/clement-poupelin\.github\.io\/Statistique_en_grande_dimension\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1393,8 +1531,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1406,7 +1553,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1450,6 +1720,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1475,6 +1746,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1621,13 +1918,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb47-85"><a href="#cb47-85" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-86"><a href="#cb47-86" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE, message=FALSE}</span></span>
 <span id="cb47-87"><a href="#cb47-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-88"><a href="#cb47-88" aria-hidden="true" tabindex="-1"></a><span class="co"># Inférence</span></span>
-<span id="cb47-89"><a href="#cb47-89" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet) <span class="do">## regression pénalisée</span></span>
+<span id="cb47-88"><a href="#cb47-88" aria-hidden="true" tabindex="-1"></a><span class="in"># Inférence</span></span>
+<span id="cb47-89"><a href="#cb47-89" aria-hidden="true" tabindex="-1"></a><span class="in">library(glmnet) ## regression pénalisée</span></span>
 <span id="cb47-90"><a href="#cb47-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-91"><a href="#cb47-91" aria-hidden="true" tabindex="-1"></a><span class="co"># Plots</span></span>
-<span id="cb47-92"><a href="#cb47-92" aria-hidden="true" tabindex="-1"></a><span class="do">## ggplot</span></span>
-<span id="cb47-93"><a href="#cb47-93" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb47-94"><a href="#cb47-94" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb47-91"><a href="#cb47-91" aria-hidden="true" tabindex="-1"></a><span class="in"># Plots</span></span>
+<span id="cb47-92"><a href="#cb47-92" aria-hidden="true" tabindex="-1"></a><span class="in">## ggplot</span></span>
+<span id="cb47-93"><a href="#cb47-93" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
+<span id="cb47-94"><a href="#cb47-94" aria-hidden="true" tabindex="-1"></a><span class="in">library(gridExtra)</span></span>
 <span id="cb47-95"><a href="#cb47-95" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-96"><a href="#cb47-96" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb47-97"><a href="#cb47-97" aria-hidden="true" tabindex="-1"></a></span>
@@ -1729,24 +2026,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb47-199"><a href="#cb47-199" aria-hidden="true" tabindex="-1"></a>La base de données d'origine *ozone.txt* répertorie ainsi 112 données météorologiques mesurées durant l'été 2001 à Rennes. Celles-ci sont caractérisées par les 13 variables suivantes : </span>
 <span id="cb47-200"><a href="#cb47-200" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-201"><a href="#cb47-201" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, echo=FALSE, message=FALSE, warning=FALSE}</span></span>
-<span id="cb47-202"><a href="#cb47-202" aria-hidden="true" tabindex="-1"></a>ozone <span class="ot">&lt;-</span><span class="fu">read.table</span>(<span class="st">"https://r-stat-sc-donnees.github.io/ozone.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>)</span>
+<span id="cb47-202"><a href="#cb47-202" aria-hidden="true" tabindex="-1"></a><span class="in">ozone &lt;-read.table("https://r-stat-sc-donnees.github.io/ozone.txt", header=TRUE)</span></span>
 <span id="cb47-203"><a href="#cb47-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-204"><a href="#cb47-204" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb47-205"><a href="#cb47-205" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
-<span id="cb47-206"><a href="#cb47-206" aria-hidden="true" tabindex="-1"></a>identity_keys <span class="ot">&lt;-</span> <span class="fu">cell_spec</span>(</span>
-<span id="cb47-207"><a href="#cb47-207" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">colnames</span>(ozone), <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb47-208"><a href="#cb47-208" aria-hidden="true" tabindex="-1"></a>identity_values <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"concentration maximale d'ozone (en DU)"</span>, <span class="st">"température à 9H (en °C)"</span>, <span class="st">"température à 12H (en °C)"</span>, <span class="st">"température à 15H (en °C)"</span>, <span class="st">"nébulosité à 9H (en octa)"</span>, <span class="st">"nébulosité à 12H (en octa)"</span>, <span class="st">"nébulosité à 15H (en octa)"</span>, <span class="st">"vitesse du vent à 9H"</span>, <span class="st">"vitesse du vent à 12H"</span>, <span class="st">"vitesse du vent à 15H"</span>, <span class="st">"concentration maximale d'ozone de la veille (en DU)"</span>, <span class="st">"direction principale du vent (Nord / Ouest / Sud / Est)"</span>, <span class="st">"présence ou non de pluie (Sec / Pluie)"</span>)</span>
-<span id="cb47-209"><a href="#cb47-209" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb47-210"><a href="#cb47-210" aria-hidden="true" tabindex="-1"></a>  <span class="at">keys =</span> identity_keys, </span>
-<span id="cb47-211"><a href="#cb47-211" aria-hidden="true" tabindex="-1"></a>  <span class="at">values =</span> identity_values, </span>
-<span id="cb47-212"><a href="#cb47-212" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb47-213"><a href="#cb47-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(</span>
-<span id="cb47-214"><a href="#cb47-214" aria-hidden="true" tabindex="-1"></a>    <span class="at">format =</span> <span class="st">"html"</span>, </span>
-<span id="cb47-215"><a href="#cb47-215" aria-hidden="true" tabindex="-1"></a>    <span class="at">booktabs =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb47-216"><a href="#cb47-216" aria-hidden="true" tabindex="-1"></a>    <span class="at">escape =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb47-217"><a href="#cb47-217" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="cn">NULL</span></span>
-<span id="cb47-218"><a href="#cb47-218" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb47-219"><a href="#cb47-219" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"hover"</span>, <span class="st">"condensed"</span>))</span>
+<span id="cb47-204"><a href="#cb47-204" aria-hidden="true" tabindex="-1"></a><span class="in">library(tidyverse)</span></span>
+<span id="cb47-205"><a href="#cb47-205" aria-hidden="true" tabindex="-1"></a><span class="in">library(kableExtra)</span></span>
+<span id="cb47-206"><a href="#cb47-206" aria-hidden="true" tabindex="-1"></a><span class="in">identity_keys &lt;- cell_spec(</span></span>
+<span id="cb47-207"><a href="#cb47-207" aria-hidden="true" tabindex="-1"></a><span class="in">  x = colnames(ozone), format = "html", bold = TRUE)</span></span>
+<span id="cb47-208"><a href="#cb47-208" aria-hidden="true" tabindex="-1"></a><span class="in">identity_values &lt;- c("concentration maximale d'ozone (en DU)", "température à 9H (en °C)", "température à 12H (en °C)", "température à 15H (en °C)", "nébulosité à 9H (en octa)", "nébulosité à 12H (en octa)", "nébulosité à 15H (en octa)", "vitesse du vent à 9H", "vitesse du vent à 12H", "vitesse du vent à 15H", "concentration maximale d'ozone de la veille (en DU)", "direction principale du vent (Nord / Ouest / Sud / Est)", "présence ou non de pluie (Sec / Pluie)")</span></span>
+<span id="cb47-209"><a href="#cb47-209" aria-hidden="true" tabindex="-1"></a><span class="in">tibble(</span></span>
+<span id="cb47-210"><a href="#cb47-210" aria-hidden="true" tabindex="-1"></a><span class="in">  keys = identity_keys, </span></span>
+<span id="cb47-211"><a href="#cb47-211" aria-hidden="true" tabindex="-1"></a><span class="in">  values = identity_values, </span></span>
+<span id="cb47-212"><a href="#cb47-212" aria-hidden="true" tabindex="-1"></a><span class="in">) %&gt;% </span></span>
+<span id="cb47-213"><a href="#cb47-213" aria-hidden="true" tabindex="-1"></a><span class="in">  kbl(</span></span>
+<span id="cb47-214"><a href="#cb47-214" aria-hidden="true" tabindex="-1"></a><span class="in">    format = "html", </span></span>
+<span id="cb47-215"><a href="#cb47-215" aria-hidden="true" tabindex="-1"></a><span class="in">    booktabs = TRUE, </span></span>
+<span id="cb47-216"><a href="#cb47-216" aria-hidden="true" tabindex="-1"></a><span class="in">    escape = FALSE, </span></span>
+<span id="cb47-217"><a href="#cb47-217" aria-hidden="true" tabindex="-1"></a><span class="in">    col.names = NULL</span></span>
+<span id="cb47-218"><a href="#cb47-218" aria-hidden="true" tabindex="-1"></a><span class="in">  ) %&gt;% </span></span>
+<span id="cb47-219"><a href="#cb47-219" aria-hidden="true" tabindex="-1"></a><span class="in">  kable_styling(bootstrap_options = c("hover", "condensed"))</span></span>
 <span id="cb47-220"><a href="#cb47-220" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb47-221"><a href="#cb47-221" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-222"><a href="#cb47-222" aria-hidden="true" tabindex="-1"></a>On identifie le regroupement de toutes les données météorologiques récoltées en une journée par la date à laquelle les relevés ont été effectués.</span>
@@ -1770,7 +2067,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb47-242"><a href="#cb47-242" aria-hidden="true" tabindex="-1"></a>On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.</span>
 <span id="cb47-243"><a href="#cb47-243" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-244"><a href="#cb47-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, fig.height=6, fig.width=8}</span></span>
-<span id="cb47-245"><a href="#cb47-245" aria-hidden="true" tabindex="-1"></a><span class="fu">my_boxplot</span>(ozone)</span>
+<span id="cb47-245"><a href="#cb47-245" aria-hidden="true" tabindex="-1"></a><span class="in">my_boxplot(ozone)</span></span>
 <span id="cb47-246"><a href="#cb47-246" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb47-247"><a href="#cb47-247" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-248"><a href="#cb47-248" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
@@ -1789,15 +2086,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb47-261"><a href="#cb47-261" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-262"><a href="#cb47-262" aria-hidden="true" tabindex="-1"></a><span class="fu">### Température</span></span>
 <span id="cb47-263"><a href="#cb47-263" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, fig.height=6, fig.width=8}</span></span>
-<span id="cb47-264"><a href="#cb47-264" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(ozone, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"T9"</span>, <span class="st">"T12"</span>, <span class="st">"T15"</span>))  <span class="sc">%&gt;%</span> <span class="fu">my_boxplot</span>()</span>
+<span id="cb47-264"><a href="#cb47-264" aria-hidden="true" tabindex="-1"></a><span class="in">subset(ozone, select = c("T9", "T12", "T15"))  %&gt;% my_boxplot()</span></span>
 <span id="cb47-265"><a href="#cb47-265" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb47-266"><a href="#cb47-266" aria-hidden="true" tabindex="-1"></a><span class="fu">### Nébulosité</span></span>
 <span id="cb47-267"><a href="#cb47-267" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, fig.height=6, fig.width=8}</span></span>
-<span id="cb47-268"><a href="#cb47-268" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(ozone, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"Ne9"</span>, <span class="st">"Ne12"</span>, <span class="st">"Ne15"</span>))  <span class="sc">%&gt;%</span> <span class="fu">my_boxplot</span>()</span>
+<span id="cb47-268"><a href="#cb47-268" aria-hidden="true" tabindex="-1"></a><span class="in">subset(ozone, select = c("Ne9", "Ne12", "Ne15"))  %&gt;% my_boxplot()</span></span>
 <span id="cb47-269"><a href="#cb47-269" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb47-270"><a href="#cb47-270" aria-hidden="true" tabindex="-1"></a><span class="fu">### Vitesse du vent </span></span>
 <span id="cb47-271"><a href="#cb47-271" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, fig.height=6, fig.width=8}</span></span>
-<span id="cb47-272"><a href="#cb47-272" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(ozone, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"Vx9"</span>, <span class="st">"Vx12"</span>, <span class="st">"Vx15"</span>))  <span class="sc">%&gt;%</span> <span class="fu">my_boxplot</span>()</span>
+<span id="cb47-272"><a href="#cb47-272" aria-hidden="true" tabindex="-1"></a><span class="in">subset(ozone, select = c("Vx9", "Vx12", "Vx15"))  %&gt;% my_boxplot()</span></span>
 <span id="cb47-273"><a href="#cb47-273" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb47-274"><a href="#cb47-274" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb47-275"><a href="#cb47-275" aria-hidden="true" tabindex="-1"></a></span>
@@ -1807,7 +2104,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb47-279"><a href="#cb47-279" aria-hidden="true" tabindex="-1"></a>On regarde ici la corrélation calculée entre chacune de nos variables.</span>
 <span id="cb47-280"><a href="#cb47-280" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-281"><a href="#cb47-281" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=22, fig.width=28}</span></span>
-<span id="cb47-282"><a href="#cb47-282" aria-hidden="true" tabindex="-1"></a><span class="fu">my_pairs.panels</span>(ozone)</span>
+<span id="cb47-282"><a href="#cb47-282" aria-hidden="true" tabindex="-1"></a><span class="in">my_pairs.panels(ozone)</span></span>
 <span id="cb47-283"><a href="#cb47-283" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb47-284"><a href="#cb47-284" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-285"><a href="#cb47-285" aria-hidden="true" tabindex="-1"></a>::: success-header</span>
@@ -1879,26 +2176,26 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb47-355"><a href="#cb47-355" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
 <span id="cb47-356"><a href="#cb47-356" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Pluie </span></span>
 <span id="cb47-357"><a href="#cb47-357" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=6, fig.width=8}</span></span>
-<span id="cb47-358"><a href="#cb47-358" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_pca_ind</span>(</span>
-<span id="cb47-359"><a href="#cb47-359" aria-hidden="true" tabindex="-1"></a>  res_pca,</span>
-<span id="cb47-360"><a href="#cb47-360" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="st">"none"</span>,</span>
-<span id="cb47-361"><a href="#cb47-361" aria-hidden="true" tabindex="-1"></a>  <span class="at">pointsize =</span> <span class="dv">2</span>,</span>
-<span id="cb47-362"><a href="#cb47-362" aria-hidden="true" tabindex="-1"></a>  <span class="at">habillage =</span> <span class="fu">as.factor</span>(ozone<span class="sc">$</span>pluie),</span>
-<span id="cb47-363"><a href="#cb47-363" aria-hidden="true" tabindex="-1"></a>  <span class="at">addEllipses =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb47-364"><a href="#cb47-364" aria-hidden="true" tabindex="-1"></a>  <span class="at">ellipse.level =</span> <span class="fl">0.95</span></span>
-<span id="cb47-365"><a href="#cb47-365" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-358"><a href="#cb47-358" aria-hidden="true" tabindex="-1"></a><span class="in">factoextra::fviz_pca_ind(</span></span>
+<span id="cb47-359"><a href="#cb47-359" aria-hidden="true" tabindex="-1"></a><span class="in">  res_pca,</span></span>
+<span id="cb47-360"><a href="#cb47-360" aria-hidden="true" tabindex="-1"></a><span class="in">  label = "none",</span></span>
+<span id="cb47-361"><a href="#cb47-361" aria-hidden="true" tabindex="-1"></a><span class="in">  pointsize = 2,</span></span>
+<span id="cb47-362"><a href="#cb47-362" aria-hidden="true" tabindex="-1"></a><span class="in">  habillage = as.factor(ozone$pluie),</span></span>
+<span id="cb47-363"><a href="#cb47-363" aria-hidden="true" tabindex="-1"></a><span class="in">  addEllipses = TRUE,</span></span>
+<span id="cb47-364"><a href="#cb47-364" aria-hidden="true" tabindex="-1"></a><span class="in">  ellipse.level = 0.95</span></span>
+<span id="cb47-365"><a href="#cb47-365" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb47-366"><a href="#cb47-366" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb47-367"><a href="#cb47-367" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-368"><a href="#cb47-368" aria-hidden="true" tabindex="-1"></a><span class="fu">##### vent </span></span>
 <span id="cb47-369"><a href="#cb47-369" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=6, fig.width=8}</span></span>
-<span id="cb47-370"><a href="#cb47-370" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_pca_ind</span>(</span>
-<span id="cb47-371"><a href="#cb47-371" aria-hidden="true" tabindex="-1"></a>  res_pca,</span>
-<span id="cb47-372"><a href="#cb47-372" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="st">"none"</span>,</span>
-<span id="cb47-373"><a href="#cb47-373" aria-hidden="true" tabindex="-1"></a>  <span class="at">pointsize =</span> <span class="dv">2</span>,</span>
-<span id="cb47-374"><a href="#cb47-374" aria-hidden="true" tabindex="-1"></a>  <span class="at">habillage =</span> <span class="fu">as.factor</span>(ozone<span class="sc">$</span>vent),</span>
-<span id="cb47-375"><a href="#cb47-375" aria-hidden="true" tabindex="-1"></a>  <span class="at">addEllipses =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb47-376"><a href="#cb47-376" aria-hidden="true" tabindex="-1"></a>  <span class="at">ellipse.level =</span> <span class="fl">0.95</span></span>
-<span id="cb47-377"><a href="#cb47-377" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-370"><a href="#cb47-370" aria-hidden="true" tabindex="-1"></a><span class="in">factoextra::fviz_pca_ind(</span></span>
+<span id="cb47-371"><a href="#cb47-371" aria-hidden="true" tabindex="-1"></a><span class="in">  res_pca,</span></span>
+<span id="cb47-372"><a href="#cb47-372" aria-hidden="true" tabindex="-1"></a><span class="in">  label = "none",</span></span>
+<span id="cb47-373"><a href="#cb47-373" aria-hidden="true" tabindex="-1"></a><span class="in">  pointsize = 2,</span></span>
+<span id="cb47-374"><a href="#cb47-374" aria-hidden="true" tabindex="-1"></a><span class="in">  habillage = as.factor(ozone$vent),</span></span>
+<span id="cb47-375"><a href="#cb47-375" aria-hidden="true" tabindex="-1"></a><span class="in">  addEllipses = TRUE,</span></span>
+<span id="cb47-376"><a href="#cb47-376" aria-hidden="true" tabindex="-1"></a><span class="in">  ellipse.level = 0.95</span></span>
+<span id="cb47-377"><a href="#cb47-377" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb47-378"><a href="#cb47-378" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb47-379"><a href="#cb47-379" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb47-380"><a href="#cb47-380" aria-hidden="true" tabindex="-1"></a></span>
@@ -1927,12 +2224,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb47-403"><a href="#cb47-403" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Si l’angle est proche de 90°, alors les variables ne sont pas corrélées</span>
 <span id="cb47-404"><a href="#cb47-404" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-405"><a href="#cb47-405" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=6, fig.width=8}</span></span>
-<span id="cb47-406"><a href="#cb47-406" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_pca_var</span>(</span>
-<span id="cb47-407"><a href="#cb47-407" aria-hidden="true" tabindex="-1"></a>  res_pca,</span>
-<span id="cb47-408"><a href="#cb47-408" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.var =</span> <span class="st">"cos2"</span>,</span>
-<span id="cb47-409"><a href="#cb47-409" aria-hidden="true" tabindex="-1"></a>  <span class="at">gradient.cols =</span> <span class="fu">rainbow</span>(<span class="at">n =</span> <span class="dv">8</span>, <span class="at">start =</span> .<span class="dv">6</span>, <span class="at">end =</span> .<span class="dv">9</span>),</span>
-<span id="cb47-410"><a href="#cb47-410" aria-hidden="true" tabindex="-1"></a>  <span class="at">repel =</span> <span class="cn">TRUE</span></span>
-<span id="cb47-411"><a href="#cb47-411" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-406"><a href="#cb47-406" aria-hidden="true" tabindex="-1"></a><span class="in">factoextra::fviz_pca_var(</span></span>
+<span id="cb47-407"><a href="#cb47-407" aria-hidden="true" tabindex="-1"></a><span class="in">  res_pca,</span></span>
+<span id="cb47-408"><a href="#cb47-408" aria-hidden="true" tabindex="-1"></a><span class="in">  col.var = "cos2",</span></span>
+<span id="cb47-409"><a href="#cb47-409" aria-hidden="true" tabindex="-1"></a><span class="in">  gradient.cols = rainbow(n = 8, start = .6, end = .9),</span></span>
+<span id="cb47-410"><a href="#cb47-410" aria-hidden="true" tabindex="-1"></a><span class="in">  repel = TRUE</span></span>
+<span id="cb47-411"><a href="#cb47-411" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb47-412"><a href="#cb47-412" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-413"><a href="#cb47-413" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb47-414"><a href="#cb47-414" aria-hidden="true" tabindex="-1"></a></span>
@@ -2214,18 +2511,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb47-734"><a href="#cb47-734" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb47-735"><a href="#cb47-735" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">pkgs =</span> <span class="st">"attached"</span>)</span>
 <span id="cb47-736"><a href="#cb47-736" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
-    <div class="nav-footer-left">Copyright 2025, Clément Poupelin</div>   
+    <div class="nav-footer-left">
+<p>Copyright 2025, Clément Poupelin</p>
+</div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
-    <div class="nav-footer-right">This blog is built with <a href="https://quarto.org/">Quarto</a></div>
+    <div class="nav-footer-right">
+<p>This blog is built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
   </div>
 </footer>
+
 
 
 

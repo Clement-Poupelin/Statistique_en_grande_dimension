@@ -30,7 +30,7 @@ library(dplyr)
 library(glmnet)
 
 ad.data <- readr::read_delim(
-  "~/Documents/1_Projet/Perso/Statistique_en_grande_dimension/data/internet+advertisements/ad.data",
+  "~/Documents/1_Projet/Perso/Statistique_en_grande_dimension/data/ad.data",
   delim = ",",
   col_names = FALSE,
   na = c("?"),
