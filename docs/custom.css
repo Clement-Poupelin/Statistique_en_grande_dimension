@@ -11,7 +11,7 @@
 
 /* Agrandir le titre dans la navbar */
 .navbar-brand {
-    font-size: 1.2em; /* Augmente la taille du texte */
+    /*font-size: 1.2em; /* Augmente la taille du texte */
     display: none;
     /* font-weight: bold; /* Met en gras */
 }
