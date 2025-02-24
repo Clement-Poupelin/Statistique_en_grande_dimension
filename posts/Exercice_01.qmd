@@ -16,7 +16,7 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["Régression linéaire", "Sélection de variable"]
+categories: ["Régression linéaire", "Sélection automatique"]
 image: "/img/baseball.png"
 description: "Il s'agit d'une première utilisation des méthodes de regression avec selection de variable via des approches stepwise sur des données de baseball"
 ---

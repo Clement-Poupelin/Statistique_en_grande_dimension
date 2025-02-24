@@ -15,7 +15,7 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["TP"]
+categories: ["Régression linéaire", "Sélection automatique", "Régression sur composantes principales", "Régression des moindres carrés partiels", "Régression Ridge", "Régression Lasso", "Régression adaptative Lasso", "Régression Gauss-Lasso", "Régression Elastic Net"]
 image: "/img/biscuits.png"
 description: "Description"
 ---

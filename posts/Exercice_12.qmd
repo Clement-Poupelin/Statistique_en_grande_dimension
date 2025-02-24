@@ -15,7 +15,7 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["TP"]
-image: ""
+categories: ["Tests multiples"]
+image: "/img/repetition.png"
 description: "Description"
 ---

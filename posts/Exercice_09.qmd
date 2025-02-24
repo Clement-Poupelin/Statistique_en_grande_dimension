@@ -15,8 +15,8 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["TP"]
-image: ""
+categories: ["Régression Lasso", "Régression adaptative Lasso", "Régression Gauss-Lasso", "Sélection automatique"]
+image: "/img/gants-de-boxe.png"
 description: "Comparaison de différents modèles de regression"
 ---
 

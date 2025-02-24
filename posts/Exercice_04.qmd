@@ -15,7 +15,7 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["TP"]
+categories: ["Régression logistique", "Sélection automatique", "Validation croisée"]
 image: "/img/caravane.png"
 description: "Utilisation des précédentes techniques de selections de variable et de validation croisée dans le cadre de données de grandes dimension avec le jeu de données Caravan"
 ---

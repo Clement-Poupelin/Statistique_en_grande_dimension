@@ -15,7 +15,7 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["TP"]
+categories: ["Régression logistique", "Régression logistique Lasso", "Sélection automatique", "Validation croisée"]
 image: "/img/caravane.png"
 description: "Description"
 ---
