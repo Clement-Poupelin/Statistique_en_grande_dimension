@@ -9,14 +9,17 @@ website:
   favicon: img/logo_univ_nantes_simple.png
   navbar:
     background: light
-    title: X3MS020
+    title: Front page
     logo: img/logo_univ_nantes_complet.png
+    logo-href: https://www.univ-nantes.fr/
     left:
       - icon: file-earmark-font-fill
         text: Feuille de TP
         href: TP_StatGdeDim.pdf
         
     right:
+      - href: https://clement-poupelin.github.io/Statistique_en_grande_dimension/
+        text: Front page
       - about.qmd
       - icon: github
         menu: 

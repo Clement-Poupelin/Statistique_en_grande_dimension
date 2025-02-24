@@ -1,5 +1,33 @@
 /* css styles */
 
+/******************************************************************************/
+
+/* Option de mise en forme pour le yml */
+/* Agrandir le logo dans la navbar */
+.navbar-brand img {
+    max-height: 60px; /* Ajuste la hauteur selon tes préférences */
+    width: auto; /* Garde les proportions */
+}
+
+/* Agrandir le titre dans la navbar */
+.navbar-brand {
+    font-size: 1.2em; /* Augmente la taille du texte */
+    display: none;
+    /* font-weight: bold; /* Met en gras */
+}
+
+/* Agrandir le titre principal du site */
+h1.title {
+    font-size: 2.2em; /* Ajuste la taille selon tes besoins */
+    font-weight: bold; /* Met en gras */
+    /* text-align: center; /* Centre le titre (optionnel) */
+}
+
+
+/******************************************************************************/
+
+
+/* Création de Callout-Box */
 .result-header {
   background-color: #d175b8; 
   color: white; 
