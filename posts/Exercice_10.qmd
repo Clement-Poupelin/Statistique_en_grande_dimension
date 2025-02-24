@@ -16,6 +16,6 @@ toc: true
 number-sections: false
 editor: visual
 categories: ["TP"]
-image: ""
+image: "/img/caravane.png"
 description: "Description"
 ---
