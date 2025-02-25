@@ -18,9 +18,8 @@ number-sections: false
 editor: visual
 categories: ["Régression sur composantes principales", "Régression des moindres carrés partiels", "Validation croisée"]
 image: "/img/baseball.png"
-description: "Ici, on continu sur des données de baseball en mettant en pratique les techniques de PCR et PLSR avec de la validation croisée"
+description: "On reprend les données de baseball en mettant en pratique les techniques de *PCR* et *PLSR*"
 ---
-
 
 # Intervenant.e.s
 
@@ -32,16 +31,12 @@ description: "Ici, on continu sur des données de baseball en mettant en pratiqu
 
 -   
 
-
 # Rappels sur PCR et PLSR
-
 
 Dans l’analyse des données et la modélisation statistique, la régression linéaire classique peut être limitée lorsque les variables explicatives sont fortement corrélées (problème de colinéarité) ou lorsque leur nombre est supérieur au nombre d’observations (problème de haute dimensionnalité). Pour remédier à ces défis, des méthodes de réduction de dimensionnalité comme la **Régression sur Composantes Principales** (**PCR**) et la **Régression des Moindres Carrés Partiels** (**PLSR**) sont utilisées.
 
 ::: panel-tabset
-
 ## PCR
-
 
 La **régression sur Composantes Principales** (**PCR**) repose sur une Analyse en Composantes Principales (ACP) pour transformer les variables explicatives en nouvelles variables orthogonales appelées composantes principales. Seules les premières composantes, capturant le plus de variance, sont conservées dans la régression.\
 
@@ -49,24 +44,16 @@ Cette approche permet de réduire la multicolinéarité et d’éviter le sur-aj
 
 Cependant, la **PCR** ne prend pas en compte la relation entre les variables explicatives et la variable réponse lors de la sélection des composantes.
 
-
-## PLSR 
+## PLSR
 
 Contrairement à la **PCR**, la **régression des Moindres Carrés Partiels** (**PLSR**) cherche à maximiser la covariance entre les variables explicatives et la variable réponse.\
 Elle construit des composantes latentes qui capturent non seulement la variance des variables explicatives mais aussi leur corrélation avec la variable à prédire.\
 
 Cette méthode est souvent plus efficace que la **PCR** pour les problèmes de prédiction, car elle optimise directement la relation entre les prédicteurs et la réponse.
-
 :::
 
 En résumé, la **PCR** est une approche basée sur la variance des prédicteurs, tandis que la **PLSR** optimise la relation entre les prédicteurs et la réponse.\
 Le choix entre ces deux méthodes dépend du contexte : la **PCR** est utile pour la réduction de dimensionnalité, tandis que la **PLSR** est souvent plus performante pour la prédiction
-
-
-
-
-
-
 
 # Setup
 
@@ -91,7 +78,6 @@ library(gridExtra)
 ## Fonctions
 
 ::: panel-tabset
-
 ### Plot de validation
 
 ```{r}
@@ -166,8 +152,6 @@ my_validationplot <- function(mod, data) {
   return(list(MSEP = p.msep, RMSEP = p.rmsep, Exp_Var = p.variance))
 }
 ```
-
-
 :::
 
 ## Seed
@@ -175,9 +159,7 @@ my_validationplot <- function(mod, data) {
 ```{r}
 set.seed(140400)
 ```
-
 ::::
-
 
 # Données
 
@@ -224,14 +206,11 @@ Hitters_train <- Hitters_Without_NA[index_train, ]
 Hitters_test <- Hitters_Without_NA[-index_train, ]
 ```
 
-
 # Analyse Inférentielle
 
 On va maintenant effectuer une régression **PCR** et une régression **PLSR** sur l’échantillon *train* en sélectionnant le nombre de composantes par une validation croisée *K-fold* où $K = 10$.
 
-
 ::: panel-tabset
-
 ## PCR
 
 ```{r}
@@ -245,7 +224,6 @@ mod_pcr <- pcr(
 mod_pcr %>% summary()
 ```
 
-
 ## PLSR
 
 ```{r}
@@ -258,11 +236,7 @@ mod_pls <- plsr(
 )
 mod_pls %>% summary()
 ```
-
-
 :::
-
-
 
 On peut maintenant visualiser l'évolution du MSEP et RMSEP en fonction du nombre de composantes gardées.
 
@@ -270,10 +244,8 @@ On peut maintenant visualiser l'évolution du MSEP et RMSEP en fonction du nombr
 Pour des raisons esthétiques, on à ici construit un graphique à partir de `ggplot2`mais on aurait pu se contenter d'utiliser la fonction `validationplot` de la library `pls`.
 :::
 
-
 ::: panel-tabset
-
-## PCR 
+## PCR
 
 ```{r, fig.height=8, fig.width=18}
 grid.arrange(my_validationplot(mod_pcr, Hitters_train)$RMSEP,
@@ -288,44 +260,44 @@ grid.arrange(my_validationplot(mod_pls, Hitters_train)$RMSEP,
              my_validationplot(mod_pls, Hitters_train)$Exp_Var,
              ncol=2)
 ```
-
 :::
 
-
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
+
+Résultats
+::::
 
 ::: success
-Pour la **PCR** on peut voir courbe proche entre CV et adjCV avec une première valeur minimum qui semble se trouver à partir de 5 composantes.\
+Pour la **PCR** on peut voir courbe proche entre *CV* et *adjCV* avec une première valeur minimum qui semble se trouver à partir de 5 composantes.\
 Ensuite la courbe remonte à nouveau pour redescendre progressivement. Et concernant le pourcentage de variance expliquée, on voit un coude au niveau de 5 composantes.
 
 Tandus que pour la **PLSR** on voit plutôt que c'est à partir de 5 composantes que la décroissance commence. Et pour le pourcentage de variance expliquée, on voit un coude au niveau de 5 composantes.
 :::
 
-
 Et on peut alors récupérer le nombre de composantes à garder qui minimsent le MSEP et RMSEP.
+
 ```{r}
 ncomp.rmsep_pcr <- which.min(RMSEP(mod_pcr, estimate = c("CV"))$val["CV",,])-1
 ncomp.rmsep_pls <- which.min(RMSEP(mod_pls, estimate = c("CV"))$val["CV",,])-1
 ```
 
-
-::: success-header
+:::: success-header
 ::: success-icon
-::: 
-Résultats
 :::
 
+Résultats
+::::
+
 ::: success
-On a que le nombre de composante à retenir est de `r ncomp.rmsep_pcr` pour la PCR et `r ncomp.rmsep_pls` pour la PLSR. 
+On a que le nombre de composante à retenir est de `r ncomp.rmsep_pcr` pour la PCR et `r ncomp.rmsep_pls` pour la PLSR.
 :::
 
 # Prédiction
 
 On va calculer le RMSEP calculé à partir de la prédiction pour l'échantillon test.
+
 ```{r}
 hat_Hitters_test_mod_pcr <- predict(mod_pcr,
                                     Hitters_test,
@@ -344,33 +316,16 @@ rownames(rmsep_pred_df) <- "RMSEP"
 rmsep_pred_df 
 ```
 
-
 Le choix final du modèle peut ainsi se reposer sur celui qui minimise la *RMSEP* pour la prediction de notre échantillon *test*.
 
-
-
-
 # Conclusion
-
 
 En conclusion, on a ici 2 méthodes complémentaires permettant de construire des modèles linéaires pour des données de grandes dimension.\
 
 Ce sont des méthodes intuitives et robustes souvent utilisés par les statisticiens.
-
-
-
-
-
-
-
 
 # Session info
 
 ```{r}
 sessioninfo::session_info(pkgs = "attached")
 ```
-
-
-
-
-

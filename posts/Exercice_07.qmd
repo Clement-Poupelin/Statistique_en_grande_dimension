@@ -234,7 +234,7 @@ Ici on on obtient $\lambda_{min} =$ `r round(lassoCV$lambda.min, 3)` et $\lambda
 :::
 
 
-# Prédiction
+# Prédiction et comparaison
 
 On souhaite maintenant prédiction pour le jeu de données *test*.
 
@@ -249,7 +249,7 @@ rmsep_lasso <- sqrt(mean((pred.lasso_min - Y_test)^2, na.rm=T))
 ```
 
 
-Ainsi on peut obtenir l'erreur de prédiction via le RMSEP pour les 2 modèles et les comparer avec les valeurs obtenues pour les méthodes précédemment testées : **Sélection automatique forward**, **PCR**, **PLSR**.
+Ainsi on peut obtenir l'erreur de prédiction via le RMSEP pour les 2 modèles et les comparer avec les valeurs obtenues pour les méthodes précédemment testées : **Sélection automatique both** ([Exercice 01](../posts/Exercice_01.qmd)), **PCR** ([Exercice 06](../posts/Exercice_06.qmd)), **PLSR** ([Exercice 06](../posts/Exercice_06.qmd).
 
 ```{r}
 ## Sélection automatique
@@ -260,7 +260,7 @@ mod_step <- step(
   mod0,
   scope = formula(mod1),
   trace = FALSE,
-  direction = "forward",
+  direction = "both",
   k = log(nrow(Hitters_train))
 )
 
@@ -369,7 +369,7 @@ for (i in 1:K) {
   mod_step <- step(
     mod0,
     scope = formula(mod1),
-    direction = "forward",
+    direction = "both",
     k = log(n),
     trace = 0
   )
@@ -440,7 +440,7 @@ my_interactive_boxplot(err_pred_df)
 ```
 
 ```{r}
-methods <- c("Err_mod.step",
+methods <- c("Err_mod_step",
              "Err_PCR",
              "Err_PLS",
              "Err_Ridge",

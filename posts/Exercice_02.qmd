@@ -18,7 +18,7 @@ number-sections: false
 editor: visual
 categories: ["Régression linéaire", "Sélection automatique"]
 image: "/img/baseball.png"
-description: "Ici, on continu sur des données de baseball en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"
+description: "On continu sur les données de baseball en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"
 ---
 
 # Intervenant.e.s
@@ -41,8 +41,6 @@ description: "Ici, on continu sur des données de baseball en testant cette fois
 library(ISLR)         # Hitters data 
 library(dplyr)        # manipulation des données
 ```
-
-## Fonctions
 
 ## Seed
 
