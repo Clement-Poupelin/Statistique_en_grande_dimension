@@ -1,7 +1,8 @@
 ---
 title: "Exercice 11"
 author: "Clément Poupelin"
-date: "`r Sys.Date()`"
+date: "2025-02-xx"
+date-modified: "`r Sys.Date()`"
 format: 
   html:
     embed-resources: false
@@ -19,3 +20,251 @@ categories: ["Tests multiples"]
 image: "/img/repetition.png"
 description: "Description"
 ---
+# Intervenant.e.s
+
+### Rédaction
+
+-   **Clément Poupelin**, [clementjc.poupelin\@gmail.com](mailto:clementjc.poupelin@gmail.com){.email}\
+
+### Relecture
+
+-
+
+
+
+# Rappels sur les tests multiples
+
+
+
+# Setup
+
+:::: panel-tabset
+## Packages
+
+```{r, setup, warning=FALSE, message=FALSE}
+# Données
+library(dplyr)        # manipulation des données
+
+# Plots
+## ggplot
+library(ggplot2)
+library(gridExtra)
+```
+
+## Fonctions
+
+::: panel-tabset
+
+### Simulation des *p-values*
+
+```{r}
+simulate_pvalues <- function(n, m, m0, mu1) {
+  p_values <- numeric(m)
+  
+  for (i in 1:m0) {
+    sample <- rnorm(n, mean = 0, sd = 1)  
+    p_values[i] <- t.test(sample)$p.value
+  }
+  
+  for (i in (m0+1):m) {
+    sample <- rnorm(n, mean = mu1, sd = 1)  
+    p_values[i] <- t.test(sample)$p.value
+  }
+  
+  return(p_values)
+}
+```
+
+### Fonction qui calcul les résultats
+
+```{r}
+
+results_fun <- function(p_values, m0, alpha = 0.05) {
+  positives <- p_values < alpha
+  bonferroni_threshold <- alpha / length(p_values)
+  bh_thresholds <- p.adjust(p_values, method = "BH")
+  
+  bonferroni_positives <- p_values < bonferroni_threshold
+  bh_positives <- bh_thresholds < alpha
+  
+  count_results <- function(positives) {
+    true_positives <- sum(positives[(m0 + 1):length(p_values)])
+    false_positives <- sum(positives[1:m0])
+    proportion_fp <- false_positives / max(1, sum(positives))
+    return(c(
+      sum(positives),
+      true_positives,
+      false_positives,
+      proportion_fp
+    ))
+  }
+  
+  list(
+    "Sans correction" = count_results(positives),
+    "Bonferroni" = count_results(bonferroni_positives),
+    "Benjamini-Hochberg" = count_results(bh_positives)
+  )
+}
+
+```
+
+:::
+
+## Seed
+
+```{r}
+set.seed(140400)
+```
+::::
+
+# Données
+
+Dans cette exercice nous allons générer des *p-values* en différentes quantités afin d'illustrer l'importance des techniques de correction pour des tests mutliples.\
+
+On va alors utiliser la fonction *`simulate_pvalues`* qui prend en entrée $n$, $m$, $m_0 \leq m$ et $\mu_1$, et qui :
+
+- simule $m_0$ échantillons contenant chacun $n$ réalisations d’une loi Normale centrée réduite, et $m−m_0$ échantillons de taille $n$ d’une loi normale d’espérance $\mu_1$ et de variance $1$ 
+
+- effectue pour chacun des $m$ échantillons un test de Student de nullité de la moyenne
+
+- retourne les $m$ *p-values* associées à ces tests 
+
+Dans la suite, on considère que $n = 100$ et $m = 1000$. Pour différentes situations, on va alors relever le nombre de **positifs**, de **vrais-positifs**, de **faux-positifs** et la **proportion de faux-positifs** lorsqu’on applique chacun des $m$ tests précédents au niveau $\alpha = 0.05$ **sans correction**, lorsqu’on applique une procédure de **Bonferroni** associée à FWER $\leq 0.05$ et lorsqu’on applique une procédure de **Benjamini-Hochberg** associée à FDR $\leq 0.05$.
+
+::: calout-note
+Il y a donc pour chaque situation, 3 méthodes et 4 scores à calculer par méthode
+:::
+
+Les différents scénarios testés seront :
+
+- Pas de positifs : $m_0$ = 1000
+
+- Peu de positifs, facilement identifiables : $m_0$ = 950, $\mu_1$ = 1
+
+- Peu de positifs, difficilement identifiables : $m_0$ = 950, $\mu_1$ = 0.3
+
+- Pas mal de positifs, facilement identifiables : $m_0$ = 800, $\mu_1$ = 1
+
+- Pas mal de positifs, difficilement identifiables : $m_0$ = 800, $\mu_1$ = 0.3
+
+- Beaucoup de positifs, facilement identifiables : $m_0$ = 200, $\mu_1$ = 1
+
+- Beaucoup de positifs, difficilement identifiables : $m_0$ = 200, $\mu_1$ = 0.3
+
+
+```{r}
+scenarios <- list(
+  c(1000, 0),
+  c(950, 1),
+  c(950, 0.3),
+  c(800, 1),
+  c(800, 0.3),
+  c(200, 1),
+  c(200, 0.3)
+)
+```
+
+```{r}
+results <- list()
+n <- 100
+m <- 1000
+
+for (i in 1:length(scenarios)) {
+  m0 <- scenarios[[i]][1]
+  mu1 <- scenarios[[i]][2]
+  p_values <- simulate_pvalues(n, m, m0, mu1)
+  results[[paste("m0 =", m0, "mu1 =", mu1)]] <- results_fun(p_values, m0)
+}
+
+# Création du tableau des résultats
+results_matrix <- do.call(rbind, lapply(names(results), function(scenario) {
+  cbind(Scenario = scenario, do.call(rbind, results[[scenario]]))
+}))
+results_df <- as.data.frame(results_matrix)
+names(results_df) <- c("Scenario", "Total Positifs", "Vrais Positifs", "Faux Positifs", "Proportion Faux Positifs")
+```
+
+# Analyse des scénarios
+
+:::panel-tabset 
+
+## S0
+
+Ici on a pas de positifs : $m_0$ = 1000.
+```{r}
+results_df[1:3,] %>% DT::datatable()
+```
+
+## S1
+
+Ici on a peu de positifs, facilement identifiables : $m_0$ = 950, $\mu_1$ = 1
+```{r}
+results_df[4:6,] %>% DT::datatable()
+```
+
+## S2
+
+Ici on a peu de positifs, difficilement identifiables : $m_0$ = 950, $\mu_1$ = 0.3
+```{r}
+results_df[7:9,] %>% DT::datatable()
+```
+
+## S3
+
+Ici on a pas mal de positifs, facilement identifiables : $m_0$ = 800, $\mu_1$ = 1
+```{r}
+results_df[10:12,] %>% DT::datatable()
+```
+
+## S4
+
+Ici on a pas mal de positifs, difficilement identifiables : $m_0$ = 800, $\mu_1$ = 0.3
+```{r}
+results_df[13:15,] %>% DT::datatable()
+```
+
+## S5
+
+Ici on a beaucoup de positifs, facilement identifiables : $m_0$ = 200, $\mu_1$ = 1
+```{r}
+results_df[16:18,] %>% DT::datatable()
+```
+
+## S6
+
+Ici on a beaucoup de positifs, difficilement identifiables : $m_0$ = 200, $\mu_1$ = 0.3
+```{r}
+results_df[19:21,] %>% DT::datatable()
+```
+
+
+:::
+
+:::: success-header
+::: success-icon
+:::
+
+Résultats
+::::
+
+::: success
+Les avantages et inconvénients des méthodes sont :
+
+- **Sans correction** : Forte sensibilité mais haut risque de faux positifs
+
+- **Bonferroni** : Réduit considérablement les faux positifs mais manque de puissance
+
+- **Benjamini-Hochberg** : Bon compromis entre puissance et contrôle des faux positifs
+:::
+
+
+
+# Conclusion
+
+
+
+# Session info
+
+```{r}
+sessioninfo::session_info(pkgs = "attached")
+```

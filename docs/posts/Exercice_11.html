@@ -105,7 +105,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="../site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="../site_libs/datatables-binding-0.33/datatables.js"></script>
+<script src="../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="../site_libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="../site_libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="../site_libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+<link href="../site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+<script src="../site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../custom.css">
 </head>
@@ -206,7 +245,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <div class="quarto-title-block"><div><h1 class="title">Exercice 11</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+      <div class="quarto-title-block"><div><h1 class="title">Exercice 11</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
                   <div>
         <div class="description">
           Description
@@ -235,6 +274,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </div>
     </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">February 25, 2025</p>
+      </div>
+    </div>
       
     </div>
     
@@ -242,8 +287,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#intervenant.e.s" id="toc-intervenant.e.s" class="nav-link active" data-scroll-target="#intervenant.e.s">Intervenant.e.s</a>
+  <ul class="collapse">
+  <li><a href="#rédaction" id="toc-rédaction" class="nav-link" data-scroll-target="#rédaction">Rédaction</a></li>
+  <li><a href="#relecture" id="toc-relecture" class="nav-link" data-scroll-target="#relecture">Relecture</a></li>
+  </ul></li>
+  <li><a href="#rappels-sur-les-tests-multiples" id="toc-rappels-sur-les-tests-multiples" class="nav-link" data-scroll-target="#rappels-sur-les-tests-multiples">Rappels sur les tests multiples</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#données" id="toc-données" class="nav-link" data-scroll-target="#données">Données</a></li>
+  <li><a href="#analyse-des-scénarios" id="toc-analyse-des-scénarios" class="nav-link" data-scroll-target="#analyse-des-scénarios">Analyse des scénarios</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session info</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -252,10 +313,334 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+<section id="intervenant.e.s" class="level1">
+<h1>Intervenant.e.s</h1>
+<section id="rédaction" class="level3">
+<h3 class="anchored" data-anchor-id="rédaction">Rédaction</h3>
+<ul>
+<li><strong>Clément Poupelin</strong>, <a href="mailto:clementjc.poupelin@gmail.com" class="email">clementjc.poupelin@gmail.com</a><br>
+</li>
+</ul>
+</section>
+<section id="relecture" class="level3">
+<h3 class="anchored" data-anchor-id="relecture">Relecture</h3>
+<ul>
+<li></li>
+</ul>
+</section>
+</section>
+<section id="rappels-sur-les-tests-multiples" class="level1">
+<h1>Rappels sur les tests multiples</h1>
+</section>
+<section id="setup" class="level1">
+<h1>Setup</h1>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Packages</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Fonctions</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Seed</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Données</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)        <span class="co"># manipulation des données</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plots</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="do">## ggplot</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Simulation des <em>p-values</em></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Fonction qui calcul les résultats</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>simulate_pvalues <span class="ot">&lt;-</span> <span class="cf">function</span>(n, m, m0, mu1) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  p_values <span class="ot">&lt;-</span> <span class="fu">numeric</span>(m)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>m0) {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    sample <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)  </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    p_values[i] <span class="ot">&lt;-</span> <span class="fu">t.test</span>(sample)<span class="sc">$</span>p.value</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> (m0<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>m) {</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    sample <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> mu1, <span class="at">sd =</span> <span class="dv">1</span>)  </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    p_values[i] <span class="ot">&lt;-</span> <span class="fu">t.test</span>(sample)<span class="sc">$</span>p.value</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p_values)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>results_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(p_values, m0, <span class="at">alpha =</span> <span class="fl">0.05</span>) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  positives <span class="ot">&lt;-</span> p_values <span class="sc">&lt;</span> alpha</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  bonferroni_threshold <span class="ot">&lt;-</span> alpha <span class="sc">/</span> <span class="fu">length</span>(p_values)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  bh_thresholds <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(p_values, <span class="at">method =</span> <span class="st">"BH"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  bonferroni_positives <span class="ot">&lt;-</span> p_values <span class="sc">&lt;</span> bonferroni_threshold</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  bh_positives <span class="ot">&lt;-</span> bh_thresholds <span class="sc">&lt;</span> alpha</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  count_results <span class="ot">&lt;-</span> <span class="cf">function</span>(positives) {</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    true_positives <span class="ot">&lt;-</span> <span class="fu">sum</span>(positives[(m0 <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span><span class="fu">length</span>(p_values)])</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    false_positives <span class="ot">&lt;-</span> <span class="fu">sum</span>(positives[<span class="dv">1</span><span class="sc">:</span>m0])</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    proportion_fp <span class="ot">&lt;-</span> false_positives <span class="sc">/</span> <span class="fu">max</span>(<span class="dv">1</span>, <span class="fu">sum</span>(positives))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">c</span>(</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(positives),</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      true_positives,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>      false_positives,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      proportion_fp</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sans correction"</span> <span class="ot">=</span> <span class="fu">count_results</span>(positives),</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Bonferroni"</span> <span class="ot">=</span> <span class="fu">count_results</span>(bonferroni_positives),</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Benjamini-Hochberg"</span> <span class="ot">=</span> <span class="fu">count_results</span>(bh_positives)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">140400</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="données" class="level1">
+<h1>Données</h1>
+<p>Dans cette exercice nous allons générer des <em>p-values</em> en différentes quantités afin d’illustrer l’importance des techniques de correction pour des tests mutliples.<br>
+</p>
+<p>On va alors utiliser la fonction <em><code>simulate_pvalues</code></em> qui prend en entrée <span class="math inline">\(n\)</span>, <span class="math inline">\(m\)</span>, <span class="math inline">\(m_0 \leq m\)</span> et <span class="math inline">\(\mu_1\)</span>, et qui :</p>
+<ul>
+<li><p>simule <span class="math inline">\(m_0\)</span> échantillons contenant chacun <span class="math inline">\(n\)</span> réalisations d’une loi Normale centrée réduite, et <span class="math inline">\(m−m_0\)</span> échantillons de taille <span class="math inline">\(n\)</span> d’une loi normale d’espérance <span class="math inline">\(\mu_1\)</span> et de variance <span class="math inline">\(1\)</span></p></li>
+<li><p>effectue pour chacun des <span class="math inline">\(m\)</span> échantillons un test de Student de nullité de la moyenne</p></li>
+<li><p>retourne les <span class="math inline">\(m\)</span> <em>p-values</em> associées à ces tests</p></li>
+</ul>
+<p>Dans la suite, on considère que <span class="math inline">\(n = 100\)</span> et <span class="math inline">\(m = 1000\)</span>. Pour différentes situations, on va alors relever le nombre de <strong>positifs</strong>, de <strong>vrais-positifs</strong>, de <strong>faux-positifs</strong> et la <strong>proportion de faux-positifs</strong> lorsqu’on applique chacun des <span class="math inline">\(m\)</span> tests précédents au niveau <span class="math inline">\(\alpha = 0.05\)</span> <strong>sans correction</strong>, lorsqu’on applique une procédure de <strong>Bonferroni</strong> associée à FWER <span class="math inline">\(\leq 0.05\)</span> et lorsqu’on applique une procédure de <strong>Benjamini-Hochberg</strong> associée à FDR <span class="math inline">\(\leq 0.05\)</span>.</p>
+<div class="calout-note">
+<p>Il y a donc pour chaque situation, 3 méthodes et 4 scores à calculer par méthode</p>
+</div>
+<p>Les différents scénarios testés seront :</p>
+<ul>
+<li><p>Pas de positifs : <span class="math inline">\(m_0\)</span> = 1000</p></li>
+<li><p>Peu de positifs, facilement identifiables : <span class="math inline">\(m_0\)</span> = 950, <span class="math inline">\(\mu_1\)</span> = 1</p></li>
+<li><p>Peu de positifs, difficilement identifiables : <span class="math inline">\(m_0\)</span> = 950, <span class="math inline">\(\mu_1\)</span> = 0.3</p></li>
+<li><p>Pas mal de positifs, facilement identifiables : <span class="math inline">\(m_0\)</span> = 800, <span class="math inline">\(\mu_1\)</span> = 1</p></li>
+<li><p>Pas mal de positifs, difficilement identifiables : <span class="math inline">\(m_0\)</span> = 800, <span class="math inline">\(\mu_1\)</span> = 0.3</p></li>
+<li><p>Beaucoup de positifs, facilement identifiables : <span class="math inline">\(m_0\)</span> = 200, <span class="math inline">\(\mu_1\)</span> = 1</p></li>
+<li><p>Beaucoup de positifs, difficilement identifiables : <span class="math inline">\(m_0\)</span> = 200, <span class="math inline">\(\mu_1\)</span> = 0.3</p></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>scenarios <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">0</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">950</span>, <span class="dv">1</span>),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">950</span>, <span class="fl">0.3</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">800</span>, <span class="dv">1</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">800</span>, <span class="fl">0.3</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">200</span>, <span class="dv">1</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">200</span>, <span class="fl">0.3</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(scenarios)) {</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  m0 <span class="ot">&lt;-</span> scenarios[[i]][<span class="dv">1</span>]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  mu1 <span class="ot">&lt;-</span> scenarios[[i]][<span class="dv">2</span>]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  p_values <span class="ot">&lt;-</span> <span class="fu">simulate_pvalues</span>(n, m, m0, mu1)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  results[[<span class="fu">paste</span>(<span class="st">"m0 ="</span>, m0, <span class="st">"mu1 ="</span>, mu1)]] <span class="ot">&lt;-</span> <span class="fu">results_fun</span>(p_values, m0)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Création du tableau des résultats</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>results_matrix <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">names</span>(results), <span class="cf">function</span>(scenario) {</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">Scenario =</span> scenario, <span class="fu">do.call</span>(rbind, results[[scenario]]))</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>results_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(results_matrix)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(results_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Scenario"</span>, <span class="st">"Total Positifs"</span>, <span class="st">"Vrais Positifs"</span>, <span class="st">"Faux Positifs"</span>, <span class="st">"Proportion Faux Positifs"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="analyse-des-scénarios" class="level1">
+<h1>Analyse des scénarios</h1>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">S0</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">S1</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">S2</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false">S3</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-5" role="tab" aria-controls="tabset-3-5" aria-selected="false">S4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-6" role="tab" aria-controls="tabset-3-6" aria-selected="false">S5</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-7" role="tab" aria-controls="tabset-3-7" aria-selected="false">S6</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p>Ici on a pas de positifs : <span class="math inline">\(m_0\)</span> = 1000.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-a8672201a10eebdaee2e" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-a8672201a10eebdaee2e">{"x":{"filter":"none","vertical":false,"data":[["Sans.correction","Bonferroni","Benjamini.Hochberg"],["m0 = 1000 mu1 = 0","m0 = 1000 mu1 = 0","m0 = 1000 mu1 = 0"],["57","0","0"],["0","0","0"],["57","0","0"],["1","0","0"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Scenario<\/th>\n      <th>Total Positifs<\/th>\n      <th>Vrais Positifs<\/th>\n      <th>Faux Positifs<\/th>\n      <th>Proportion Faux Positifs<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Scenario","targets":1},{"name":"Total Positifs","targets":2},{"name":"Vrais Positifs","targets":3},{"name":"Faux Positifs","targets":4},{"name":"Proportion Faux Positifs","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p>Ici on a peu de positifs, facilement identifiables : <span class="math inline">\(m_0\)</span> = 950, <span class="math inline">\(\mu_1\)</span> = 1</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-a7cc00216d1664c4881e" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-a7cc00216d1664c4881e">{"x":{"filter":"none","vertical":false,"data":[["Sans.correction.1","Bonferroni.1","Benjamini.Hochberg.1"],["m0 = 950 mu1 = 1","m0 = 950 mu1 = 1","m0 = 950 mu1 = 1"],["91","50","51"],["50","50","50"],["41","0","1"],["0.450549450549451","0","0.0196078431372549"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Scenario<\/th>\n      <th>Total Positifs<\/th>\n      <th>Vrais Positifs<\/th>\n      <th>Faux Positifs<\/th>\n      <th>Proportion Faux Positifs<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Scenario","targets":1},{"name":"Total Positifs","targets":2},{"name":"Vrais Positifs","targets":3},{"name":"Faux Positifs","targets":4},{"name":"Proportion Faux Positifs","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<p>Ici on a peu de positifs, difficilement identifiables : <span class="math inline">\(m_0\)</span> = 950, <span class="math inline">\(\mu_1\)</span> = 0.3</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">7</span><span class="sc">:</span><span class="dv">9</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-55fe1469dc833b66ec9f" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-55fe1469dc833b66ec9f">{"x":{"filter":"none","vertical":false,"data":[["Sans.correction.2","Bonferroni.2","Benjamini.Hochberg.2"],["m0 = 950 mu1 = 0.3","m0 = 950 mu1 = 0.3","m0 = 950 mu1 = 0.3"],["95","3","8"],["42","3","8"],["53","0","0"],["0.557894736842105","0","0"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Scenario<\/th>\n      <th>Total Positifs<\/th>\n      <th>Vrais Positifs<\/th>\n      <th>Faux Positifs<\/th>\n      <th>Proportion Faux Positifs<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Scenario","targets":1},{"name":"Total Positifs","targets":2},{"name":"Vrais Positifs","targets":3},{"name":"Faux Positifs","targets":4},{"name":"Proportion Faux Positifs","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+<div id="tabset-3-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-4-tab">
+<p>Ici on a pas mal de positifs, facilement identifiables : <span class="math inline">\(m_0\)</span> = 800, <span class="math inline">\(\mu_1\)</span> = 1</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">10</span><span class="sc">:</span><span class="dv">12</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-7ee4ba53263295459932" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-7ee4ba53263295459932">{"x":{"filter":"none","vertical":false,"data":[["Sans.correction.3","Bonferroni.3","Benjamini.Hochberg.3"],["m0 = 800 mu1 = 1","m0 = 800 mu1 = 1","m0 = 800 mu1 = 1"],["240","200","207"],["200","200","200"],["40","0","7"],["0.166666666666667","0","0.0338164251207729"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Scenario<\/th>\n      <th>Total Positifs<\/th>\n      <th>Vrais Positifs<\/th>\n      <th>Faux Positifs<\/th>\n      <th>Proportion Faux Positifs<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Scenario","targets":1},{"name":"Total Positifs","targets":2},{"name":"Vrais Positifs","targets":3},{"name":"Faux Positifs","targets":4},{"name":"Proportion Faux Positifs","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+<div id="tabset-3-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-5-tab">
+<p>Ici on a pas mal de positifs, difficilement identifiables : <span class="math inline">\(m_0\)</span> = 800, <span class="math inline">\(\mu_1\)</span> = 0.3</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">13</span><span class="sc">:</span><span class="dv">15</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-6285d25f968cafeefbd1" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-6285d25f968cafeefbd1">{"x":{"filter":"none","vertical":false,"data":[["Sans.correction.4","Bonferroni.4","Benjamini.Hochberg.4"],["m0 = 800 mu1 = 0.3","m0 = 800 mu1 = 0.3","m0 = 800 mu1 = 0.3"],["208","25","128"],["166","25","123"],["42","0","5"],["0.201923076923077","0","0.0390625"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Scenario<\/th>\n      <th>Total Positifs<\/th>\n      <th>Vrais Positifs<\/th>\n      <th>Faux Positifs<\/th>\n      <th>Proportion Faux Positifs<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Scenario","targets":1},{"name":"Total Positifs","targets":2},{"name":"Vrais Positifs","targets":3},{"name":"Faux Positifs","targets":4},{"name":"Proportion Faux Positifs","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+<div id="tabset-3-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-6-tab">
+<p>Ici on a beaucoup de positifs, facilement identifiables : <span class="math inline">\(m_0\)</span> = 200, <span class="math inline">\(\mu_1\)</span> = 1</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">16</span><span class="sc">:</span><span class="dv">18</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-970793772f3a696bf162" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-970793772f3a696bf162">{"x":{"filter":"none","vertical":false,"data":[["Sans.correction.5","Bonferroni.5","Benjamini.Hochberg.5"],["m0 = 200 mu1 = 1","m0 = 200 mu1 = 1","m0 = 200 mu1 = 1"],["810","800","809"],["800","800","800"],["10","0","9"],["0.0123456790123457","0","0.0111248454882571"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Scenario<\/th>\n      <th>Total Positifs<\/th>\n      <th>Vrais Positifs<\/th>\n      <th>Faux Positifs<\/th>\n      <th>Proportion Faux Positifs<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Scenario","targets":1},{"name":"Total Positifs","targets":2},{"name":"Vrais Positifs","targets":3},{"name":"Faux Positifs","targets":4},{"name":"Proportion Faux Positifs","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+<div id="tabset-3-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-7-tab">
+<p>Ici on a beaucoup de positifs, difficilement identifiables : <span class="math inline">\(m_0\)</span> = 200, <span class="math inline">\(\mu_1\)</span> = 0.3</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">19</span><span class="sc">:</span><span class="dv">21</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-cd900d07b4b7adbd4317" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-cd900d07b4b7adbd4317">{"x":{"filter":"none","vertical":false,"data":[["Sans.correction.6","Bonferroni.6","Benjamini.Hochberg.6"],["m0 = 200 mu1 = 0.3","m0 = 200 mu1 = 0.3","m0 = 200 mu1 = 0.3"],["682","91","631"],["668","91","622"],["14","0","9"],["0.0205278592375367","0","0.0142630744849445"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Scenario<\/th>\n      <th>Total Positifs<\/th>\n      <th>Vrais Positifs<\/th>\n      <th>Faux Positifs<\/th>\n      <th>Proportion Faux Positifs<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Scenario","targets":1},{"name":"Total Positifs","targets":2},{"name":"Vrais Positifs","targets":3},{"name":"Faux Positifs","targets":4},{"name":"Proportion Faux Positifs","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="success-header">
+<div class="success-icon">
+
+</div>
+<p>Résultats</p>
+</div>
+<div class="success">
+<p>Les avantages et inconvénients des méthodes sont :</p>
+<ul>
+<li><p><strong>Sans correction</strong> : Forte sensibilité mais haut risque de faux positifs</p></li>
+<li><p><strong>Bonferroni</strong> : Réduit considérablement les faux positifs mais manque de puissance</p></li>
+<li><p><strong>Benjamini-Hochberg</strong> : Bon compromis entre puissance et contrôle des faux positifs</p></li>
+</ul>
+</div>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+</section>
+<section id="session-info" class="level1">
+<h1>Session info</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">pkgs =</span> <span class="st">"attached"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>─ Session info ───────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.4.2 (2024-10-31)
+ os       Ubuntu 24.04.1 LTS
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  fr_FR.UTF-8
+ ctype    fr_FR.UTF-8
+ tz       Europe/Paris
+ date     2025-02-25
+ pandoc   3.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/x86_64/ (via rmarkdown)
+
+─ Packages ───────────────────────────────────────────────────────────────────
+ package   * version date (UTC) lib source
+ dplyr     * 1.1.4   2023-11-17 [1] CRAN (R 4.4.2)
+ ggplot2   * 3.5.1   2024-04-23 [1] CRAN (R 4.4.2)
+ gridExtra * 2.3     2017-09-09 [1] CRAN (R 4.4.2)
+
+ [1] /home/clement/R/x86_64-pc-linux-gnu-library/4.4
+ [2] /usr/local/lib/R/site-library
+ [3] /usr/lib/R/site-library
+ [4] /usr/lib/R/library
+
+──────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
 
 
 <!-- -->
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -873,27 +1258,276 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Exercice 11"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Clément Poupelin"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">    embed-resources: false</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-summary: "Show the code"</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> false</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> visual</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> ["Tests multiples"]</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> "/img/repetition.png"</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Description"</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Exercice 11"</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Clément Poupelin"</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "2025-02-xx"</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="an">date-modified:</span><span class="co"> "`r Sys.Date()`"</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">    embed-resources: false</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-summary: "Show the code"</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> false</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> visual</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> ["Tests multiples"]</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> "/img/repetition.png"</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Description"</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="fu"># Intervenant.e.s</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="fu">### Rédaction</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Clément Poupelin**, <span class="co">[</span><span class="ot">clementjc.poupelin\@gmail.com</span><span class="co">](mailto:clementjc.poupelin@gmail.com)</span>{.email}\</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="fu">### Relecture</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>-</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="fu"># Rappels sur les tests multiples</span></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a><span class="fu"># Setup</span></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>:::: panel-tabset</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Packages</span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, setup, warning=FALSE, message=FALSE}</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a><span class="in"># Données</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)        # manipulation des données</span></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a><span class="in"># Plots</span></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a><span class="in">## ggplot</span></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a><span class="in">library(gridExtra)</span></span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fonctions</span></span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a><span class="fu">### Simulation des *p-values*</span></span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>simulate_pvalues <span class="ot">&lt;-</span> <span class="cf">function</span>(n, m, m0, mu1) {</span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>  p_values <span class="ot">&lt;-</span> <span class="fu">numeric</span>(m)</span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>m0) {</span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>    sample <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)  </span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>    p_values[i] <span class="ot">&lt;-</span> <span class="fu">t.test</span>(sample)<span class="sc">$</span>p.value</span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> (m0<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>m) {</span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>    sample <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> mu1, <span class="at">sd =</span> <span class="dv">1</span>)  </span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>    p_values[i] <span class="ot">&lt;-</span> <span class="fu">t.test</span>(sample)<span class="sc">$</span>p.value</span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p_values)</span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a><span class="fu">### Fonction qui calcul les résultats</span></span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a>results_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(p_values, m0, <span class="at">alpha =</span> <span class="fl">0.05</span>) {</span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a>  positives <span class="ot">&lt;-</span> p_values <span class="sc">&lt;</span> alpha</span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a>  bonferroni_threshold <span class="ot">&lt;-</span> alpha <span class="sc">/</span> <span class="fu">length</span>(p_values)</span>
+<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a>  bh_thresholds <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(p_values, <span class="at">method =</span> <span class="st">"BH"</span>)</span>
+<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>  bonferroni_positives <span class="ot">&lt;-</span> p_values <span class="sc">&lt;</span> bonferroni_threshold</span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a>  bh_positives <span class="ot">&lt;-</span> bh_thresholds <span class="sc">&lt;</span> alpha</span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a>  count_results <span class="ot">&lt;-</span> <span class="cf">function</span>(positives) {</span>
+<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a>    true_positives <span class="ot">&lt;-</span> <span class="fu">sum</span>(positives[(m0 <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span><span class="fu">length</span>(p_values)])</span>
+<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a>    false_positives <span class="ot">&lt;-</span> <span class="fu">sum</span>(positives[<span class="dv">1</span><span class="sc">:</span>m0])</span>
+<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a>    proportion_fp <span class="ot">&lt;-</span> false_positives <span class="sc">/</span> <span class="fu">max</span>(<span class="dv">1</span>, <span class="fu">sum</span>(positives))</span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">c</span>(</span>
+<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(positives),</span>
+<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a>      true_positives,</span>
+<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a>      false_positives,</span>
+<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a>      proportion_fp</span>
+<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sans correction"</span> <span class="ot">=</span> <span class="fu">count_results</span>(positives),</span>
+<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Bonferroni"</span> <span class="ot">=</span> <span class="fu">count_results</span>(bonferroni_positives),</span>
+<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Benjamini-Hochberg"</span> <span class="ot">=</span> <span class="fu">count_results</span>(bh_positives)</span>
+<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-116"><a href="#cb16-116" aria-hidden="true" tabindex="-1"></a><span class="fu">## Seed</span></span>
+<span id="cb16-117"><a href="#cb16-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">140400</span>)</span>
+<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a>::::</span>
+<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-125"><a href="#cb16-125" aria-hidden="true" tabindex="-1"></a><span class="fu"># Données</span></span>
+<span id="cb16-126"><a href="#cb16-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a>Dans cette exercice nous allons générer des *p-values* en différentes quantités afin d'illustrer l'importance des techniques de correction pour des tests mutliples.\</span>
+<span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-129"><a href="#cb16-129" aria-hidden="true" tabindex="-1"></a>On va alors utiliser la fonction *`simulate_pvalues`* qui prend en entrée $n$, $m$, $m_0 \leq m$ et $\mu_1$, et qui :</span>
+<span id="cb16-130"><a href="#cb16-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-131"><a href="#cb16-131" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>simule $m_0$ échantillons contenant chacun $n$ réalisations d’une loi Normale centrée réduite, et $m−m_0$ échantillons de taille $n$ d’une loi normale d’espérance $\mu_1$ et de variance $1$ </span>
+<span id="cb16-132"><a href="#cb16-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-133"><a href="#cb16-133" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>effectue pour chacun des $m$ échantillons un test de Student de nullité de la moyenne</span>
+<span id="cb16-134"><a href="#cb16-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-135"><a href="#cb16-135" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>retourne les $m$ *p-values* associées à ces tests </span>
+<span id="cb16-136"><a href="#cb16-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-137"><a href="#cb16-137" aria-hidden="true" tabindex="-1"></a>Dans la suite, on considère que $n = 100$ et $m = 1000$. Pour différentes situations, on va alors relever le nombre de **positifs**, de **vrais-positifs**, de **faux-positifs** et la **proportion de faux-positifs** lorsqu’on applique chacun des $m$ tests précédents au niveau $\alpha = 0.05$ **sans correction**, lorsqu’on applique une procédure de **Bonferroni** associée à FWER $\leq 0.05$ et lorsqu’on applique une procédure de **Benjamini-Hochberg** associée à FDR $\leq 0.05$.</span>
+<span id="cb16-138"><a href="#cb16-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-139"><a href="#cb16-139" aria-hidden="true" tabindex="-1"></a>::: calout-note</span>
+<span id="cb16-140"><a href="#cb16-140" aria-hidden="true" tabindex="-1"></a>Il y a donc pour chaque situation, 3 méthodes et 4 scores à calculer par méthode</span>
+<span id="cb16-141"><a href="#cb16-141" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb16-142"><a href="#cb16-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-143"><a href="#cb16-143" aria-hidden="true" tabindex="-1"></a>Les différents scénarios testés seront :</span>
+<span id="cb16-144"><a href="#cb16-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-145"><a href="#cb16-145" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pas de positifs : $m_0$ = 1000</span>
+<span id="cb16-146"><a href="#cb16-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-147"><a href="#cb16-147" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Peu de positifs, facilement identifiables : $m_0$ = 950, $\mu_1$ = 1</span>
+<span id="cb16-148"><a href="#cb16-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-149"><a href="#cb16-149" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Peu de positifs, difficilement identifiables : $m_0$ = 950, $\mu_1$ = 0.3</span>
+<span id="cb16-150"><a href="#cb16-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-151"><a href="#cb16-151" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pas mal de positifs, facilement identifiables : $m_0$ = 800, $\mu_1$ = 1</span>
+<span id="cb16-152"><a href="#cb16-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-153"><a href="#cb16-153" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pas mal de positifs, difficilement identifiables : $m_0$ = 800, $\mu_1$ = 0.3</span>
+<span id="cb16-154"><a href="#cb16-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-155"><a href="#cb16-155" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Beaucoup de positifs, facilement identifiables : $m_0$ = 200, $\mu_1$ = 1</span>
+<span id="cb16-156"><a href="#cb16-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-157"><a href="#cb16-157" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Beaucoup de positifs, difficilement identifiables : $m_0$ = 200, $\mu_1$ = 0.3</span>
+<span id="cb16-158"><a href="#cb16-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-159"><a href="#cb16-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-162"><a href="#cb16-162" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-163"><a href="#cb16-163" aria-hidden="true" tabindex="-1"></a>scenarios <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb16-164"><a href="#cb16-164" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">0</span>),</span>
+<span id="cb16-165"><a href="#cb16-165" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">950</span>, <span class="dv">1</span>),</span>
+<span id="cb16-166"><a href="#cb16-166" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">950</span>, <span class="fl">0.3</span>),</span>
+<span id="cb16-167"><a href="#cb16-167" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">800</span>, <span class="dv">1</span>),</span>
+<span id="cb16-168"><a href="#cb16-168" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">800</span>, <span class="fl">0.3</span>),</span>
+<span id="cb16-169"><a href="#cb16-169" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">200</span>, <span class="dv">1</span>),</span>
+<span id="cb16-170"><a href="#cb16-170" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">200</span>, <span class="fl">0.3</span>)</span>
+<span id="cb16-171"><a href="#cb16-171" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-172"><a href="#cb16-172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-173"><a href="#cb16-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-176"><a href="#cb16-176" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-177"><a href="#cb16-177" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb16-178"><a href="#cb16-178" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb16-179"><a href="#cb16-179" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb16-180"><a href="#cb16-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-181"><a href="#cb16-181" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(scenarios)) {</span>
+<span id="cb16-182"><a href="#cb16-182" aria-hidden="true" tabindex="-1"></a>  m0 <span class="ot">&lt;-</span> scenarios[[i]][<span class="dv">1</span>]</span>
+<span id="cb16-183"><a href="#cb16-183" aria-hidden="true" tabindex="-1"></a>  mu1 <span class="ot">&lt;-</span> scenarios[[i]][<span class="dv">2</span>]</span>
+<span id="cb16-184"><a href="#cb16-184" aria-hidden="true" tabindex="-1"></a>  p_values <span class="ot">&lt;-</span> <span class="fu">simulate_pvalues</span>(n, m, m0, mu1)</span>
+<span id="cb16-185"><a href="#cb16-185" aria-hidden="true" tabindex="-1"></a>  results[[<span class="fu">paste</span>(<span class="st">"m0 ="</span>, m0, <span class="st">"mu1 ="</span>, mu1)]] <span class="ot">&lt;-</span> <span class="fu">results_fun</span>(p_values, m0)</span>
+<span id="cb16-186"><a href="#cb16-186" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-187"><a href="#cb16-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-188"><a href="#cb16-188" aria-hidden="true" tabindex="-1"></a><span class="co"># Création du tableau des résultats</span></span>
+<span id="cb16-189"><a href="#cb16-189" aria-hidden="true" tabindex="-1"></a>results_matrix <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">names</span>(results), <span class="cf">function</span>(scenario) {</span>
+<span id="cb16-190"><a href="#cb16-190" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">Scenario =</span> scenario, <span class="fu">do.call</span>(rbind, results[[scenario]]))</span>
+<span id="cb16-191"><a href="#cb16-191" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb16-192"><a href="#cb16-192" aria-hidden="true" tabindex="-1"></a>results_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(results_matrix)</span>
+<span id="cb16-193"><a href="#cb16-193" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(results_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Scenario"</span>, <span class="st">"Total Positifs"</span>, <span class="st">"Vrais Positifs"</span>, <span class="st">"Faux Positifs"</span>, <span class="st">"Proportion Faux Positifs"</span>)</span>
+<span id="cb16-194"><a href="#cb16-194" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-195"><a href="#cb16-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-196"><a href="#cb16-196" aria-hidden="true" tabindex="-1"></a><span class="fu"># Analyse des scénarios</span></span>
+<span id="cb16-197"><a href="#cb16-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-198"><a href="#cb16-198" aria-hidden="true" tabindex="-1"></a>:::panel-tabset </span>
+<span id="cb16-199"><a href="#cb16-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-200"><a href="#cb16-200" aria-hidden="true" tabindex="-1"></a><span class="fu">## S0</span></span>
+<span id="cb16-201"><a href="#cb16-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-202"><a href="#cb16-202" aria-hidden="true" tabindex="-1"></a>Ici on a pas de positifs : $m_0$ = 1000.</span>
+<span id="cb16-205"><a href="#cb16-205" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-206"><a href="#cb16-206" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
+<span id="cb16-207"><a href="#cb16-207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-208"><a href="#cb16-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-209"><a href="#cb16-209" aria-hidden="true" tabindex="-1"></a><span class="fu">## S1</span></span>
+<span id="cb16-210"><a href="#cb16-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-211"><a href="#cb16-211" aria-hidden="true" tabindex="-1"></a>Ici on a peu de positifs, facilement identifiables : $m_0$ = 950, $\mu_1$ = 1</span>
+<span id="cb16-214"><a href="#cb16-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-215"><a href="#cb16-215" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
+<span id="cb16-216"><a href="#cb16-216" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-217"><a href="#cb16-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-218"><a href="#cb16-218" aria-hidden="true" tabindex="-1"></a><span class="fu">## S2</span></span>
+<span id="cb16-219"><a href="#cb16-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-220"><a href="#cb16-220" aria-hidden="true" tabindex="-1"></a>Ici on a peu de positifs, difficilement identifiables : $m_0$ = 950, $\mu_1$ = 0.3</span>
+<span id="cb16-223"><a href="#cb16-223" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-224"><a href="#cb16-224" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">7</span><span class="sc">:</span><span class="dv">9</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
+<span id="cb16-225"><a href="#cb16-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-226"><a href="#cb16-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-227"><a href="#cb16-227" aria-hidden="true" tabindex="-1"></a><span class="fu">## S3</span></span>
+<span id="cb16-228"><a href="#cb16-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-229"><a href="#cb16-229" aria-hidden="true" tabindex="-1"></a>Ici on a pas mal de positifs, facilement identifiables : $m_0$ = 800, $\mu_1$ = 1</span>
+<span id="cb16-232"><a href="#cb16-232" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-233"><a href="#cb16-233" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">10</span><span class="sc">:</span><span class="dv">12</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
+<span id="cb16-234"><a href="#cb16-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-235"><a href="#cb16-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-236"><a href="#cb16-236" aria-hidden="true" tabindex="-1"></a><span class="fu">## S4</span></span>
+<span id="cb16-237"><a href="#cb16-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-238"><a href="#cb16-238" aria-hidden="true" tabindex="-1"></a>Ici on a pas mal de positifs, difficilement identifiables : $m_0$ = 800, $\mu_1$ = 0.3</span>
+<span id="cb16-241"><a href="#cb16-241" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-242"><a href="#cb16-242" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">13</span><span class="sc">:</span><span class="dv">15</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
+<span id="cb16-243"><a href="#cb16-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-244"><a href="#cb16-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-245"><a href="#cb16-245" aria-hidden="true" tabindex="-1"></a><span class="fu">## S5</span></span>
+<span id="cb16-246"><a href="#cb16-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-247"><a href="#cb16-247" aria-hidden="true" tabindex="-1"></a>Ici on a beaucoup de positifs, facilement identifiables : $m_0$ = 200, $\mu_1$ = 1</span>
+<span id="cb16-250"><a href="#cb16-250" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-251"><a href="#cb16-251" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">16</span><span class="sc">:</span><span class="dv">18</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
+<span id="cb16-252"><a href="#cb16-252" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-253"><a href="#cb16-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-254"><a href="#cb16-254" aria-hidden="true" tabindex="-1"></a><span class="fu">## S6</span></span>
+<span id="cb16-255"><a href="#cb16-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-256"><a href="#cb16-256" aria-hidden="true" tabindex="-1"></a>Ici on a beaucoup de positifs, difficilement identifiables : $m_0$ = 200, $\mu_1$ = 0.3</span>
+<span id="cb16-259"><a href="#cb16-259" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-260"><a href="#cb16-260" aria-hidden="true" tabindex="-1"></a>results_df[<span class="dv">19</span><span class="sc">:</span><span class="dv">21</span>,] <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span>
+<span id="cb16-261"><a href="#cb16-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-262"><a href="#cb16-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-263"><a href="#cb16-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-264"><a href="#cb16-264" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb16-265"><a href="#cb16-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-266"><a href="#cb16-266" aria-hidden="true" tabindex="-1"></a>:::: success-header</span>
+<span id="cb16-267"><a href="#cb16-267" aria-hidden="true" tabindex="-1"></a>::: success-icon</span>
+<span id="cb16-268"><a href="#cb16-268" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb16-269"><a href="#cb16-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-270"><a href="#cb16-270" aria-hidden="true" tabindex="-1"></a>Résultats</span>
+<span id="cb16-271"><a href="#cb16-271" aria-hidden="true" tabindex="-1"></a>::::</span>
+<span id="cb16-272"><a href="#cb16-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-273"><a href="#cb16-273" aria-hidden="true" tabindex="-1"></a>::: success</span>
+<span id="cb16-274"><a href="#cb16-274" aria-hidden="true" tabindex="-1"></a>Les avantages et inconvénients des méthodes sont :</span>
+<span id="cb16-275"><a href="#cb16-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-276"><a href="#cb16-276" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Sans correction** : Forte sensibilité mais haut risque de faux positifs</span>
+<span id="cb16-277"><a href="#cb16-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-278"><a href="#cb16-278" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Bonferroni** : Réduit considérablement les faux positifs mais manque de puissance</span>
+<span id="cb16-279"><a href="#cb16-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-280"><a href="#cb16-280" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Benjamini-Hochberg** : Bon compromis entre puissance et contrôle des faux positifs</span>
+<span id="cb16-281"><a href="#cb16-281" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb16-282"><a href="#cb16-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-283"><a href="#cb16-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-284"><a href="#cb16-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-285"><a href="#cb16-285" aria-hidden="true" tabindex="-1"></a><span class="fu"># Conclusion</span></span>
+<span id="cb16-286"><a href="#cb16-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-287"><a href="#cb16-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-288"><a href="#cb16-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-289"><a href="#cb16-289" aria-hidden="true" tabindex="-1"></a><span class="fu"># Session info</span></span>
+<span id="cb16-290"><a href="#cb16-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-293"><a href="#cb16-293" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-294"><a href="#cb16-294" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">pkgs =</span> <span class="st">"attached"</span>)</span>
+<span id="cb16-295"><a href="#cb16-295" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
