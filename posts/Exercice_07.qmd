@@ -18,7 +18,7 @@ number-sections: false
 editor: visual
 categories: ["Régression linéaire", "Sélection automatique", "Régression sur composantes principales", "Régression des moindres carrés partiels", "Régression Ridge", "Régression Lasso", "Validation croisée"]
 image: "/img/baseball.png"
-description: "Ici, on continu sur des données de baseball en mettant en pratique les techniques de régression pénalisée **Ridge** et **Lasso** avec de la validation croisée. Puis on compare les résultats avec ceux obtenus dans les exercices précédents"
+description: "On continu sur les données de baseball avec les techniques de régression **Ridge** et **Lasso**. Puis on compare les résultats avec ceux obtenus précédemment"
 ---
 
 # Intervenant.e.s
