@@ -431,11 +431,11 @@ for (i in 1:K) {
 }
 
 err_pred_df <- cbind(err_step, err_pcr, err_pls, err_ridge, err_lasso) %>% as.data.frame()
-colnames(err_pred_df) <- c("Err_mod.step", "Err_PCR", "Err_PLS", "Err_Ridge", "Err_Lasso_glmnet")
+colnames(err_pred_df) <- c("Err_mod_step", "Err_PCR", "Err_PLS", "Err_Ridge", "Err_Lasso_glmnet")
 ```
 
 
-```{r, message=FALSE, warning=FALSE, fig.height=6, fig.width=8}
+```{r, message=FALSE, warning=FALSE, fig.height=12, fig.width=14}
 my_interactive_boxplot(err_pred_df)
 ```
 
