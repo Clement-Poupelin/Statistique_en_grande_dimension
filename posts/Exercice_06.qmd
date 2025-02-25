@@ -18,7 +18,7 @@ number-sections: false
 editor: visual
 categories: ["Régression sur composantes principales", "Régression des moindres carrés partiels", "Validation croisée"]
 image: "/img/baseball.png"
-description: "On reprend les données de baseball en mettant en pratique les techniques de *PCR* et *PLSR*"
+description: "On reprend les données de baseball en mettant en pratique les techniques de **PCR** et **PLSR**"
 ---
 
 # Intervenant.e.s
