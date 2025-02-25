@@ -19,3 +19,144 @@ categories: ["Régression logistique", "Régression logistique Lasso", "Sélecti
 image: "/img/caravane.png"
 description: "Description"
 ---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+
+
+####################################
+### Ex 10 : Caravan
+library(ISLR)
+data("Caravan")
+dim(Caravan)
+dim(na.omit(Caravan))
+indexyes=which(Caravan$Purchase=="Yes")
+indexno=which(Caravan$Purchase=="No")
+train=c(sample(indexyes,length(indexyes)/2),sample(indexno,length(indexno)/2))
+
+y=Caravan$Purchase[train]
+Xtrain=as.matrix(Caravan[train,-86])
+ytest=Caravan$Purchase[-train]
+Xtest=Caravan[-train,-86]
+
+#Forward
+mod=glm(Purchase~.,family="binomial",data=Caravan,subset=train)
+mod0=glm(Purchase~1,family="binomial",data=Caravan,subset=train)
+tmp=step(mod0,scope=formula(mod),direction="both",k=log(n/2),trace=0)#par BIC
+tmp$formula
+modforw=eval(tmp$call)
+pred=predict(modforw,Xtest,type="response")
+
+library(ROCR)
+pr = prediction(pred, ytest) 
+roc = performance(pr, measure = "tpr", x.measure = "fpr") 
+plot(roc)
+aucfwd=performance(pr,measure="auc")@y.values
+
+#Lasso
+cvglmnet=cv.glmnet(Xtrain,y,family="binomial",type.measure="auc",nfolds=10)
+plot(cvglmnet)
+predlasso=predict(cvglmnet,as.matrix(Xtest),s=cvglmnet$lambda.min,type="response")
+prlasso = prediction(predlasso, ytest) 
+roclasso = performance(prlasso, measure = "tpr", x.measure = "fpr") 
+auclasso=performance(prlasso,measure="auc")@y.values
+
+#Comparaison : Lasso semble un peu meilleur, mais sélectionne plus de variables
+#(il faudrait recommencer avec plusieurs découpages train/test)
+plot(roc)
+plot(roclasso,add=T,col=2)
+
+aucfwd
+auclasso
+
+coef(modforw)
+coef(cvglmnet,s=cvglmnet$lambda.min)
+
+
+#D'autres méthodes possibles :
+
+#Gauss Lasso
+w=coef(cvglmnet,s=cvglmnet$lambda.min)
+index=which(w[-1]!=0)
+fit=glm(Purchase~.,data=Caravan[train,c(index,86)],family="binomial")
+predgauss=predict(fit,Xtest,type="response")
+
+#Adaptive Lasso
+cvglm=cv.glmnet(Xtrain,y,family="binomial",type.measure="auc",penalty.factor=1/abs(w[-1]))
+plot(cvglm)
+predalasso=predict(cvglm,as.matrix(Xtest),s=cvglm$lambda.min,type="response")
+#+Gauss pour finir
+wal=coef(cvglm,s=cvglm$lambda.min)
+index=which(wal[-1]!=0)
+fit=glm(Purchase~.,data=Caravan[train,c(index,86)],family="binomial")
+predalgauss=predict(fit,Xtest,type="response")
+
+#Logistic Ridge
+cvglmnet=cv.glmnet(Xtrain,y,family="binomial",type.measure="auc",alpha=0)
+plot(cvglmnet)
+predridge=predict(cvglmnet,as.matrix(Xtest),s=cvglmnet$lambda.min,type="response")
+
+
+#Logistic Elastic Net (pour alpha=0.5)
+cvglmnet=cv.glmnet(Xtrain,y,family="binomial",type.measure="auc",alpha=1/2)
+plot(cvglmnet)
+preden=predict(cvglmnet,as.matrix(Xtest),s=cvglmnet$lambda.min,type="response")
+
+
+
+#Comparaison finale : les méthodes supplémentaires n'apportent rien d'intéressant 
+#(il faudrait recommencer avec plusieurs découpages train/test)
+library(ROCR)
+pr = prediction(pred, ytest) 
+roc = performance(pr, measure = "tpr", x.measure = "fpr") 
+prlasso = prediction(predlasso, ytest) 
+roclasso = performance(prlasso, measure = "tpr", x.measure = "fpr") 
+prgauss = prediction(predgauss, ytest) 
+rocgauss = performance(prgauss, measure = "tpr", x.measure = "fpr")
+pralasso = prediction(predalasso, ytest) 
+rocalasso = performance(pralasso, measure = "tpr", x.measure = "fpr")
+pralgauss = prediction(predalgauss, ytest) 
+rocalgauss = performance(pralgauss, measure = "tpr", x.measure = "fpr")
+prridge = prediction(predridge, ytest) 
+rocridge = performance(prridge, measure = "tpr", x.measure = "fpr") 
+pren = prediction(preden, ytest) 
+rocen = performance(pren, measure = "tpr", x.measure = "fpr") 
+
+plot(roc)
+plot(roclasso,add=T,col=2)
+plot(rocgauss,add=T,col=3)
+plot(rocalasso,add=T,col=4)
+plot(rocalgauss,add=T,col=5)
+plot(rocridge,add=T,col=6)
+plot(rocen,add=T,col=7)
+
+performance(pr,measure="auc")@y.values
+performance(prlasso,measure="auc")@y.values
+performance(prgauss,measure="auc")@y.values
+performance(pralasso,measure="auc")@y.values
+performance(pralgauss,measure="auc")@y.values
+performance(prridge,measure="auc")@y.values
+performance(pren,measure="auc")@y.values
+
+```
+

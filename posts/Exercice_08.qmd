@@ -19,3 +19,320 @@ categories: ["Régression linéaire", "Sélection automatique", "Régression sur
 image: "/img/biscuits.png"
 description: "Description"
 ---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+# On considère le jeu de données cookies de la libraire fdm2id qui
+# contient, pour 72 cookies, leur spectre par proche infrarouge 
+# (les 700 premières variables, chacune correspondant à une longueur d’onde)
+# ainsi que la mesure de 4 ingrédients (variables 701 à 704).
+# On souhaite prédire le taux de sucre (variable 702)
+# en fonction du spectre.
+# Les 40 premiers cookies formeront l’échantillon d’apprentissage 
+# et les 32 derniers l’échantillon test.
+
+
+# Question 0 ------------------------------------------------------------
+
+library(fdm2id)
+#view(cookies)
+dim(cookies)
+# 72 704
+# p>>n 
+summary(cookies)
+cookies = na.omit(cookies)
+dim(cookies)
+# effectivement pas de NA
+
+cookies.train = cookies[1:40,]
+cookies.test = cookies[41:72,]
+
+# Question 1 ------------------------------------------------------------
+matplot(t(cookies.train),
+        type='l',
+        ylim=c(0.2, 1.85),
+        main = paste("Plot des spectres des", dim(t(cookies.train))[2]," cookies de l'échantillon train"))
+dim(t(cookies.train)) 
+# 704  40
+
+# PCA
+FactoMineR::PCA(cookies, scale=T, quanti.sup=c(701:704))
+
+# Question 2 ------------------------------------------------------------
+
+#### Data prep ####
+X.train = as.matrix(cookies.train[,1:700])
+y.train = as.matrix(cookies.train[,702])
+
+X.test = as.matrix(cookies.test[,1:700])
+y.test = as.matrix(cookies.test[,702])
+
+tab = data.frame(y = y.train, X = X.train)
+
+#### Step Forward (hybride) ####
+reg_full = lm(y~.,data = tab)
+reg_start = lm(y~1,data = tab)
+modforw = step(reg_start,
+               scope = formula(reg_full),
+               direction = "both",
+               k = log(dim(tab)[1]),
+               trace = 0) 
+summary(modforw)
+
+
+
+# Question 3 ------------------------------------------------------------
+prev_forw = sqrt(mean((predict(modforw,data.frame(X = X.test)) - y.test)^2))
+indexforw = as.numeric(substr(names(modforw$model)[-1],3,10))
+
+prev_forw # 1.669854
+indexforw # 427 489 579   1 699 492
+
+
+
+matplot(t(cookies.train), type='l', ylim=c(0.2, 2))
+abline(v = indexforw, lwd = 2, col ="red" )
+legend("topleft", legend = "forward", col="red", lty = 1, lwd = 2)
+
+# Question 4 ------------------------------------------------------------
+
+#### PCR ####
+library(pls)
+pcr.fit = pcr(y.train~X.train, 
+              scale = TRUE,
+              validation = "CV",
+              segments = 4) 
+# K = 4 dans CV car l'echantillon est petit (n=40) donc évitons les k=10
+
+validationplot(pcr.fit)
+M_pcr = which.min(pcr.fit$validation$PRESS)
+prev_pcr = sqrt(mean((predict(pcr.fit, cookies.test[,1:700], ncomp = M_pcr) - cookies.test[,702])^2))
+prev_pcr # 5.917207
+
+
+# Question 5 ------------------------------------------------------------
+
+#### PLS ####
+pls.fit = plsr(y~X.train,
+               data = tab,
+               scale = TRUE,
+               validation = "CV",
+               segments = 4)
+validationplot(pls.fit)
+M_pls = which.min(pls.fit$validation$PRESS) 
+prev_pls = sqrt(mean((predict(pls.fit, cookies.test[,1:700], ncomp = M_pls) - cookies.test[,702])^2))
+prev_pls # 5.923798
+
+
+# Question 6 ------------------------------------------------------------
+
+#### Ridge ####
+library(glmnet)
+cvglm = cv.glmnet(X.train, y.train, 
+                  alpha = 0, # alpha = 0 <=> Ridge 
+                  nfolds = 4)
+plot(cvglm)
+# lambda n'a pas été choisi assez petit. 
+# En effet, on est au bord en terme de min donc il faudrait regarder 
+# plus petit et zoomer pour voir si on est pas en cas MCO
+cvglm$lambda
+
+cvglm = cv.glmnet(X.train, y.train, 
+                  alpha = 0,
+                  nfolds = 4,
+                  lambda = seq(0.1, 5, 0.01))
+plot(cvglm)
+# recommencer si choix aberrant
+
+lbda_min_ridge = cvglm$lambda.min
+prev_ridge = sqrt(mean((predict(cvglm, newx = X.test, s = lbda_min_ridge) - y.test)^2))
+# pas lambda.1se car ecart type trop grand avec n=40
+
+prev_ridge # 0.8743336 mais depend du nfold
+
+
+# Question 7 ------------------------------------------------------------
+
+#### Lasso ####
+cvglm = cv.glmnet(X.train, y.train,
+                  alpha = 1, # alpha = 1 <=> Lasso
+                  nfolds = 4)
+plot(cvglm)
+# lambda n'a pas été choisi assez petit car 
+# encore une fois on est proche du bord gauche et bord gauche = MCO
+# Attention, on est en log
+
+cvglm$lambda
+
+
+cvglm = cv.glmnet(X.train, y.train,
+                  alpha = 1,
+                  nfolds = 4,
+                  lambda = seq(0.01, 1, 0.001))
+plot(cvglm)
+# recommencer si choix aberrant
+
+lbda_min_lasso = cvglm$lambda.min
+prev_lasso = sqrt(mean((predict(cvglm, newx = X.test, s = lbda_min_lasso) - y.test)^2))
+# pas lambda.1se car ecart type trop grand avec n=40
+
+prev_lasso # 1.846122 mais depend du nfold
+
+## Comme on a de la selection de variable, regardons les longeurs d'ondes gardée
+# pour comparer avec forward
+coeff = coef(cvglm, s=lbda_min_lasso)
+indexlasso = which(coeff[-1] != 0)
+length(indexlasso)
+
+matplot(t(cookies.train), type='l', ylim=c(0.2, 2))
+abline(v = indexforw, lwd = 2, col ="red" )
+abline(v = indexlasso, lwd = 2, col ="green" )
+legend("topleft", legend = c("forward", "lasso"), col=c("red", "green"), lty = c(1,1), lwd = c(2,2))
+# Pour comparer lasso et forward, on peut donc prendre en considération le rmsep 
+# mais aussi prendre en compte le nombre de variables selectionnées
+
+
+# Question 8 ------------------------------------------------------------
+
+# Interessant de faire Gauss-Lasso car entre ridge et lasso 
+# on a un écart de rmsep ou lasso pas forcément meilleur 
+# donc interssant de tester un entre deux 
+
+#### Gauss-Lasso ####
+w = coef(cvglm, s = cvglm$lambda.min)
+indexlasso = which(w[-1] != 0)
+length(indexlasso)
+# environ 30 : trop grand /à n=40 pour les MCO, ne marchera pas
+
+reg = lm(y~.,
+         data = tab[, c(1, indexlasso+1)])
+
+
+prev_gauss = sqrt(mean((predict(reg, data.frame(X = X.test)) - y.test)^2))
+prev_gauss # 1.825471
+
+
+
+# Question 9 ------------------------------------------------------------
+
+#### Lasso Adaptative ####
+cvglm = cv.glmnet(X.train, y.train, 
+                  nfolds = 4,
+                  penalty.factor = 1/abs(w[-1]))
+plot(cvglm)
+cvglm$lambda
+
+cvglm = cv.glmnet(X.train, y.train,
+                  alpha = 1,
+                  nfolds = 4,
+                  penalty.factor = 1/abs(w[-1]),
+                  lambda = seq(1, 50, 0.1))
+plot(cvglm)
+
+
+lbda_min_alasso = cvglm$lambda.min
+prev_alasso = sqrt(mean((predict(cvglm, newx = X.test, s = lbda_min_alasso) - y.test)^2))
+prev_alasso # 1.901688 mais depend du nfold
+
+
+
+# + Gauss pour finir
+wal = coef(cvglm, s = lbda_min_alasso)
+indexadlasso = which(wal[-1] != 0)
+length(indexadlasso) #9 : on peut essayer gauss
+reg=lm(y~.,
+       data = tab[, c(1, indexadlasso + 1)])
+
+prev_algauss = sqrt(mean((predict(reg,data.frame(X = X.test)) - y.test)^2))
+prev_algauss # 2.003703
+
+
+# Question 10 ------------------------------------------------------------
+
+#### Elastic Net ####
+cvglm = cv.glmnet(X.train, y.train,
+                  alpha = 0.5,
+                  nfolds = 4)
+plot(cvglm)
+# encore une fois, lambda proche du bord gauche donc essayons d'affiner 
+cvglm$lambda
+
+
+cvglm = cv.glmnet(X.train, y.train,
+                  alpha = 0.5,
+                  nfolds = 4,
+                  lambda = seq(0.001, 1, 0.001))
+plot(cvglm)
+
+lbda_min_en = cvglm$lambda.min
+prev_en = sqrt(mean((predict(cvglm, newx = X.test, s = lbda_min_en) - y.test)^2))
+prev_en # 2.007716
+
+
+wen = coef(cvglm, s = lbda_min_en)
+indexen = which(wen[-1] != 0)
+length(indexen)
+
+prev_list = c(prev_forw, prev_ridge, prev_pcr, prev_pls, prev_lasso, prev_gauss, prev_alasso, prev_algauss, prev_en)
+
+matplot(t(X.train), type='l', ylim = c(-0.2, 2))
+points(indexforw, rep(0.2, length(indexforw)), pch = 3, col = "red")
+points(indexadlasso, rep(0.1, length(indexadlasso)), pch = 3, col = "cyan")
+points(indexlasso, rep(0, length(indexlasso)), pch = 3, col = "deeppink")
+points(indexen, rep(-0.1, length(indexen)), pch = 3, col = "purple")
+legend("topleft", legend = c("Forward","Adaptative Lasso","Lasso","Elastic Net"), pch = 3, col = c("red", "cyan", "deeppink", "purple"))
+
+## On met des points pour la lisibilité contrairement à une multitude de abline
+
+
+
+
+# Question 11 ------------------------------------------------------------
+
+# Analyser les résultats, à la fois en terme de qualité de prévision 
+# et d’identification des longueurs d’onde importantes
+
+
+prev_list
+# en terme de rmsep (sans compter l'aléa du nfold), on a :
+# Ridge, forward, gauss, lasso, alasso, algauss, en
+# que l'on gardera (<2.1)
+# par contre on pourrait rejeter pcr et pls (>5.5)
+
+# en terme de selection de variables
+length(indexforw) # 6
+length(indexlasso) # 19
+length(indexadlasso) # 8
+length(indexen) # 298
+# Donc on pourrait enlever Elastic Net qui garde beaucoup de variables
+
+## Conclusion :
+# avec ces deux critères, on pourrait avoir une préférence 
+# pour forward qui garde peut de variable et qui a un rmsep faible
+# mais le rmsep le plus faible reste pour ridge 
+
+## Concl à revoir car normalement pcr et pls tournent également autour de 1.qqchose
+
+## IDEE : 
+# faire un dataframe avec nom des methodes et rmsep associé et nb de variables gardées
+
+```
+
+
+
+
+

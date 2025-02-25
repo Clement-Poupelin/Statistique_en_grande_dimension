@@ -20,6 +20,56 @@ image: "/img/gants-de-boxe.png"
 description: "Comparaison de différents modèles de regression"
 ---
 
+
+
+```{r}
+# On souhaite réaliser une petite étude par simulation pour évaluer
+# les qualités respectives de 4 méthodes d’estimation d’un modèle de 
+# régression linéaire. 
+# On s’intéresse pour chacune d’elle à ses qualités de sélection de variables
+# et à ses qualités prédictives. Le programme SimusReg.R permet de réaliser 
+# cette étude. Il contient deux fonctions, Simudata et la fonction 
+# principale fun, et un exemple d’utilisation en fin de programme.
+
+## LE FAIRE EN RAPPORT SCIENTIFIQUE 
+
+# Question 1 ------------------------------------------------------------
+
+#Simudata nous fait un modèle de regression linéaire multiple (lm avec p>4).
+# notre bruit est gaussien 
+# y = 2*X1 + 2*X2 + 2*X3 + 0*X4 + eps (donc X4 n'intervient pas)
+
+
+# Question 2 ------------------------------------------------------------
+
+# avec fun on a :
+# - forward hybride
+# - alpha par defaut c'est ? LASSO
+# - Lasso adaptative 
+# - Gauss-Lasso
+
+
+# Question 3 ------------------------------------------------------------
+
+
+# en sortie on a :
+# - mean de ????
+# - nb de var selectionnée (si selection)
+# - erreur de prevision RMSEP
+# - moyenne de temps de calcul
+
+
+# The safe and reliable way to test two objects for being exactly equal.
+# It returns TRUE in this case, FALSE in every other case.
+
+# step$model renvoi les variables du modèle (noms et contenu)
+# la première sortie nous dit si la méthode fait de la selection de variabel ou non
+
+
+
+
+```
+
 ```{r setup, include=FALSE}
 # chargement des packages et scripts nécessaires
 library(latex2exp)
