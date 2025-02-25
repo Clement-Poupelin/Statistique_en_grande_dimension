@@ -1,29 +1,35 @@
 # **Blog - UE X3MS020 : Statistique en grande dimension**
 
-## Contexte  
-Ce blog est dédié à la reprise et des exercices de **Statistique en grande dimension** enseignée dans le cadre du **Master 2 IS** à **Nantes Université** pour l'année universitaire 2023-2024.\
-Il s'inscrit dans une démarche pédagogique visant à proposer des analyses claires, bien structurées et reproductibles en lien avec les thématiques abordées durant le cours.  
+## Contexte
 
-## Objectif  
-L’objectif de ce blog est de :  
+Ce blog est dédié à la reprise et des exercices de **Statistique en grande dimension** enseignée dans le cadre du **Master 2 IS** à **Nantes Université** pour l'année universitaire **2023-2024**.\
+Il s'inscrit dans une démarche pédagogique visant à proposer des analyses claires, bien structurées et reproductibles en lien avec les thématiques abordées durant le cours.
 
-- Fournir des analyses **complètes et rigoureuses** en réponse aux exercices abordés en travaux pratiques.  
+## Objectif
 
-- Proposer des **solutions détaillées et commentées** pour aider à la compréhension des méthodes statistiques.  
+L’objectif de ce blog est de :
 
-- Favoriser une approche **reproductible** et **bien documentée** en utilisant **R et Quarto**.  
+-   Fournir des analyses **complètes et rigoureuses** en réponse aux exercices abordés en travaux pratiques.
 
-## Le Blog  
-Ce projet est conçu sous la forme d’un **blog Quarto** hébergé sur **GitHub Pages**. Chaque rubrique correspond à un exercice spécifique, structuré de manière à être facilement lisible et exploitable.  
+-   Proposer des **solutions détaillées et commentées** pour aider à la compréhension des méthodes statistiques.
 
-### Technologies utilisées  
-- **Quarto** (pour la génération du blog)  
-- **R & RStudio** (pour les analyses statistiques)  
-- **GitHub** (pour l’hébergement et la gestion des versions)  
+-   Favoriser une approche **reproductible** et **bien documentée** en utilisant **R et Quarto**.
 
-## Intervenant.e.s  
-Les **rédacteurs** et **relecteurs** des articles sont mentionnés sur chaque document du blog. Le travail collaboratif permet d’assurer la clarté, la rigueur et la qualité des contenus proposés.  
+## Le Blog
 
-## Accès au Blog  
-Le blog est disponible en ligne à l’adresse suivante :  
-[https://clement-poupelin.github.io/Statistique_en_grande_dimension/](https://clement-poupelin.github.io/Statistique_en_grande_dimension/)  
+Ce projet est conçu sous la forme d’un **blog Quarto** hébergé sur **GitHub Pages**. Chaque rubrique correspond à un exercice spécifique, structuré de manière à être facilement lisible et exploitable.
+
+### Technologies utilisées
+
+-   **Quarto** (pour la génération du blog)\
+-   **R & RStudio** (pour les analyses statistiques)\
+-   **GitHub** (pour l’hébergement et la gestion des versions)
+
+## Intervenant.e.s
+
+Les **rédacteurs** et **relecteurs** des articles sont mentionnés sur chaque document du blog. Le travail collaboratif permet d’assurer la clarté, la rigueur et la qualité des contenus proposés.
+
+## Accès au Blog
+
+Le blog est disponible en ligne à l’adresse suivante :\
+<https://clement-poupelin.github.io/Statistique_en_grande_dimension/>
