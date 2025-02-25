@@ -16,9 +16,9 @@ format:
 toc: true
 number-sections: false
 editor: visual
-categories: ["Régression Ridge", "Régression Lasso", "Validation croisée"]
+categories: ["Régression linéaire", "Sélection automatique", "Régression sur composantes principales", "Régression des moindres carrés partiels", "Régression Ridge", "Régression Lasso", "Validation croisée"]
 image: "/img/baseball.png"
-description: "Ici, on continu sur des données de baseball en mettant en pratique les techniques de PCR et PLS avec de la validation croisée"
+description: "Ici, on continu sur des données de baseball en mettant en pratique les techniques de régression pénalisée **Ridge** et **Lasso** avec de la validation croisée. Puis on compare les résultats avec ceux obtenus dans les exercices précédents"
 ---
 
 # Intervenant.e.s
