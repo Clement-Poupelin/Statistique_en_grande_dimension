@@ -20,28 +20,7 @@ image: "/img/caravane.png"
 description: "Description"
 ---
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r}
+```{r, error=TRUE}
 
 
 ####################################
@@ -159,4 +138,3 @@ performance(prridge,measure="auc")@y.values
 performance(pren,measure="auc")@y.values
 
 ```
-

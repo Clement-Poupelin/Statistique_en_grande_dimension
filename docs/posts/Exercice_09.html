@@ -2173,509 +2173,559 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb217-20"><a href="#cb217-20" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Comparaison de différents modèles de regression"</span></span>
 <span id="cb217-21"><a href="#cb217-21" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb217-22"><a href="#cb217-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-23"><a href="#cb217-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup, include=FALSE}</span></span>
-<span id="cb217-24"><a href="#cb217-24" aria-hidden="true" tabindex="-1"></a><span class="in"># chargement des packages et scripts nécessaires</span></span>
-<span id="cb217-25"><a href="#cb217-25" aria-hidden="true" tabindex="-1"></a><span class="in">library(latex2exp)</span></span>
-<span id="cb217-26"><a href="#cb217-26" aria-hidden="true" tabindex="-1"></a><span class="in">library(kableExtra)</span></span>
-<span id="cb217-27"><a href="#cb217-27" aria-hidden="true" tabindex="-1"></a><span class="in">library(corrplot)</span></span>
-<span id="cb217-28"><a href="#cb217-28" aria-hidden="true" tabindex="-1"></a><span class="in">library(scales)</span></span>
-<span id="cb217-29"><a href="#cb217-29" aria-hidden="true" tabindex="-1"></a><span class="in">library(ISLR)</span></span>
-<span id="cb217-30"><a href="#cb217-30" aria-hidden="true" tabindex="-1"></a><span class="in">library(leaps)</span></span>
-<span id="cb217-31"><a href="#cb217-31" aria-hidden="true" tabindex="-1"></a><span class="in">library(MASS)</span></span>
-<span id="cb217-32"><a href="#cb217-32" aria-hidden="true" tabindex="-1"></a><span class="in">library(psych) # pour pairs.panels</span></span>
-<span id="cb217-33"><a href="#cb217-33" aria-hidden="true" tabindex="-1"></a><span class="in">library(FactoMineR) # pour PCA</span></span>
-<span id="cb217-34"><a href="#cb217-34" aria-hidden="true" tabindex="-1"></a><span class="in">library(GGally) # pour ggcorr</span></span>
-<span id="cb217-35"><a href="#cb217-35" aria-hidden="true" tabindex="-1"></a><span class="in">library(car) # pour VIF</span></span>
-<span id="cb217-36"><a href="#cb217-36" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)</span></span>
-<span id="cb217-37"><a href="#cb217-37" aria-hidden="true" tabindex="-1"></a><span class="in">library(future)</span></span>
-<span id="cb217-38"><a href="#cb217-38" aria-hidden="true" tabindex="-1"></a><span class="in">set.seed(123)</span></span>
-<span id="cb217-39"><a href="#cb217-39" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-40"><a href="#cb217-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-41"><a href="#cb217-41" aria-hidden="true" tabindex="-1"></a>On souhaite réaliser une petite étude par simulation pour évaluer les qualités respectives de 4 méthodes d’estimation d’un modèle de régression linéaire. On s’intéresse pour chacune d’elle à ses qualités de sélection de variables et à ses qualités prédictives. Le programme SimusReg.R permet de réaliser cette étude. Il contient deux fonctions, Simudata et la fonction principale fun, et un exemple d’utilisation en fin de programme.</span>
-<span id="cb217-42"><a href="#cb217-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-45"><a href="#cb217-45" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-46"><a href="#cb217-46" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">100</span></span>
-<span id="cb217-47"><a href="#cb217-47" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">500</span></span>
-<span id="cb217-48"><a href="#cb217-48" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n<span class="sc">*</span>p), n, p)</span>
-<span id="cb217-49"><a href="#cb217-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-50"><a href="#cb217-50" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-51"><a href="#cb217-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-52"><a href="#cb217-52" aria-hidden="true" tabindex="-1"></a><span class="in">```{r function}</span></span>
-<span id="cb217-53"><a href="#cb217-53" aria-hidden="true" tabindex="-1"></a><span class="in">library(lars)</span></span>
-<span id="cb217-54"><a href="#cb217-54" aria-hidden="true" tabindex="-1"></a><span class="in">library(leaps)</span></span>
-<span id="cb217-55"><a href="#cb217-55" aria-hidden="true" tabindex="-1"></a><span class="in">library(glmnet)</span></span>
+<span id="cb217-23"><a href="#cb217-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-24"><a href="#cb217-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-27"><a href="#cb217-27" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-28"><a href="#cb217-28" aria-hidden="true" tabindex="-1"></a><span class="co"># On souhaite réaliser une petite étude par simulation pour évaluer</span></span>
+<span id="cb217-29"><a href="#cb217-29" aria-hidden="true" tabindex="-1"></a><span class="co"># les qualités respectives de 4 méthodes d’estimation d’un modèle de </span></span>
+<span id="cb217-30"><a href="#cb217-30" aria-hidden="true" tabindex="-1"></a><span class="co"># régression linéaire. </span></span>
+<span id="cb217-31"><a href="#cb217-31" aria-hidden="true" tabindex="-1"></a><span class="co"># On s’intéresse pour chacune d’elle à ses qualités de sélection de variables</span></span>
+<span id="cb217-32"><a href="#cb217-32" aria-hidden="true" tabindex="-1"></a><span class="co"># et à ses qualités prédictives. Le programme SimusReg.R permet de réaliser </span></span>
+<span id="cb217-33"><a href="#cb217-33" aria-hidden="true" tabindex="-1"></a><span class="co"># cette étude. Il contient deux fonctions, Simudata et la fonction </span></span>
+<span id="cb217-34"><a href="#cb217-34" aria-hidden="true" tabindex="-1"></a><span class="co"># principale fun, et un exemple d’utilisation en fin de programme.</span></span>
+<span id="cb217-35"><a href="#cb217-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-36"><a href="#cb217-36" aria-hidden="true" tabindex="-1"></a><span class="do">## LE FAIRE EN RAPPORT SCIENTIFIQUE </span></span>
+<span id="cb217-37"><a href="#cb217-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-38"><a href="#cb217-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 1 ------------------------------------------------------------</span></span>
+<span id="cb217-39"><a href="#cb217-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-40"><a href="#cb217-40" aria-hidden="true" tabindex="-1"></a><span class="co">#Simudata nous fait un modèle de regression linéaire multiple (lm avec p&gt;4).</span></span>
+<span id="cb217-41"><a href="#cb217-41" aria-hidden="true" tabindex="-1"></a><span class="co"># notre bruit est gaussien </span></span>
+<span id="cb217-42"><a href="#cb217-42" aria-hidden="true" tabindex="-1"></a><span class="co"># y = 2*X1 + 2*X2 + 2*X3 + 0*X4 + eps (donc X4 n'intervient pas)</span></span>
+<span id="cb217-43"><a href="#cb217-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-44"><a href="#cb217-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-45"><a href="#cb217-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 2 ------------------------------------------------------------</span></span>
+<span id="cb217-46"><a href="#cb217-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-47"><a href="#cb217-47" aria-hidden="true" tabindex="-1"></a><span class="co"># avec fun on a :</span></span>
+<span id="cb217-48"><a href="#cb217-48" aria-hidden="true" tabindex="-1"></a><span class="co"># - forward hybride</span></span>
+<span id="cb217-49"><a href="#cb217-49" aria-hidden="true" tabindex="-1"></a><span class="co"># - alpha par defaut c'est ? LASSO</span></span>
+<span id="cb217-50"><a href="#cb217-50" aria-hidden="true" tabindex="-1"></a><span class="co"># - Lasso adaptative </span></span>
+<span id="cb217-51"><a href="#cb217-51" aria-hidden="true" tabindex="-1"></a><span class="co"># - Gauss-Lasso</span></span>
+<span id="cb217-52"><a href="#cb217-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-53"><a href="#cb217-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-54"><a href="#cb217-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 3 ------------------------------------------------------------</span></span>
+<span id="cb217-55"><a href="#cb217-55" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb217-56"><a href="#cb217-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-57"><a href="#cb217-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-58"><a href="#cb217-58" aria-hidden="true" tabindex="-1"></a><span class="in">DataSimulation = function(n,p){</span></span>
-<span id="cb217-59"><a href="#cb217-59" aria-hidden="true" tabindex="-1"></a><span class="in">  if(p &lt; 4){stop("p&gt;3 require")}</span></span>
-<span id="cb217-60"><a href="#cb217-60" aria-hidden="true" tabindex="-1"></a><span class="in">  # We create our matrix of explanatory variables</span></span>
-<span id="cb217-61"><a href="#cb217-61" aria-hidden="true" tabindex="-1"></a><span class="in">  X = matrix(rnorm(n*p), n, p)</span></span>
-<span id="cb217-62"><a href="#cb217-62" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb217-63"><a href="#cb217-63" aria-hidden="true" tabindex="-1"></a><span class="in">  # We define our coefficients of regression </span></span>
-<span id="cb217-64"><a href="#cb217-64" aria-hidden="true" tabindex="-1"></a><span class="in">  coeff = matrix(0, p)</span></span>
-<span id="cb217-65"><a href="#cb217-65" aria-hidden="true" tabindex="-1"></a><span class="in">  coeff[1:3] = 2</span></span>
-<span id="cb217-66"><a href="#cb217-66" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb217-67"><a href="#cb217-67" aria-hidden="true" tabindex="-1"></a><span class="in">  # We build our explanatory variables</span></span>
-<span id="cb217-68"><a href="#cb217-68" aria-hidden="true" tabindex="-1"></a><span class="in">  y = X%*%coeff + rnorm(n, sd = 2)</span></span>
-<span id="cb217-69"><a href="#cb217-69" aria-hidden="true" tabindex="-1"></a><span class="in">  return(list(X = X, y = y, coeff = coeff))</span></span>
-<span id="cb217-70"><a href="#cb217-70" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb217-57"><a href="#cb217-57" aria-hidden="true" tabindex="-1"></a><span class="co"># en sortie on a :</span></span>
+<span id="cb217-58"><a href="#cb217-58" aria-hidden="true" tabindex="-1"></a><span class="co"># - mean de ????</span></span>
+<span id="cb217-59"><a href="#cb217-59" aria-hidden="true" tabindex="-1"></a><span class="co"># - nb de var selectionnée (si selection)</span></span>
+<span id="cb217-60"><a href="#cb217-60" aria-hidden="true" tabindex="-1"></a><span class="co"># - erreur de prevision RMSEP</span></span>
+<span id="cb217-61"><a href="#cb217-61" aria-hidden="true" tabindex="-1"></a><span class="co"># - moyenne de temps de calcul</span></span>
+<span id="cb217-62"><a href="#cb217-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-63"><a href="#cb217-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-64"><a href="#cb217-64" aria-hidden="true" tabindex="-1"></a><span class="co"># The safe and reliable way to test two objects for being exactly equal.</span></span>
+<span id="cb217-65"><a href="#cb217-65" aria-hidden="true" tabindex="-1"></a><span class="co"># It returns TRUE in this case, FALSE in every other case.</span></span>
+<span id="cb217-66"><a href="#cb217-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-67"><a href="#cb217-67" aria-hidden="true" tabindex="-1"></a><span class="co"># step$model renvoi les variables du modèle (noms et contenu)</span></span>
+<span id="cb217-68"><a href="#cb217-68" aria-hidden="true" tabindex="-1"></a><span class="co"># la première sortie nous dit si la méthode fait de la selection de variabel ou non</span></span>
+<span id="cb217-69"><a href="#cb217-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-70"><a href="#cb217-70" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb217-71"><a href="#cb217-71" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb217-72"><a href="#cb217-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-73"><a href="#cb217-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-74"><a href="#cb217-74" aria-hidden="true" tabindex="-1"></a><span class="in">fun = function(n, p, M = 100){ # By default, we make M = 100 simulation </span></span>
-<span id="cb217-75"><a href="#cb217-75" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb217-76"><a href="#cb217-76" aria-hidden="true" tabindex="-1"></a><span class="in">  ## Initialization </span></span>
-<span id="cb217-77"><a href="#cb217-77" aria-hidden="true" tabindex="-1"></a><span class="in">  #################</span></span>
-<span id="cb217-78"><a href="#cb217-78" aria-hidden="true" tabindex="-1"></a><span class="in">  selec_method1 = NULL; selec_method2 = NULL; selec_method3 = NULL;</span></span>
-<span id="cb217-79"><a href="#cb217-79" aria-hidden="true" tabindex="-1"></a><span class="in">  taille_method1 = NULL; taille_method2 = NULL; taille_method3 = NULL;</span></span>
-<span id="cb217-80"><a href="#cb217-80" aria-hidden="true" tabindex="-1"></a><span class="in">  prev_method1 = NULL; prev_method2 = NULL; prev_method3 = NULL; prev_method4 = NULL;</span></span>
-<span id="cb217-81"><a href="#cb217-81" aria-hidden="true" tabindex="-1"></a><span class="in">  temps1 = NULL; temps2 = NULL; temps3 = NULL; temps4 = NULL;</span></span>
-<span id="cb217-82"><a href="#cb217-82" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb217-83"><a href="#cb217-83" aria-hidden="true" tabindex="-1"></a><span class="in">  for(i in 1:M){</span></span>
-<span id="cb217-84"><a href="#cb217-84" aria-hidden="true" tabindex="-1"></a><span class="in">    cat(paste(i, ":")) # counter to see progress</span></span>
-<span id="cb217-85"><a href="#cb217-85" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-86"><a href="#cb217-86" aria-hidden="true" tabindex="-1"></a><span class="in">    # We define our train set</span></span>
-<span id="cb217-87"><a href="#cb217-87" aria-hidden="true" tabindex="-1"></a><span class="in">    datatrain = DataSimulation(n, p)</span></span>
-<span id="cb217-88"><a href="#cb217-88" aria-hidden="true" tabindex="-1"></a><span class="in">    Xtrain = datatrain$X</span></span>
-<span id="cb217-89"><a href="#cb217-89" aria-hidden="true" tabindex="-1"></a><span class="in">    y = datatrain$y</span></span>
-<span id="cb217-90"><a href="#cb217-90" aria-hidden="true" tabindex="-1"></a><span class="in">    coeff = datatrain$coeff</span></span>
-<span id="cb217-91"><a href="#cb217-91" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-92"><a href="#cb217-92" aria-hidden="true" tabindex="-1"></a><span class="in">    # We define our test set</span></span>
-<span id="cb217-93"><a href="#cb217-93" aria-hidden="true" tabindex="-1"></a><span class="in">    datatest = DataSimulation(n, p)</span></span>
-<span id="cb217-94"><a href="#cb217-94" aria-hidden="true" tabindex="-1"></a><span class="in">    Xtest = datatest$X</span></span>
-<span id="cb217-95"><a href="#cb217-95" aria-hidden="true" tabindex="-1"></a><span class="in">    ytest = datatest$y</span></span>
-<span id="cb217-96"><a href="#cb217-96" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-97"><a href="#cb217-97" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-98"><a href="#cb217-98" aria-hidden="true" tabindex="-1"></a><span class="in">    ## Regression </span></span>
-<span id="cb217-99"><a href="#cb217-99" aria-hidden="true" tabindex="-1"></a><span class="in">    #################</span></span>
-<span id="cb217-100"><a href="#cb217-100" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-101"><a href="#cb217-101" aria-hidden="true" tabindex="-1"></a><span class="in">    # Method 1 : Forward-Hybrid with BIC</span></span>
-<span id="cb217-102"><a href="#cb217-102" aria-hidden="true" tabindex="-1"></a><span class="in">    tic = proc.time()</span></span>
-<span id="cb217-103"><a href="#cb217-103" aria-hidden="true" tabindex="-1"></a><span class="in">    tab = data.frame(y = y, X = Xtrain)</span></span>
-<span id="cb217-104"><a href="#cb217-104" aria-hidden="true" tabindex="-1"></a><span class="in">    fit0 = lm(y~1, tab)</span></span>
-<span id="cb217-105"><a href="#cb217-105" aria-hidden="true" tabindex="-1"></a><span class="in">    fit = lm(y~., tab)</span></span>
-<span id="cb217-106"><a href="#cb217-106" aria-hidden="true" tabindex="-1"></a><span class="in">    tmp = step(fit0, scope = formula(fit),</span></span>
-<span id="cb217-107"><a href="#cb217-107" aria-hidden="true" tabindex="-1"></a><span class="in">               k = log(n), # BIC criteria</span></span>
-<span id="cb217-108"><a href="#cb217-108" aria-hidden="true" tabindex="-1"></a><span class="in">               direction = "both", # Hybrid</span></span>
-<span id="cb217-109"><a href="#cb217-109" aria-hidden="true" tabindex="-1"></a><span class="in">               trace = 0)</span></span>
-<span id="cb217-110"><a href="#cb217-110" aria-hidden="true" tabindex="-1"></a><span class="in">    noms = sort(names(tmp$model))</span></span>
-<span id="cb217-111"><a href="#cb217-111" aria-hidden="true" tabindex="-1"></a><span class="in">    selec_method1[i] = identical(</span></span>
-<span id="cb217-112"><a href="#cb217-112" aria-hidden="true" tabindex="-1"></a><span class="in">      noms[-length(noms)], sort(paste("X.", which(coeff != 0), sep = ""))</span></span>
-<span id="cb217-113"><a href="#cb217-113" aria-hidden="true" tabindex="-1"></a><span class="in">      )</span></span>
-<span id="cb217-114"><a href="#cb217-114" aria-hidden="true" tabindex="-1"></a><span class="in">    taille_method1[i] = length(noms) - 1</span></span>
-<span id="cb217-115"><a href="#cb217-115" aria-hidden="true" tabindex="-1"></a><span class="in">    prev_method1[i] = mean((predict(tmp,data.frame(X = Xtest)) - ytest)^2)</span></span>
-<span id="cb217-116"><a href="#cb217-116" aria-hidden="true" tabindex="-1"></a><span class="in">    tac = proc.time() - tic</span></span>
-<span id="cb217-117"><a href="#cb217-117" aria-hidden="true" tabindex="-1"></a><span class="in">    temps1[i] = tac[3]</span></span>
-<span id="cb217-118"><a href="#cb217-118" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-119"><a href="#cb217-119" aria-hidden="true" tabindex="-1"></a><span class="in">    # Method 2 : Lasso</span></span>
-<span id="cb217-120"><a href="#cb217-120" aria-hidden="true" tabindex="-1"></a><span class="in">    tic = proc.time()</span></span>
-<span id="cb217-121"><a href="#cb217-121" aria-hidden="true" tabindex="-1"></a><span class="in">    cvglm = cv.glmnet(Xtrain, y) # By default we have Lasso</span></span>
-<span id="cb217-122"><a href="#cb217-122" aria-hidden="true" tabindex="-1"></a><span class="in">    lambda = cvglm$lambda.min</span></span>
-<span id="cb217-123"><a href="#cb217-123" aria-hidden="true" tabindex="-1"></a><span class="in">    coef2 = coef(cvglm, s = lambda)[-1]</span></span>
-<span id="cb217-124"><a href="#cb217-124" aria-hidden="true" tabindex="-1"></a><span class="in">    index = which(coef2 != 0) </span></span>
-<span id="cb217-125"><a href="#cb217-125" aria-hidden="true" tabindex="-1"></a><span class="in">    selec_method2[i] = identical(sort(index), which(coeff != 0))</span></span>
-<span id="cb217-126"><a href="#cb217-126" aria-hidden="true" tabindex="-1"></a><span class="in">    taille_method2[i] = length(index)</span></span>
-<span id="cb217-127"><a href="#cb217-127" aria-hidden="true" tabindex="-1"></a><span class="in">    prev_method2[i] = mean((predict(cvglm, Xtest, s = lambda) - ytest)^2)</span></span>
-<span id="cb217-128"><a href="#cb217-128" aria-hidden="true" tabindex="-1"></a><span class="in">    tac = proc.time() - tic</span></span>
-<span id="cb217-129"><a href="#cb217-129" aria-hidden="true" tabindex="-1"></a><span class="in">    temps2[i] = tac[3]</span></span>
-<span id="cb217-130"><a href="#cb217-130" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-131"><a href="#cb217-131" aria-hidden="true" tabindex="-1"></a><span class="in">    # Methods 3 and 4 : Adaptive Lasso and  Gauss-Lasso  </span></span>
-<span id="cb217-132"><a href="#cb217-132" aria-hidden="true" tabindex="-1"></a><span class="in">    if(length(index) == 0){</span></span>
-<span id="cb217-133"><a href="#cb217-133" aria-hidden="true" tabindex="-1"></a><span class="in">      selec_method3[i] = selec_method2[i]</span></span>
-<span id="cb217-134"><a href="#cb217-134" aria-hidden="true" tabindex="-1"></a><span class="in">      taille_method3[i] = taille_method2[i]</span></span>
-<span id="cb217-135"><a href="#cb217-135" aria-hidden="true" tabindex="-1"></a><span class="in">      prev_method3[i] = prev_method2[i]</span></span>
-<span id="cb217-136"><a href="#cb217-136" aria-hidden="true" tabindex="-1"></a><span class="in">      prev_method4[i] = prev_method2[i]}</span></span>
-<span id="cb217-137"><a href="#cb217-137" aria-hidden="true" tabindex="-1"></a><span class="in">    else{</span></span>
-<span id="cb217-138"><a href="#cb217-138" aria-hidden="true" tabindex="-1"></a><span class="in">      # Adaptive Lasso part</span></span>
-<span id="cb217-139"><a href="#cb217-139" aria-hidden="true" tabindex="-1"></a><span class="in">      cvglm = cv.glmnet(Xtrain, y,</span></span>
-<span id="cb217-140"><a href="#cb217-140" aria-hidden="true" tabindex="-1"></a><span class="in">                        penalty.factor = 1/abs(coef2))</span></span>
-<span id="cb217-141"><a href="#cb217-141" aria-hidden="true" tabindex="-1"></a><span class="in">      lambda = cvglm$lambda.min</span></span>
-<span id="cb217-142"><a href="#cb217-142" aria-hidden="true" tabindex="-1"></a><span class="in">      coef3 = coef(cvglm, s = lambda)[-1]</span></span>
-<span id="cb217-143"><a href="#cb217-143" aria-hidden="true" tabindex="-1"></a><span class="in">      index = which(coef3 != 0) </span></span>
-<span id="cb217-144"><a href="#cb217-144" aria-hidden="true" tabindex="-1"></a><span class="in">      selec_method3[i] = identical(sort(index), which(coeff != 0))</span></span>
-<span id="cb217-145"><a href="#cb217-145" aria-hidden="true" tabindex="-1"></a><span class="in">      taille_method3[i] = length(index)</span></span>
-<span id="cb217-146"><a href="#cb217-146" aria-hidden="true" tabindex="-1"></a><span class="in">      prev_method3[i] = mean((predict(cvglm, Xtest, s = lambda) - ytest)^2)</span></span>
-<span id="cb217-147"><a href="#cb217-147" aria-hidden="true" tabindex="-1"></a><span class="in">      tac = proc.time() - tic</span></span>
-<span id="cb217-148"><a href="#cb217-148" aria-hidden="true" tabindex="-1"></a><span class="in">      temps3[i] = tac[3]</span></span>
-<span id="cb217-149"><a href="#cb217-149" aria-hidden="true" tabindex="-1"></a><span class="in">      </span></span>
-<span id="cb217-150"><a href="#cb217-150" aria-hidden="true" tabindex="-1"></a><span class="in">      # Gauss-Lasso part</span></span>
-<span id="cb217-151"><a href="#cb217-151" aria-hidden="true" tabindex="-1"></a><span class="in">      if(length(index) == 0){</span></span>
-<span id="cb217-152"><a href="#cb217-152" aria-hidden="true" tabindex="-1"></a><span class="in">        prev_method4[i] = mean((mean(y) - ytest)^2)}</span></span>
-<span id="cb217-153"><a href="#cb217-153" aria-hidden="true" tabindex="-1"></a><span class="in">      else{</span></span>
-<span id="cb217-154"><a href="#cb217-154" aria-hidden="true" tabindex="-1"></a><span class="in">        tab = data.frame(y = y, X = Xtrain)</span></span>
-<span id="cb217-155"><a href="#cb217-155" aria-hidden="true" tabindex="-1"></a><span class="in">        reg = lm(y~., </span></span>
-<span id="cb217-156"><a href="#cb217-156" aria-hidden="true" tabindex="-1"></a><span class="in">                 data = tab[, c(1, index + 1)])</span></span>
-<span id="cb217-157"><a href="#cb217-157" aria-hidden="true" tabindex="-1"></a><span class="in">        prev_method4[i] = mean((predict(reg, data.frame(X = Xtest)) - ytest)^2)</span></span>
-<span id="cb217-158"><a href="#cb217-158" aria-hidden="true" tabindex="-1"></a><span class="in">        tac = proc.time() - tic</span></span>
-<span id="cb217-159"><a href="#cb217-159" aria-hidden="true" tabindex="-1"></a><span class="in">        temps4[i] = tac[3]</span></span>
-<span id="cb217-160"><a href="#cb217-160" aria-hidden="true" tabindex="-1"></a><span class="in">      }</span></span>
-<span id="cb217-161"><a href="#cb217-161" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
-<span id="cb217-162"><a href="#cb217-162" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
-<span id="cb217-163"><a href="#cb217-163" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb217-164"><a href="#cb217-164" aria-hidden="true" tabindex="-1"></a><span class="in">  ## Results</span></span>
-<span id="cb217-165"><a href="#cb217-165" aria-hidden="true" tabindex="-1"></a><span class="in">  #################</span></span>
-<span id="cb217-166"><a href="#cb217-166" aria-hidden="true" tabindex="-1"></a><span class="in">  res = list(mean(selec_method1), mean(selec_method2), mean(selec_method3), taille_method1, taille_method2, taille_method3, prev_method1, prev_method2, prev_method3, prev_method4, mean(temps1), mean(temps2), mean(temps3), mean(temps4))</span></span>
-<span id="cb217-167"><a href="#cb217-167" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb217-168"><a href="#cb217-168" aria-hidden="true" tabindex="-1"></a><span class="in">  names(res) = c("selec_method1", "selec_method2", "selec_method3", "taille_method1", "taille_method2", "taille_method3", "prev_method1", "prev_method2", "prev_method3", "prev_method4", "temps1", "temps2", "temps3", "temps4")</span></span>
-<span id="cb217-169"><a href="#cb217-169" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb217-170"><a href="#cb217-170" aria-hidden="true" tabindex="-1"></a><span class="in">  return(res)</span></span>
-<span id="cb217-171"><a href="#cb217-171" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb217-172"><a href="#cb217-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-173"><a href="#cb217-173" aria-hidden="true" tabindex="-1"></a><span class="in">fun2 = function(n, p, M = 100){ # By default, we make M = 100 simulation </span></span>
-<span id="cb217-174"><a href="#cb217-174" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb217-175"><a href="#cb217-175" aria-hidden="true" tabindex="-1"></a><span class="in">  ## Initialization </span></span>
-<span id="cb217-176"><a href="#cb217-176" aria-hidden="true" tabindex="-1"></a><span class="in">  #################</span></span>
-<span id="cb217-177"><a href="#cb217-177" aria-hidden="true" tabindex="-1"></a><span class="in">  selec_method1 = NULL; selec_method2 = NULL; selec_method3 = NULL;</span></span>
-<span id="cb217-178"><a href="#cb217-178" aria-hidden="true" tabindex="-1"></a><span class="in">  taille_method1 = NULL; taille_method2 = NULL; taille_method3 = NULL;</span></span>
-<span id="cb217-179"><a href="#cb217-179" aria-hidden="true" tabindex="-1"></a><span class="in">  prev_method1 = NULL; prev_method2 = NULL; prev_method3 = NULL; prev_method4 = NULL;</span></span>
-<span id="cb217-180"><a href="#cb217-180" aria-hidden="true" tabindex="-1"></a><span class="in">  temps1 = NULL; temps2 = NULL; temps3 = NULL; temps4 = NULL;</span></span>
-<span id="cb217-181"><a href="#cb217-181" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb217-182"><a href="#cb217-182" aria-hidden="true" tabindex="-1"></a><span class="in">  for(i in 1:M){</span></span>
-<span id="cb217-183"><a href="#cb217-183" aria-hidden="true" tabindex="-1"></a><span class="in">    cat(paste(i, ":")) # counter to see progress</span></span>
-<span id="cb217-184"><a href="#cb217-184" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-185"><a href="#cb217-185" aria-hidden="true" tabindex="-1"></a><span class="in">    # We define our train set</span></span>
-<span id="cb217-186"><a href="#cb217-186" aria-hidden="true" tabindex="-1"></a><span class="in">    datatrain = DataSimulation(n, p)</span></span>
-<span id="cb217-187"><a href="#cb217-187" aria-hidden="true" tabindex="-1"></a><span class="in">    Xtrain = datatrain$X</span></span>
-<span id="cb217-188"><a href="#cb217-188" aria-hidden="true" tabindex="-1"></a><span class="in">    y = datatrain$y</span></span>
-<span id="cb217-189"><a href="#cb217-189" aria-hidden="true" tabindex="-1"></a><span class="in">    coeff = datatrain$coeff</span></span>
-<span id="cb217-190"><a href="#cb217-190" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-191"><a href="#cb217-191" aria-hidden="true" tabindex="-1"></a><span class="in">    # We define our test set</span></span>
-<span id="cb217-192"><a href="#cb217-192" aria-hidden="true" tabindex="-1"></a><span class="in">    datatest = DataSimulation(n, p)</span></span>
-<span id="cb217-193"><a href="#cb217-193" aria-hidden="true" tabindex="-1"></a><span class="in">    Xtest = datatest$X</span></span>
-<span id="cb217-194"><a href="#cb217-194" aria-hidden="true" tabindex="-1"></a><span class="in">    ytest = datatest$y</span></span>
-<span id="cb217-195"><a href="#cb217-195" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-196"><a href="#cb217-196" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-197"><a href="#cb217-197" aria-hidden="true" tabindex="-1"></a><span class="in">    ## Regression </span></span>
-<span id="cb217-198"><a href="#cb217-198" aria-hidden="true" tabindex="-1"></a><span class="in">    #################</span></span>
-<span id="cb217-199"><a href="#cb217-199" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-200"><a href="#cb217-200" aria-hidden="true" tabindex="-1"></a><span class="in">    # Method 2 : Lasso</span></span>
-<span id="cb217-201"><a href="#cb217-201" aria-hidden="true" tabindex="-1"></a><span class="in">    tic = proc.time()</span></span>
-<span id="cb217-202"><a href="#cb217-202" aria-hidden="true" tabindex="-1"></a><span class="in">    cvglm = cv.glmnet(Xtrain, y) # By default we have Lasso</span></span>
-<span id="cb217-203"><a href="#cb217-203" aria-hidden="true" tabindex="-1"></a><span class="in">    lambda = cvglm$lambda.min</span></span>
-<span id="cb217-204"><a href="#cb217-204" aria-hidden="true" tabindex="-1"></a><span class="in">    coef2 = coef(cvglm, s = lambda)[-1]</span></span>
-<span id="cb217-205"><a href="#cb217-205" aria-hidden="true" tabindex="-1"></a><span class="in">    index = which(coef2 != 0) </span></span>
-<span id="cb217-206"><a href="#cb217-206" aria-hidden="true" tabindex="-1"></a><span class="in">    selec_method2[i] = identical(sort(index), which(coeff != 0))</span></span>
-<span id="cb217-207"><a href="#cb217-207" aria-hidden="true" tabindex="-1"></a><span class="in">    taille_method2[i] = length(index)</span></span>
-<span id="cb217-208"><a href="#cb217-208" aria-hidden="true" tabindex="-1"></a><span class="in">    prev_method2[i] = mean((predict(cvglm, Xtest, s = lambda) - ytest)^2)</span></span>
-<span id="cb217-209"><a href="#cb217-209" aria-hidden="true" tabindex="-1"></a><span class="in">    tac = proc.time() - tic</span></span>
-<span id="cb217-210"><a href="#cb217-210" aria-hidden="true" tabindex="-1"></a><span class="in">    temps2[i] = tac[3]</span></span>
-<span id="cb217-211"><a href="#cb217-211" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb217-212"><a href="#cb217-212" aria-hidden="true" tabindex="-1"></a><span class="in">    # Methods 3 and 4 : Adaptive Lasso and  Gauss-Lasso  </span></span>
-<span id="cb217-213"><a href="#cb217-213" aria-hidden="true" tabindex="-1"></a><span class="in">    if(length(index) == 0){</span></span>
-<span id="cb217-214"><a href="#cb217-214" aria-hidden="true" tabindex="-1"></a><span class="in">      selec_method3[i] = selec_method2[i]</span></span>
-<span id="cb217-215"><a href="#cb217-215" aria-hidden="true" tabindex="-1"></a><span class="in">      taille_method3[i] = taille_method2[i]</span></span>
-<span id="cb217-216"><a href="#cb217-216" aria-hidden="true" tabindex="-1"></a><span class="in">      prev_method3[i] = prev_method2[i]</span></span>
-<span id="cb217-217"><a href="#cb217-217" aria-hidden="true" tabindex="-1"></a><span class="in">      prev_method4[i] = prev_method2[i]}</span></span>
-<span id="cb217-218"><a href="#cb217-218" aria-hidden="true" tabindex="-1"></a><span class="in">    else{</span></span>
-<span id="cb217-219"><a href="#cb217-219" aria-hidden="true" tabindex="-1"></a><span class="in">      # Adaptive Lasso part</span></span>
-<span id="cb217-220"><a href="#cb217-220" aria-hidden="true" tabindex="-1"></a><span class="in">      cvglm = cv.glmnet(Xtrain, y,</span></span>
-<span id="cb217-221"><a href="#cb217-221" aria-hidden="true" tabindex="-1"></a><span class="in">                        penalty.factor = 1/abs(coef2))</span></span>
-<span id="cb217-222"><a href="#cb217-222" aria-hidden="true" tabindex="-1"></a><span class="in">      lambda = cvglm$lambda.min</span></span>
-<span id="cb217-223"><a href="#cb217-223" aria-hidden="true" tabindex="-1"></a><span class="in">      coef3 = coef(cvglm, s = lambda)[-1]</span></span>
-<span id="cb217-224"><a href="#cb217-224" aria-hidden="true" tabindex="-1"></a><span class="in">      index = which(coef3 != 0) </span></span>
-<span id="cb217-225"><a href="#cb217-225" aria-hidden="true" tabindex="-1"></a><span class="in">      selec_method3[i] = identical(sort(index), which(coeff != 0))</span></span>
-<span id="cb217-226"><a href="#cb217-226" aria-hidden="true" tabindex="-1"></a><span class="in">      taille_method3[i] = length(index)</span></span>
-<span id="cb217-227"><a href="#cb217-227" aria-hidden="true" tabindex="-1"></a><span class="in">      prev_method3[i] = mean((predict(cvglm, Xtest, s = lambda) - ytest)^2)</span></span>
-<span id="cb217-228"><a href="#cb217-228" aria-hidden="true" tabindex="-1"></a><span class="in">      tac = proc.time() - tic</span></span>
-<span id="cb217-229"><a href="#cb217-229" aria-hidden="true" tabindex="-1"></a><span class="in">      temps3[i] = tac[3]</span></span>
-<span id="cb217-230"><a href="#cb217-230" aria-hidden="true" tabindex="-1"></a><span class="in">      </span></span>
-<span id="cb217-231"><a href="#cb217-231" aria-hidden="true" tabindex="-1"></a><span class="in">      # Gauss-Lasso part</span></span>
-<span id="cb217-232"><a href="#cb217-232" aria-hidden="true" tabindex="-1"></a><span class="in">      if(length(index) == 0){</span></span>
-<span id="cb217-233"><a href="#cb217-233" aria-hidden="true" tabindex="-1"></a><span class="in">        prev_method4[i] = mean((mean(y) - ytest)^2)}</span></span>
-<span id="cb217-234"><a href="#cb217-234" aria-hidden="true" tabindex="-1"></a><span class="in">      else{</span></span>
-<span id="cb217-235"><a href="#cb217-235" aria-hidden="true" tabindex="-1"></a><span class="in">        tab = data.frame(y = y, X = Xtrain)</span></span>
-<span id="cb217-236"><a href="#cb217-236" aria-hidden="true" tabindex="-1"></a><span class="in">        reg = lm(y~., </span></span>
-<span id="cb217-237"><a href="#cb217-237" aria-hidden="true" tabindex="-1"></a><span class="in">                 data = tab[, c(1, index + 1)])</span></span>
-<span id="cb217-238"><a href="#cb217-238" aria-hidden="true" tabindex="-1"></a><span class="in">        prev_method4[i] = mean((predict(reg, data.frame(X = Xtest)) - ytest)^2)</span></span>
-<span id="cb217-239"><a href="#cb217-239" aria-hidden="true" tabindex="-1"></a><span class="in">        tac = proc.time() - tic</span></span>
-<span id="cb217-240"><a href="#cb217-240" aria-hidden="true" tabindex="-1"></a><span class="in">        temps4[i] = tac[3]</span></span>
-<span id="cb217-241"><a href="#cb217-241" aria-hidden="true" tabindex="-1"></a><span class="in">      }</span></span>
-<span id="cb217-242"><a href="#cb217-242" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
-<span id="cb217-243"><a href="#cb217-243" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
-<span id="cb217-244"><a href="#cb217-244" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb217-245"><a href="#cb217-245" aria-hidden="true" tabindex="-1"></a><span class="in">  ## Results</span></span>
-<span id="cb217-246"><a href="#cb217-246" aria-hidden="true" tabindex="-1"></a><span class="in">  #################</span></span>
-<span id="cb217-247"><a href="#cb217-247" aria-hidden="true" tabindex="-1"></a><span class="in">  res = list(mean(selec_method1), mean(selec_method2), mean(selec_method3), taille_method1, taille_method2, taille_method3, prev_method1, prev_method2, prev_method3, prev_method4, mean(temps1), mean(temps2), mean(temps3), mean(temps4))</span></span>
-<span id="cb217-248"><a href="#cb217-248" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb217-249"><a href="#cb217-249" aria-hidden="true" tabindex="-1"></a><span class="in">  names(res) = c("selec_method1", "selec_method2", "selec_method3", "taille_method1", "taille_method2", "taille_method3", "prev_method1", "prev_method2", "prev_method3", "prev_method4", "temps1", "temps2", "temps3", "temps4")</span></span>
-<span id="cb217-250"><a href="#cb217-250" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb217-251"><a href="#cb217-251" aria-hidden="true" tabindex="-1"></a><span class="in">  return(res)</span></span>
-<span id="cb217-252"><a href="#cb217-252" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb217-253"><a href="#cb217-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-254"><a href="#cb217-254" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-255"><a href="#cb217-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-258"><a href="#cb217-258" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-259"><a href="#cb217-259" aria-hidden="true" tabindex="-1"></a><span class="do">###### Exemple</span></span>
-<span id="cb217-260"><a href="#cb217-260" aria-hidden="true" tabindex="-1"></a>a<span class="ot">=</span><span class="fu">fun</span>(<span class="dv">50</span>,<span class="dv">5</span>,<span class="dv">100</span>)</span>
-<span id="cb217-261"><a href="#cb217-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-262"><a href="#cb217-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-265"><a href="#cb217-265" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-266"><a href="#cb217-266" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>selec_method1</span>
-<span id="cb217-267"><a href="#cb217-267" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>selec_method2</span>
-<span id="cb217-268"><a href="#cb217-268" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>selec_method3</span>
-<span id="cb217-269"><a href="#cb217-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-270"><a href="#cb217-270" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>taille_method1</span>
-<span id="cb217-271"><a href="#cb217-271" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>taille_method2</span>
-<span id="cb217-272"><a href="#cb217-272" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>taille_method3</span>
-<span id="cb217-273"><a href="#cb217-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-274"><a href="#cb217-274" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method4),<span class="at">names=</span><span class="fu">c</span>(<span class="st">"Method1"</span>,<span class="st">"Method2"</span>,<span class="st">"Method3"</span>,<span class="st">"Method4"</span>),<span class="at">main=</span><span class="st">"Title"</span>)</span>
-<span id="cb217-275"><a href="#cb217-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-276"><a href="#cb217-276" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(a<span class="sc">$</span>prev_method1)</span>
-<span id="cb217-277"><a href="#cb217-277" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(a<span class="sc">$</span>prev_method2)</span>
-<span id="cb217-278"><a href="#cb217-278" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(a<span class="sc">$</span>prev_method3)</span>
-<span id="cb217-279"><a href="#cb217-279" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(a<span class="sc">$</span>prev_method4)</span>
-<span id="cb217-280"><a href="#cb217-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-281"><a href="#cb217-281" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>temps1</span>
-<span id="cb217-282"><a href="#cb217-282" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>temps2</span>
-<span id="cb217-283"><a href="#cb217-283" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>temps3</span>
-<span id="cb217-284"><a href="#cb217-284" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>temps4</span>
-<span id="cb217-285"><a href="#cb217-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-286"><a href="#cb217-286" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-287"><a href="#cb217-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-288"><a href="#cb217-288" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 1</span></span>
-<span id="cb217-289"><a href="#cb217-289" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-290"><a href="#cb217-290" aria-hidden="true" tabindex="-1"></a>Quel modèle génère la fonction Simudata ? Combien de variables explicatives sont générées ? Parmi elles, lesquelles sont pertinentes pour la modélisation ? Ecrire l’équation du modèle.</span>
-<span id="cb217-291"><a href="#cb217-291" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-292"><a href="#cb217-292" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 2</span></span>
-<span id="cb217-293"><a href="#cb217-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-294"><a href="#cb217-294" aria-hidden="true" tabindex="-1"></a>Identifier les 4 méthodes d’estimation mises en oeuvre dans la fonction fun.</span>
-<span id="cb217-295"><a href="#cb217-295" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-296"><a href="#cb217-296" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 3</span></span>
-<span id="cb217-297"><a href="#cb217-297" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-298"><a href="#cb217-298" aria-hidden="true" tabindex="-1"></a>Détailler les différentes sorties proposées par la fonction fun.</span>
-<span id="cb217-299"><a href="#cb217-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-300"><a href="#cb217-300" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 4</span></span>
-<span id="cb217-301"><a href="#cb217-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-302"><a href="#cb217-302" aria-hidden="true" tabindex="-1"></a>Remplacer la valeur des options names et title du boxplot réalisé dans l’exemple par les bonnes informations.</span>
-<span id="cb217-303"><a href="#cb217-303" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-306"><a href="#cb217-306" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-307"><a href="#cb217-307" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method4),</span>
-<span id="cb217-308"><a href="#cb217-308" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
-<span id="cb217-309"><a href="#cb217-309" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, <span class="dv">100</span>,<span class="st">"et p="</span>, <span class="dv">10</span>),</span>
-<span id="cb217-310"><a href="#cb217-310" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>),</span>
-<span id="cb217-311"><a href="#cb217-311" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span>
-<span id="cb217-312"><a href="#cb217-312" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-313"><a href="#cb217-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-314"><a href="#cb217-314" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 5</span></span>
-<span id="cb217-315"><a href="#cb217-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-316"><a href="#cb217-316" aria-hidden="true" tabindex="-1"></a>Réaliser une étude comparative des méthodes lorsque $n = 50$ et $p = n/10$, $p = n$, $p = 2n$, $p = 10n$. Pour chaque situation, on considèrera $100$ simulations afin de calculer les différents critères. On synthétisera les résultats en terme de qualité de sélection, nombre de variables sélectionnées, erreurs de prévision et temps de calcul.</span>
-<span id="cb217-317"><a href="#cb217-317" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-318"><a href="#cb217-318" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE}</span></span>
-<span id="cb217-319"><a href="#cb217-319" aria-hidden="true" tabindex="-1"></a><span class="in">#parallelisation</span></span>
-<span id="cb217-320"><a href="#cb217-320" aria-hidden="true" tabindex="-1"></a><span class="in">future::plan(multisession, workers = 2)</span></span>
+<span id="cb217-73"><a href="#cb217-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-74"><a href="#cb217-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-75"><a href="#cb217-75" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup, include=FALSE}</span></span>
+<span id="cb217-76"><a href="#cb217-76" aria-hidden="true" tabindex="-1"></a><span class="in"># chargement des packages et scripts nécessaires</span></span>
+<span id="cb217-77"><a href="#cb217-77" aria-hidden="true" tabindex="-1"></a><span class="in">library(latex2exp)</span></span>
+<span id="cb217-78"><a href="#cb217-78" aria-hidden="true" tabindex="-1"></a><span class="in">library(kableExtra)</span></span>
+<span id="cb217-79"><a href="#cb217-79" aria-hidden="true" tabindex="-1"></a><span class="in">library(corrplot)</span></span>
+<span id="cb217-80"><a href="#cb217-80" aria-hidden="true" tabindex="-1"></a><span class="in">library(scales)</span></span>
+<span id="cb217-81"><a href="#cb217-81" aria-hidden="true" tabindex="-1"></a><span class="in">library(ISLR)</span></span>
+<span id="cb217-82"><a href="#cb217-82" aria-hidden="true" tabindex="-1"></a><span class="in">library(leaps)</span></span>
+<span id="cb217-83"><a href="#cb217-83" aria-hidden="true" tabindex="-1"></a><span class="in">library(MASS)</span></span>
+<span id="cb217-84"><a href="#cb217-84" aria-hidden="true" tabindex="-1"></a><span class="in">library(psych) # pour pairs.panels</span></span>
+<span id="cb217-85"><a href="#cb217-85" aria-hidden="true" tabindex="-1"></a><span class="in">library(FactoMineR) # pour PCA</span></span>
+<span id="cb217-86"><a href="#cb217-86" aria-hidden="true" tabindex="-1"></a><span class="in">library(GGally) # pour ggcorr</span></span>
+<span id="cb217-87"><a href="#cb217-87" aria-hidden="true" tabindex="-1"></a><span class="in">library(car) # pour VIF</span></span>
+<span id="cb217-88"><a href="#cb217-88" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)</span></span>
+<span id="cb217-89"><a href="#cb217-89" aria-hidden="true" tabindex="-1"></a><span class="in">library(future)</span></span>
+<span id="cb217-90"><a href="#cb217-90" aria-hidden="true" tabindex="-1"></a><span class="in">set.seed(123)</span></span>
+<span id="cb217-91"><a href="#cb217-91" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-92"><a href="#cb217-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-93"><a href="#cb217-93" aria-hidden="true" tabindex="-1"></a>On souhaite réaliser une petite étude par simulation pour évaluer les qualités respectives de 4 méthodes d’estimation d’un modèle de régression linéaire. On s’intéresse pour chacune d’elle à ses qualités de sélection de variables et à ses qualités prédictives. Le programme SimusReg.R permet de réaliser cette étude. Il contient deux fonctions, Simudata et la fonction principale fun, et un exemple d’utilisation en fin de programme.</span>
+<span id="cb217-94"><a href="#cb217-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-97"><a href="#cb217-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-98"><a href="#cb217-98" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">100</span></span>
+<span id="cb217-99"><a href="#cb217-99" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">500</span></span>
+<span id="cb217-100"><a href="#cb217-100" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n<span class="sc">*</span>p), n, p)</span>
+<span id="cb217-101"><a href="#cb217-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-102"><a href="#cb217-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-103"><a href="#cb217-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-104"><a href="#cb217-104" aria-hidden="true" tabindex="-1"></a><span class="in">```{r function}</span></span>
+<span id="cb217-105"><a href="#cb217-105" aria-hidden="true" tabindex="-1"></a><span class="in">library(lars)</span></span>
+<span id="cb217-106"><a href="#cb217-106" aria-hidden="true" tabindex="-1"></a><span class="in">library(leaps)</span></span>
+<span id="cb217-107"><a href="#cb217-107" aria-hidden="true" tabindex="-1"></a><span class="in">library(glmnet)</span></span>
+<span id="cb217-108"><a href="#cb217-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-109"><a href="#cb217-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-110"><a href="#cb217-110" aria-hidden="true" tabindex="-1"></a><span class="in">DataSimulation = function(n,p){</span></span>
+<span id="cb217-111"><a href="#cb217-111" aria-hidden="true" tabindex="-1"></a><span class="in">  if(p &lt; 4){stop("p&gt;3 require")}</span></span>
+<span id="cb217-112"><a href="#cb217-112" aria-hidden="true" tabindex="-1"></a><span class="in">  # We create our matrix of explanatory variables</span></span>
+<span id="cb217-113"><a href="#cb217-113" aria-hidden="true" tabindex="-1"></a><span class="in">  X = matrix(rnorm(n*p), n, p)</span></span>
+<span id="cb217-114"><a href="#cb217-114" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb217-115"><a href="#cb217-115" aria-hidden="true" tabindex="-1"></a><span class="in">  # We define our coefficients of regression </span></span>
+<span id="cb217-116"><a href="#cb217-116" aria-hidden="true" tabindex="-1"></a><span class="in">  coeff = matrix(0, p)</span></span>
+<span id="cb217-117"><a href="#cb217-117" aria-hidden="true" tabindex="-1"></a><span class="in">  coeff[1:3] = 2</span></span>
+<span id="cb217-118"><a href="#cb217-118" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb217-119"><a href="#cb217-119" aria-hidden="true" tabindex="-1"></a><span class="in">  # We build our explanatory variables</span></span>
+<span id="cb217-120"><a href="#cb217-120" aria-hidden="true" tabindex="-1"></a><span class="in">  y = X%*%coeff + rnorm(n, sd = 2)</span></span>
+<span id="cb217-121"><a href="#cb217-121" aria-hidden="true" tabindex="-1"></a><span class="in">  return(list(X = X, y = y, coeff = coeff))</span></span>
+<span id="cb217-122"><a href="#cb217-122" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb217-123"><a href="#cb217-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-124"><a href="#cb217-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-125"><a href="#cb217-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-126"><a href="#cb217-126" aria-hidden="true" tabindex="-1"></a><span class="in">fun = function(n, p, M = 100){ # By default, we make M = 100 simulation </span></span>
+<span id="cb217-127"><a href="#cb217-127" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb217-128"><a href="#cb217-128" aria-hidden="true" tabindex="-1"></a><span class="in">  ## Initialization </span></span>
+<span id="cb217-129"><a href="#cb217-129" aria-hidden="true" tabindex="-1"></a><span class="in">  #################</span></span>
+<span id="cb217-130"><a href="#cb217-130" aria-hidden="true" tabindex="-1"></a><span class="in">  selec_method1 = NULL; selec_method2 = NULL; selec_method3 = NULL;</span></span>
+<span id="cb217-131"><a href="#cb217-131" aria-hidden="true" tabindex="-1"></a><span class="in">  taille_method1 = NULL; taille_method2 = NULL; taille_method3 = NULL;</span></span>
+<span id="cb217-132"><a href="#cb217-132" aria-hidden="true" tabindex="-1"></a><span class="in">  prev_method1 = NULL; prev_method2 = NULL; prev_method3 = NULL; prev_method4 = NULL;</span></span>
+<span id="cb217-133"><a href="#cb217-133" aria-hidden="true" tabindex="-1"></a><span class="in">  temps1 = NULL; temps2 = NULL; temps3 = NULL; temps4 = NULL;</span></span>
+<span id="cb217-134"><a href="#cb217-134" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb217-135"><a href="#cb217-135" aria-hidden="true" tabindex="-1"></a><span class="in">  for(i in 1:M){</span></span>
+<span id="cb217-136"><a href="#cb217-136" aria-hidden="true" tabindex="-1"></a><span class="in">    cat(paste(i, ":")) # counter to see progress</span></span>
+<span id="cb217-137"><a href="#cb217-137" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-138"><a href="#cb217-138" aria-hidden="true" tabindex="-1"></a><span class="in">    # We define our train set</span></span>
+<span id="cb217-139"><a href="#cb217-139" aria-hidden="true" tabindex="-1"></a><span class="in">    datatrain = DataSimulation(n, p)</span></span>
+<span id="cb217-140"><a href="#cb217-140" aria-hidden="true" tabindex="-1"></a><span class="in">    Xtrain = datatrain$X</span></span>
+<span id="cb217-141"><a href="#cb217-141" aria-hidden="true" tabindex="-1"></a><span class="in">    y = datatrain$y</span></span>
+<span id="cb217-142"><a href="#cb217-142" aria-hidden="true" tabindex="-1"></a><span class="in">    coeff = datatrain$coeff</span></span>
+<span id="cb217-143"><a href="#cb217-143" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-144"><a href="#cb217-144" aria-hidden="true" tabindex="-1"></a><span class="in">    # We define our test set</span></span>
+<span id="cb217-145"><a href="#cb217-145" aria-hidden="true" tabindex="-1"></a><span class="in">    datatest = DataSimulation(n, p)</span></span>
+<span id="cb217-146"><a href="#cb217-146" aria-hidden="true" tabindex="-1"></a><span class="in">    Xtest = datatest$X</span></span>
+<span id="cb217-147"><a href="#cb217-147" aria-hidden="true" tabindex="-1"></a><span class="in">    ytest = datatest$y</span></span>
+<span id="cb217-148"><a href="#cb217-148" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-149"><a href="#cb217-149" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-150"><a href="#cb217-150" aria-hidden="true" tabindex="-1"></a><span class="in">    ## Regression </span></span>
+<span id="cb217-151"><a href="#cb217-151" aria-hidden="true" tabindex="-1"></a><span class="in">    #################</span></span>
+<span id="cb217-152"><a href="#cb217-152" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-153"><a href="#cb217-153" aria-hidden="true" tabindex="-1"></a><span class="in">    # Method 1 : Forward-Hybrid with BIC</span></span>
+<span id="cb217-154"><a href="#cb217-154" aria-hidden="true" tabindex="-1"></a><span class="in">    tic = proc.time()</span></span>
+<span id="cb217-155"><a href="#cb217-155" aria-hidden="true" tabindex="-1"></a><span class="in">    tab = data.frame(y = y, X = Xtrain)</span></span>
+<span id="cb217-156"><a href="#cb217-156" aria-hidden="true" tabindex="-1"></a><span class="in">    fit0 = lm(y~1, tab)</span></span>
+<span id="cb217-157"><a href="#cb217-157" aria-hidden="true" tabindex="-1"></a><span class="in">    fit = lm(y~., tab)</span></span>
+<span id="cb217-158"><a href="#cb217-158" aria-hidden="true" tabindex="-1"></a><span class="in">    tmp = step(fit0, scope = formula(fit),</span></span>
+<span id="cb217-159"><a href="#cb217-159" aria-hidden="true" tabindex="-1"></a><span class="in">               k = log(n), # BIC criteria</span></span>
+<span id="cb217-160"><a href="#cb217-160" aria-hidden="true" tabindex="-1"></a><span class="in">               direction = "both", # Hybrid</span></span>
+<span id="cb217-161"><a href="#cb217-161" aria-hidden="true" tabindex="-1"></a><span class="in">               trace = 0)</span></span>
+<span id="cb217-162"><a href="#cb217-162" aria-hidden="true" tabindex="-1"></a><span class="in">    noms = sort(names(tmp$model))</span></span>
+<span id="cb217-163"><a href="#cb217-163" aria-hidden="true" tabindex="-1"></a><span class="in">    selec_method1[i] = identical(</span></span>
+<span id="cb217-164"><a href="#cb217-164" aria-hidden="true" tabindex="-1"></a><span class="in">      noms[-length(noms)], sort(paste("X.", which(coeff != 0), sep = ""))</span></span>
+<span id="cb217-165"><a href="#cb217-165" aria-hidden="true" tabindex="-1"></a><span class="in">      )</span></span>
+<span id="cb217-166"><a href="#cb217-166" aria-hidden="true" tabindex="-1"></a><span class="in">    taille_method1[i] = length(noms) - 1</span></span>
+<span id="cb217-167"><a href="#cb217-167" aria-hidden="true" tabindex="-1"></a><span class="in">    prev_method1[i] = mean((predict(tmp,data.frame(X = Xtest)) - ytest)^2)</span></span>
+<span id="cb217-168"><a href="#cb217-168" aria-hidden="true" tabindex="-1"></a><span class="in">    tac = proc.time() - tic</span></span>
+<span id="cb217-169"><a href="#cb217-169" aria-hidden="true" tabindex="-1"></a><span class="in">    temps1[i] = tac[3]</span></span>
+<span id="cb217-170"><a href="#cb217-170" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-171"><a href="#cb217-171" aria-hidden="true" tabindex="-1"></a><span class="in">    # Method 2 : Lasso</span></span>
+<span id="cb217-172"><a href="#cb217-172" aria-hidden="true" tabindex="-1"></a><span class="in">    tic = proc.time()</span></span>
+<span id="cb217-173"><a href="#cb217-173" aria-hidden="true" tabindex="-1"></a><span class="in">    cvglm = cv.glmnet(Xtrain, y) # By default we have Lasso</span></span>
+<span id="cb217-174"><a href="#cb217-174" aria-hidden="true" tabindex="-1"></a><span class="in">    lambda = cvglm$lambda.min</span></span>
+<span id="cb217-175"><a href="#cb217-175" aria-hidden="true" tabindex="-1"></a><span class="in">    coef2 = coef(cvglm, s = lambda)[-1]</span></span>
+<span id="cb217-176"><a href="#cb217-176" aria-hidden="true" tabindex="-1"></a><span class="in">    index = which(coef2 != 0) </span></span>
+<span id="cb217-177"><a href="#cb217-177" aria-hidden="true" tabindex="-1"></a><span class="in">    selec_method2[i] = identical(sort(index), which(coeff != 0))</span></span>
+<span id="cb217-178"><a href="#cb217-178" aria-hidden="true" tabindex="-1"></a><span class="in">    taille_method2[i] = length(index)</span></span>
+<span id="cb217-179"><a href="#cb217-179" aria-hidden="true" tabindex="-1"></a><span class="in">    prev_method2[i] = mean((predict(cvglm, Xtest, s = lambda) - ytest)^2)</span></span>
+<span id="cb217-180"><a href="#cb217-180" aria-hidden="true" tabindex="-1"></a><span class="in">    tac = proc.time() - tic</span></span>
+<span id="cb217-181"><a href="#cb217-181" aria-hidden="true" tabindex="-1"></a><span class="in">    temps2[i] = tac[3]</span></span>
+<span id="cb217-182"><a href="#cb217-182" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-183"><a href="#cb217-183" aria-hidden="true" tabindex="-1"></a><span class="in">    # Methods 3 and 4 : Adaptive Lasso and  Gauss-Lasso  </span></span>
+<span id="cb217-184"><a href="#cb217-184" aria-hidden="true" tabindex="-1"></a><span class="in">    if(length(index) == 0){</span></span>
+<span id="cb217-185"><a href="#cb217-185" aria-hidden="true" tabindex="-1"></a><span class="in">      selec_method3[i] = selec_method2[i]</span></span>
+<span id="cb217-186"><a href="#cb217-186" aria-hidden="true" tabindex="-1"></a><span class="in">      taille_method3[i] = taille_method2[i]</span></span>
+<span id="cb217-187"><a href="#cb217-187" aria-hidden="true" tabindex="-1"></a><span class="in">      prev_method3[i] = prev_method2[i]</span></span>
+<span id="cb217-188"><a href="#cb217-188" aria-hidden="true" tabindex="-1"></a><span class="in">      prev_method4[i] = prev_method2[i]}</span></span>
+<span id="cb217-189"><a href="#cb217-189" aria-hidden="true" tabindex="-1"></a><span class="in">    else{</span></span>
+<span id="cb217-190"><a href="#cb217-190" aria-hidden="true" tabindex="-1"></a><span class="in">      # Adaptive Lasso part</span></span>
+<span id="cb217-191"><a href="#cb217-191" aria-hidden="true" tabindex="-1"></a><span class="in">      cvglm = cv.glmnet(Xtrain, y,</span></span>
+<span id="cb217-192"><a href="#cb217-192" aria-hidden="true" tabindex="-1"></a><span class="in">                        penalty.factor = 1/abs(coef2))</span></span>
+<span id="cb217-193"><a href="#cb217-193" aria-hidden="true" tabindex="-1"></a><span class="in">      lambda = cvglm$lambda.min</span></span>
+<span id="cb217-194"><a href="#cb217-194" aria-hidden="true" tabindex="-1"></a><span class="in">      coef3 = coef(cvglm, s = lambda)[-1]</span></span>
+<span id="cb217-195"><a href="#cb217-195" aria-hidden="true" tabindex="-1"></a><span class="in">      index = which(coef3 != 0) </span></span>
+<span id="cb217-196"><a href="#cb217-196" aria-hidden="true" tabindex="-1"></a><span class="in">      selec_method3[i] = identical(sort(index), which(coeff != 0))</span></span>
+<span id="cb217-197"><a href="#cb217-197" aria-hidden="true" tabindex="-1"></a><span class="in">      taille_method3[i] = length(index)</span></span>
+<span id="cb217-198"><a href="#cb217-198" aria-hidden="true" tabindex="-1"></a><span class="in">      prev_method3[i] = mean((predict(cvglm, Xtest, s = lambda) - ytest)^2)</span></span>
+<span id="cb217-199"><a href="#cb217-199" aria-hidden="true" tabindex="-1"></a><span class="in">      tac = proc.time() - tic</span></span>
+<span id="cb217-200"><a href="#cb217-200" aria-hidden="true" tabindex="-1"></a><span class="in">      temps3[i] = tac[3]</span></span>
+<span id="cb217-201"><a href="#cb217-201" aria-hidden="true" tabindex="-1"></a><span class="in">      </span></span>
+<span id="cb217-202"><a href="#cb217-202" aria-hidden="true" tabindex="-1"></a><span class="in">      # Gauss-Lasso part</span></span>
+<span id="cb217-203"><a href="#cb217-203" aria-hidden="true" tabindex="-1"></a><span class="in">      if(length(index) == 0){</span></span>
+<span id="cb217-204"><a href="#cb217-204" aria-hidden="true" tabindex="-1"></a><span class="in">        prev_method4[i] = mean((mean(y) - ytest)^2)}</span></span>
+<span id="cb217-205"><a href="#cb217-205" aria-hidden="true" tabindex="-1"></a><span class="in">      else{</span></span>
+<span id="cb217-206"><a href="#cb217-206" aria-hidden="true" tabindex="-1"></a><span class="in">        tab = data.frame(y = y, X = Xtrain)</span></span>
+<span id="cb217-207"><a href="#cb217-207" aria-hidden="true" tabindex="-1"></a><span class="in">        reg = lm(y~., </span></span>
+<span id="cb217-208"><a href="#cb217-208" aria-hidden="true" tabindex="-1"></a><span class="in">                 data = tab[, c(1, index + 1)])</span></span>
+<span id="cb217-209"><a href="#cb217-209" aria-hidden="true" tabindex="-1"></a><span class="in">        prev_method4[i] = mean((predict(reg, data.frame(X = Xtest)) - ytest)^2)</span></span>
+<span id="cb217-210"><a href="#cb217-210" aria-hidden="true" tabindex="-1"></a><span class="in">        tac = proc.time() - tic</span></span>
+<span id="cb217-211"><a href="#cb217-211" aria-hidden="true" tabindex="-1"></a><span class="in">        temps4[i] = tac[3]</span></span>
+<span id="cb217-212"><a href="#cb217-212" aria-hidden="true" tabindex="-1"></a><span class="in">      }</span></span>
+<span id="cb217-213"><a href="#cb217-213" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb217-214"><a href="#cb217-214" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb217-215"><a href="#cb217-215" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb217-216"><a href="#cb217-216" aria-hidden="true" tabindex="-1"></a><span class="in">  ## Results</span></span>
+<span id="cb217-217"><a href="#cb217-217" aria-hidden="true" tabindex="-1"></a><span class="in">  #################</span></span>
+<span id="cb217-218"><a href="#cb217-218" aria-hidden="true" tabindex="-1"></a><span class="in">  res = list(mean(selec_method1), mean(selec_method2), mean(selec_method3), taille_method1, taille_method2, taille_method3, prev_method1, prev_method2, prev_method3, prev_method4, mean(temps1), mean(temps2), mean(temps3), mean(temps4))</span></span>
+<span id="cb217-219"><a href="#cb217-219" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb217-220"><a href="#cb217-220" aria-hidden="true" tabindex="-1"></a><span class="in">  names(res) = c("selec_method1", "selec_method2", "selec_method3", "taille_method1", "taille_method2", "taille_method3", "prev_method1", "prev_method2", "prev_method3", "prev_method4", "temps1", "temps2", "temps3", "temps4")</span></span>
+<span id="cb217-221"><a href="#cb217-221" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb217-222"><a href="#cb217-222" aria-hidden="true" tabindex="-1"></a><span class="in">  return(res)</span></span>
+<span id="cb217-223"><a href="#cb217-223" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb217-224"><a href="#cb217-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-225"><a href="#cb217-225" aria-hidden="true" tabindex="-1"></a><span class="in">fun2 = function(n, p, M = 100){ # By default, we make M = 100 simulation </span></span>
+<span id="cb217-226"><a href="#cb217-226" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb217-227"><a href="#cb217-227" aria-hidden="true" tabindex="-1"></a><span class="in">  ## Initialization </span></span>
+<span id="cb217-228"><a href="#cb217-228" aria-hidden="true" tabindex="-1"></a><span class="in">  #################</span></span>
+<span id="cb217-229"><a href="#cb217-229" aria-hidden="true" tabindex="-1"></a><span class="in">  selec_method1 = NULL; selec_method2 = NULL; selec_method3 = NULL;</span></span>
+<span id="cb217-230"><a href="#cb217-230" aria-hidden="true" tabindex="-1"></a><span class="in">  taille_method1 = NULL; taille_method2 = NULL; taille_method3 = NULL;</span></span>
+<span id="cb217-231"><a href="#cb217-231" aria-hidden="true" tabindex="-1"></a><span class="in">  prev_method1 = NULL; prev_method2 = NULL; prev_method3 = NULL; prev_method4 = NULL;</span></span>
+<span id="cb217-232"><a href="#cb217-232" aria-hidden="true" tabindex="-1"></a><span class="in">  temps1 = NULL; temps2 = NULL; temps3 = NULL; temps4 = NULL;</span></span>
+<span id="cb217-233"><a href="#cb217-233" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb217-234"><a href="#cb217-234" aria-hidden="true" tabindex="-1"></a><span class="in">  for(i in 1:M){</span></span>
+<span id="cb217-235"><a href="#cb217-235" aria-hidden="true" tabindex="-1"></a><span class="in">    cat(paste(i, ":")) # counter to see progress</span></span>
+<span id="cb217-236"><a href="#cb217-236" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-237"><a href="#cb217-237" aria-hidden="true" tabindex="-1"></a><span class="in">    # We define our train set</span></span>
+<span id="cb217-238"><a href="#cb217-238" aria-hidden="true" tabindex="-1"></a><span class="in">    datatrain = DataSimulation(n, p)</span></span>
+<span id="cb217-239"><a href="#cb217-239" aria-hidden="true" tabindex="-1"></a><span class="in">    Xtrain = datatrain$X</span></span>
+<span id="cb217-240"><a href="#cb217-240" aria-hidden="true" tabindex="-1"></a><span class="in">    y = datatrain$y</span></span>
+<span id="cb217-241"><a href="#cb217-241" aria-hidden="true" tabindex="-1"></a><span class="in">    coeff = datatrain$coeff</span></span>
+<span id="cb217-242"><a href="#cb217-242" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-243"><a href="#cb217-243" aria-hidden="true" tabindex="-1"></a><span class="in">    # We define our test set</span></span>
+<span id="cb217-244"><a href="#cb217-244" aria-hidden="true" tabindex="-1"></a><span class="in">    datatest = DataSimulation(n, p)</span></span>
+<span id="cb217-245"><a href="#cb217-245" aria-hidden="true" tabindex="-1"></a><span class="in">    Xtest = datatest$X</span></span>
+<span id="cb217-246"><a href="#cb217-246" aria-hidden="true" tabindex="-1"></a><span class="in">    ytest = datatest$y</span></span>
+<span id="cb217-247"><a href="#cb217-247" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-248"><a href="#cb217-248" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-249"><a href="#cb217-249" aria-hidden="true" tabindex="-1"></a><span class="in">    ## Regression </span></span>
+<span id="cb217-250"><a href="#cb217-250" aria-hidden="true" tabindex="-1"></a><span class="in">    #################</span></span>
+<span id="cb217-251"><a href="#cb217-251" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-252"><a href="#cb217-252" aria-hidden="true" tabindex="-1"></a><span class="in">    # Method 2 : Lasso</span></span>
+<span id="cb217-253"><a href="#cb217-253" aria-hidden="true" tabindex="-1"></a><span class="in">    tic = proc.time()</span></span>
+<span id="cb217-254"><a href="#cb217-254" aria-hidden="true" tabindex="-1"></a><span class="in">    cvglm = cv.glmnet(Xtrain, y) # By default we have Lasso</span></span>
+<span id="cb217-255"><a href="#cb217-255" aria-hidden="true" tabindex="-1"></a><span class="in">    lambda = cvglm$lambda.min</span></span>
+<span id="cb217-256"><a href="#cb217-256" aria-hidden="true" tabindex="-1"></a><span class="in">    coef2 = coef(cvglm, s = lambda)[-1]</span></span>
+<span id="cb217-257"><a href="#cb217-257" aria-hidden="true" tabindex="-1"></a><span class="in">    index = which(coef2 != 0) </span></span>
+<span id="cb217-258"><a href="#cb217-258" aria-hidden="true" tabindex="-1"></a><span class="in">    selec_method2[i] = identical(sort(index), which(coeff != 0))</span></span>
+<span id="cb217-259"><a href="#cb217-259" aria-hidden="true" tabindex="-1"></a><span class="in">    taille_method2[i] = length(index)</span></span>
+<span id="cb217-260"><a href="#cb217-260" aria-hidden="true" tabindex="-1"></a><span class="in">    prev_method2[i] = mean((predict(cvglm, Xtest, s = lambda) - ytest)^2)</span></span>
+<span id="cb217-261"><a href="#cb217-261" aria-hidden="true" tabindex="-1"></a><span class="in">    tac = proc.time() - tic</span></span>
+<span id="cb217-262"><a href="#cb217-262" aria-hidden="true" tabindex="-1"></a><span class="in">    temps2[i] = tac[3]</span></span>
+<span id="cb217-263"><a href="#cb217-263" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb217-264"><a href="#cb217-264" aria-hidden="true" tabindex="-1"></a><span class="in">    # Methods 3 and 4 : Adaptive Lasso and  Gauss-Lasso  </span></span>
+<span id="cb217-265"><a href="#cb217-265" aria-hidden="true" tabindex="-1"></a><span class="in">    if(length(index) == 0){</span></span>
+<span id="cb217-266"><a href="#cb217-266" aria-hidden="true" tabindex="-1"></a><span class="in">      selec_method3[i] = selec_method2[i]</span></span>
+<span id="cb217-267"><a href="#cb217-267" aria-hidden="true" tabindex="-1"></a><span class="in">      taille_method3[i] = taille_method2[i]</span></span>
+<span id="cb217-268"><a href="#cb217-268" aria-hidden="true" tabindex="-1"></a><span class="in">      prev_method3[i] = prev_method2[i]</span></span>
+<span id="cb217-269"><a href="#cb217-269" aria-hidden="true" tabindex="-1"></a><span class="in">      prev_method4[i] = prev_method2[i]}</span></span>
+<span id="cb217-270"><a href="#cb217-270" aria-hidden="true" tabindex="-1"></a><span class="in">    else{</span></span>
+<span id="cb217-271"><a href="#cb217-271" aria-hidden="true" tabindex="-1"></a><span class="in">      # Adaptive Lasso part</span></span>
+<span id="cb217-272"><a href="#cb217-272" aria-hidden="true" tabindex="-1"></a><span class="in">      cvglm = cv.glmnet(Xtrain, y,</span></span>
+<span id="cb217-273"><a href="#cb217-273" aria-hidden="true" tabindex="-1"></a><span class="in">                        penalty.factor = 1/abs(coef2))</span></span>
+<span id="cb217-274"><a href="#cb217-274" aria-hidden="true" tabindex="-1"></a><span class="in">      lambda = cvglm$lambda.min</span></span>
+<span id="cb217-275"><a href="#cb217-275" aria-hidden="true" tabindex="-1"></a><span class="in">      coef3 = coef(cvglm, s = lambda)[-1]</span></span>
+<span id="cb217-276"><a href="#cb217-276" aria-hidden="true" tabindex="-1"></a><span class="in">      index = which(coef3 != 0) </span></span>
+<span id="cb217-277"><a href="#cb217-277" aria-hidden="true" tabindex="-1"></a><span class="in">      selec_method3[i] = identical(sort(index), which(coeff != 0))</span></span>
+<span id="cb217-278"><a href="#cb217-278" aria-hidden="true" tabindex="-1"></a><span class="in">      taille_method3[i] = length(index)</span></span>
+<span id="cb217-279"><a href="#cb217-279" aria-hidden="true" tabindex="-1"></a><span class="in">      prev_method3[i] = mean((predict(cvglm, Xtest, s = lambda) - ytest)^2)</span></span>
+<span id="cb217-280"><a href="#cb217-280" aria-hidden="true" tabindex="-1"></a><span class="in">      tac = proc.time() - tic</span></span>
+<span id="cb217-281"><a href="#cb217-281" aria-hidden="true" tabindex="-1"></a><span class="in">      temps3[i] = tac[3]</span></span>
+<span id="cb217-282"><a href="#cb217-282" aria-hidden="true" tabindex="-1"></a><span class="in">      </span></span>
+<span id="cb217-283"><a href="#cb217-283" aria-hidden="true" tabindex="-1"></a><span class="in">      # Gauss-Lasso part</span></span>
+<span id="cb217-284"><a href="#cb217-284" aria-hidden="true" tabindex="-1"></a><span class="in">      if(length(index) == 0){</span></span>
+<span id="cb217-285"><a href="#cb217-285" aria-hidden="true" tabindex="-1"></a><span class="in">        prev_method4[i] = mean((mean(y) - ytest)^2)}</span></span>
+<span id="cb217-286"><a href="#cb217-286" aria-hidden="true" tabindex="-1"></a><span class="in">      else{</span></span>
+<span id="cb217-287"><a href="#cb217-287" aria-hidden="true" tabindex="-1"></a><span class="in">        tab = data.frame(y = y, X = Xtrain)</span></span>
+<span id="cb217-288"><a href="#cb217-288" aria-hidden="true" tabindex="-1"></a><span class="in">        reg = lm(y~., </span></span>
+<span id="cb217-289"><a href="#cb217-289" aria-hidden="true" tabindex="-1"></a><span class="in">                 data = tab[, c(1, index + 1)])</span></span>
+<span id="cb217-290"><a href="#cb217-290" aria-hidden="true" tabindex="-1"></a><span class="in">        prev_method4[i] = mean((predict(reg, data.frame(X = Xtest)) - ytest)^2)</span></span>
+<span id="cb217-291"><a href="#cb217-291" aria-hidden="true" tabindex="-1"></a><span class="in">        tac = proc.time() - tic</span></span>
+<span id="cb217-292"><a href="#cb217-292" aria-hidden="true" tabindex="-1"></a><span class="in">        temps4[i] = tac[3]</span></span>
+<span id="cb217-293"><a href="#cb217-293" aria-hidden="true" tabindex="-1"></a><span class="in">      }</span></span>
+<span id="cb217-294"><a href="#cb217-294" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb217-295"><a href="#cb217-295" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb217-296"><a href="#cb217-296" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb217-297"><a href="#cb217-297" aria-hidden="true" tabindex="-1"></a><span class="in">  ## Results</span></span>
+<span id="cb217-298"><a href="#cb217-298" aria-hidden="true" tabindex="-1"></a><span class="in">  #################</span></span>
+<span id="cb217-299"><a href="#cb217-299" aria-hidden="true" tabindex="-1"></a><span class="in">  res = list(mean(selec_method1), mean(selec_method2), mean(selec_method3), taille_method1, taille_method2, taille_method3, prev_method1, prev_method2, prev_method3, prev_method4, mean(temps1), mean(temps2), mean(temps3), mean(temps4))</span></span>
+<span id="cb217-300"><a href="#cb217-300" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb217-301"><a href="#cb217-301" aria-hidden="true" tabindex="-1"></a><span class="in">  names(res) = c("selec_method1", "selec_method2", "selec_method3", "taille_method1", "taille_method2", "taille_method3", "prev_method1", "prev_method2", "prev_method3", "prev_method4", "temps1", "temps2", "temps3", "temps4")</span></span>
+<span id="cb217-302"><a href="#cb217-302" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb217-303"><a href="#cb217-303" aria-hidden="true" tabindex="-1"></a><span class="in">  return(res)</span></span>
+<span id="cb217-304"><a href="#cb217-304" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb217-305"><a href="#cb217-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-306"><a href="#cb217-306" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-307"><a href="#cb217-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-310"><a href="#cb217-310" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-311"><a href="#cb217-311" aria-hidden="true" tabindex="-1"></a><span class="do">###### Exemple</span></span>
+<span id="cb217-312"><a href="#cb217-312" aria-hidden="true" tabindex="-1"></a>a<span class="ot">=</span><span class="fu">fun</span>(<span class="dv">50</span>,<span class="dv">5</span>,<span class="dv">100</span>)</span>
+<span id="cb217-313"><a href="#cb217-313" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-314"><a href="#cb217-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-317"><a href="#cb217-317" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-318"><a href="#cb217-318" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>selec_method1</span>
+<span id="cb217-319"><a href="#cb217-319" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>selec_method2</span>
+<span id="cb217-320"><a href="#cb217-320" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>selec_method3</span>
 <span id="cb217-321"><a href="#cb217-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-322"><a href="#cb217-322" aria-hidden="true" tabindex="-1"></a><span class="in">n = 50</span></span>
-<span id="cb217-323"><a href="#cb217-323" aria-hidden="true" tabindex="-1"></a><span class="in">p_list = c(n/10, n, 2*n, 10*n)</span></span>
-<span id="cb217-324"><a href="#cb217-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-325"><a href="#cb217-325" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas1 = fun(n, p_list[1])</span></span>
-<span id="cb217-326"><a href="#cb217-326" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas2 = fun(n, p_list[2])</span></span>
-<span id="cb217-327"><a href="#cb217-327" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas3 = fun(n, p_list[3])</span></span>
-<span id="cb217-328"><a href="#cb217-328" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas4 = fun(n, p_list[4],1)</span></span>
-<span id="cb217-329"><a href="#cb217-329" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas4bis = fun2(n, p_list[4])</span></span>
-<span id="cb217-330"><a href="#cb217-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-331"><a href="#cb217-331" aria-hidden="true" tabindex="-1"></a><span class="in"># file_path &lt;- file.path("../Data/r_cas1.rds")</span></span>
-<span id="cb217-332"><a href="#cb217-332" aria-hidden="true" tabindex="-1"></a><span class="in"># saveRDS(r_cas1, file = file_path)</span></span>
-<span id="cb217-333"><a href="#cb217-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-334"><a href="#cb217-334" aria-hidden="true" tabindex="-1"></a><span class="in"># quit parallelisation</span></span>
-<span id="cb217-335"><a href="#cb217-335" aria-hidden="true" tabindex="-1"></a><span class="in">future::plan("sequential")</span></span>
-<span id="cb217-336"><a href="#cb217-336" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-322"><a href="#cb217-322" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>taille_method1</span>
+<span id="cb217-323"><a href="#cb217-323" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>taille_method2</span>
+<span id="cb217-324"><a href="#cb217-324" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>taille_method3</span>
+<span id="cb217-325"><a href="#cb217-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-326"><a href="#cb217-326" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method4),<span class="at">names=</span><span class="fu">c</span>(<span class="st">"Method1"</span>,<span class="st">"Method2"</span>,<span class="st">"Method3"</span>,<span class="st">"Method4"</span>),<span class="at">main=</span><span class="st">"Title"</span>)</span>
+<span id="cb217-327"><a href="#cb217-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-328"><a href="#cb217-328" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(a<span class="sc">$</span>prev_method1)</span>
+<span id="cb217-329"><a href="#cb217-329" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(a<span class="sc">$</span>prev_method2)</span>
+<span id="cb217-330"><a href="#cb217-330" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(a<span class="sc">$</span>prev_method3)</span>
+<span id="cb217-331"><a href="#cb217-331" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(a<span class="sc">$</span>prev_method4)</span>
+<span id="cb217-332"><a href="#cb217-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-333"><a href="#cb217-333" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>temps1</span>
+<span id="cb217-334"><a href="#cb217-334" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>temps2</span>
+<span id="cb217-335"><a href="#cb217-335" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>temps3</span>
+<span id="cb217-336"><a href="#cb217-336" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>temps4</span>
 <span id="cb217-337"><a href="#cb217-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-340"><a href="#cb217-340" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-341"><a href="#cb217-341" aria-hidden="true" tabindex="-1"></a><span class="co"># file_path &lt;- file.path("../Data/r_cas1.rds")</span></span>
-<span id="cb217-342"><a href="#cb217-342" aria-hidden="true" tabindex="-1"></a><span class="co"># r_cas1 &lt;- readRDS(file_path)</span></span>
-<span id="cb217-343"><a href="#cb217-343" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-344"><a href="#cb217-344" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-347"><a href="#cb217-347" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-348"><a href="#cb217-348" aria-hidden="true" tabindex="-1"></a>res_cas1 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
-<span id="cb217-349"><a href="#cb217-349" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
-<span id="cb217-350"><a href="#cb217-350" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas1<span class="sc">$</span>selec_method1,r_cas1<span class="sc">$</span>selec_method2,r_cas1<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
-<span id="cb217-351"><a href="#cb217-351" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas1<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
-<span id="cb217-352"><a href="#cb217-352" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method4)),</span>
-<span id="cb217-353"><a href="#cb217-353" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas1<span class="sc">$</span>temps1,r_cas1<span class="sc">$</span>temps2,r_cas1<span class="sc">$</span>temps3,r_cas1<span class="sc">$</span>temps4)</span>
-<span id="cb217-354"><a href="#cb217-354" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb217-355"><a href="#cb217-355" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas1)</span>
-<span id="cb217-356"><a href="#cb217-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-357"><a href="#cb217-357" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method4),</span>
-<span id="cb217-358"><a href="#cb217-358" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
-<span id="cb217-359"><a href="#cb217-359" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">1</span>]),</span>
-<span id="cb217-360"><a href="#cb217-360" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
-<span id="cb217-361"><a href="#cb217-361" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-362"><a href="#cb217-362" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-365"><a href="#cb217-365" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-366"><a href="#cb217-366" aria-hidden="true" tabindex="-1"></a>res_cas2 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
-<span id="cb217-367"><a href="#cb217-367" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
-<span id="cb217-368"><a href="#cb217-368" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas2<span class="sc">$</span>selec_method1,r_cas2<span class="sc">$</span>selec_method2,r_cas2<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
-<span id="cb217-369"><a href="#cb217-369" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas2<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
-<span id="cb217-370"><a href="#cb217-370" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method4)),</span>
-<span id="cb217-371"><a href="#cb217-371" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas2<span class="sc">$</span>temps1,r_cas2<span class="sc">$</span>temps2,r_cas2<span class="sc">$</span>temps3,r_cas2<span class="sc">$</span>temps4)</span>
-<span id="cb217-372"><a href="#cb217-372" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb217-373"><a href="#cb217-373" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas2)</span>
-<span id="cb217-374"><a href="#cb217-374" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-375"><a href="#cb217-375" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method4),</span>
-<span id="cb217-376"><a href="#cb217-376" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
-<span id="cb217-377"><a href="#cb217-377" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">2</span>]),</span>
-<span id="cb217-378"><a href="#cb217-378" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
-<span id="cb217-379"><a href="#cb217-379" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-380"><a href="#cb217-380" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-383"><a href="#cb217-383" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-384"><a href="#cb217-384" aria-hidden="true" tabindex="-1"></a>res_cas3 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
-<span id="cb217-385"><a href="#cb217-385" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
-<span id="cb217-386"><a href="#cb217-386" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas3<span class="sc">$</span>selec_method1,r_cas3<span class="sc">$</span>selec_method2,r_cas3<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
-<span id="cb217-387"><a href="#cb217-387" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas3<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
-<span id="cb217-388"><a href="#cb217-388" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method4)),</span>
-<span id="cb217-389"><a href="#cb217-389" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas3<span class="sc">$</span>temps1,r_cas3<span class="sc">$</span>temps2,r_cas3<span class="sc">$</span>temps3,r_cas3<span class="sc">$</span>temps4)</span>
-<span id="cb217-390"><a href="#cb217-390" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb217-391"><a href="#cb217-391" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas3)</span>
-<span id="cb217-392"><a href="#cb217-392" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-393"><a href="#cb217-393" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method4),</span>
-<span id="cb217-394"><a href="#cb217-394" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
-<span id="cb217-395"><a href="#cb217-395" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">3</span>]),</span>
-<span id="cb217-396"><a href="#cb217-396" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
-<span id="cb217-397"><a href="#cb217-397" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-398"><a href="#cb217-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-401"><a href="#cb217-401" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-402"><a href="#cb217-402" aria-hidden="true" tabindex="-1"></a>res_cas4 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
-<span id="cb217-403"><a href="#cb217-403" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
-<span id="cb217-404"><a href="#cb217-404" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas4<span class="sc">$</span>selec_method1,r_cas4<span class="sc">$</span>selec_method2,r_cas4<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
-<span id="cb217-405"><a href="#cb217-405" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
-<span id="cb217-406"><a href="#cb217-406" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method4)),</span>
-<span id="cb217-407"><a href="#cb217-407" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas4<span class="sc">$</span>temps1,r_cas4<span class="sc">$</span>temps2,r_cas4<span class="sc">$</span>temps3,r_cas4<span class="sc">$</span>temps4)</span>
-<span id="cb217-408"><a href="#cb217-408" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb217-409"><a href="#cb217-409" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas4)</span>
-<span id="cb217-410"><a href="#cb217-410" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-411"><a href="#cb217-411" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-412"><a href="#cb217-412" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-413"><a href="#cb217-413" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-414"><a href="#cb217-414" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method4),</span>
-<span id="cb217-415"><a href="#cb217-415" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
-<span id="cb217-416"><a href="#cb217-416" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">3</span>]),</span>
-<span id="cb217-417"><a href="#cb217-417" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
-<span id="cb217-418"><a href="#cb217-418" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-419"><a href="#cb217-419" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-422"><a href="#cb217-422" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-423"><a href="#cb217-423" aria-hidden="true" tabindex="-1"></a>res_cas4bis <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
-<span id="cb217-424"><a href="#cb217-424" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
-<span id="cb217-425"><a href="#cb217-425" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas4bis<span class="sc">$</span>selec_method1,r_cas4bis<span class="sc">$</span>selec_method2,r_cas4bis<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
-<span id="cb217-426"><a href="#cb217-426" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
-<span id="cb217-427"><a href="#cb217-427" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method4)),</span>
-<span id="cb217-428"><a href="#cb217-428" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas4bis<span class="sc">$</span>temps1,r_cas4bis<span class="sc">$</span>temps2,r_cas4bis<span class="sc">$</span>temps3,r_cas4bis<span class="sc">$</span>temps4)</span>
-<span id="cb217-429"><a href="#cb217-429" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb217-430"><a href="#cb217-430" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas4bis)</span>
-<span id="cb217-431"><a href="#cb217-431" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-432"><a href="#cb217-432" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas4bis<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas4bis<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas4bis<span class="sc">$</span>prev_method4),</span>
-<span id="cb217-433"><a href="#cb217-433" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
-<span id="cb217-434"><a href="#cb217-434" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">4</span>]),</span>
-<span id="cb217-435"><a href="#cb217-435" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
-<span id="cb217-436"><a href="#cb217-436" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-437"><a href="#cb217-437" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-438"><a href="#cb217-438" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 6</span></span>
-<span id="cb217-439"><a href="#cb217-439" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-440"><a href="#cb217-440" aria-hidden="true" tabindex="-1"></a>Réaliser la même étude pour $n = 100$ et $p = n/10$, $p = n$, $p = 2n$, toujours basée sur $100$ simulations dans chaque cas. Considérer de plus le cas $p = 10n$ en ne faisant qu’une seule simulation afin d’en évaluer le temps de calcul. Une fois ce temps analysé, lancer $100$ simulations pour $p = 10n$ mais en omettant la méthode la plus couteuse en temps de calcul.</span>
-<span id="cb217-441"><a href="#cb217-441" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-442"><a href="#cb217-442" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE}</span></span>
-<span id="cb217-443"><a href="#cb217-443" aria-hidden="true" tabindex="-1"></a><span class="in">#parallelisation</span></span>
-<span id="cb217-444"><a href="#cb217-444" aria-hidden="true" tabindex="-1"></a><span class="in">future::plan(multisession, workers = 2)</span></span>
-<span id="cb217-445"><a href="#cb217-445" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-446"><a href="#cb217-446" aria-hidden="true" tabindex="-1"></a><span class="in">n = 100</span></span>
-<span id="cb217-447"><a href="#cb217-447" aria-hidden="true" tabindex="-1"></a><span class="in">p_list = c(n/10, n, 2*n, 10*n)</span></span>
-<span id="cb217-448"><a href="#cb217-448" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-449"><a href="#cb217-449" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas1 = fun(n, p_list[1])</span></span>
-<span id="cb217-450"><a href="#cb217-450" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas2 = fun(n, p_list[2])</span></span>
-<span id="cb217-451"><a href="#cb217-451" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas3 = fun(n, p_list[3])</span></span>
-<span id="cb217-452"><a href="#cb217-452" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas4 = fun(n, p_list[4],1)</span></span>
-<span id="cb217-453"><a href="#cb217-453" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas4bis = fun2(n, p_list[4])</span></span>
-<span id="cb217-454"><a href="#cb217-454" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-455"><a href="#cb217-455" aria-hidden="true" tabindex="-1"></a><span class="in"># quit parallelisation</span></span>
-<span id="cb217-456"><a href="#cb217-456" aria-hidden="true" tabindex="-1"></a><span class="in">future::plan("sequential")</span></span>
-<span id="cb217-457"><a href="#cb217-457" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-458"><a href="#cb217-458" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-461"><a href="#cb217-461" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-462"><a href="#cb217-462" aria-hidden="true" tabindex="-1"></a>res_cas1 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
-<span id="cb217-463"><a href="#cb217-463" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
-<span id="cb217-464"><a href="#cb217-464" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas1<span class="sc">$</span>selec_method1,r_cas1<span class="sc">$</span>selec_method2,r_cas1<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
-<span id="cb217-465"><a href="#cb217-465" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas1<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
-<span id="cb217-466"><a href="#cb217-466" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method4)),</span>
-<span id="cb217-467"><a href="#cb217-467" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas1<span class="sc">$</span>temps1,r_cas1<span class="sc">$</span>temps2,r_cas1<span class="sc">$</span>temps3,r_cas1<span class="sc">$</span>temps4)</span>
-<span id="cb217-468"><a href="#cb217-468" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb217-469"><a href="#cb217-469" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas1)</span>
-<span id="cb217-470"><a href="#cb217-470" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-471"><a href="#cb217-471" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method4),</span>
-<span id="cb217-472"><a href="#cb217-472" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
-<span id="cb217-473"><a href="#cb217-473" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">1</span>]),</span>
-<span id="cb217-474"><a href="#cb217-474" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
-<span id="cb217-475"><a href="#cb217-475" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-476"><a href="#cb217-476" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-479"><a href="#cb217-479" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-480"><a href="#cb217-480" aria-hidden="true" tabindex="-1"></a>res_cas2 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
-<span id="cb217-481"><a href="#cb217-481" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
-<span id="cb217-482"><a href="#cb217-482" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas2<span class="sc">$</span>selec_method1,r_cas2<span class="sc">$</span>selec_method2,r_cas2<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
-<span id="cb217-483"><a href="#cb217-483" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas2<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
-<span id="cb217-484"><a href="#cb217-484" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method4)),</span>
-<span id="cb217-485"><a href="#cb217-485" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas2<span class="sc">$</span>temps1,r_cas2<span class="sc">$</span>temps2,r_cas2<span class="sc">$</span>temps3,r_cas2<span class="sc">$</span>temps4)</span>
-<span id="cb217-486"><a href="#cb217-486" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb217-487"><a href="#cb217-487" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas2)</span>
-<span id="cb217-488"><a href="#cb217-488" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-489"><a href="#cb217-489" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method4),</span>
-<span id="cb217-490"><a href="#cb217-490" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
-<span id="cb217-491"><a href="#cb217-491" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">2</span>]),</span>
-<span id="cb217-492"><a href="#cb217-492" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
-<span id="cb217-493"><a href="#cb217-493" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-494"><a href="#cb217-494" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-497"><a href="#cb217-497" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-498"><a href="#cb217-498" aria-hidden="true" tabindex="-1"></a>res_cas3 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
-<span id="cb217-499"><a href="#cb217-499" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
-<span id="cb217-500"><a href="#cb217-500" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas3<span class="sc">$</span>selec_method1,r_cas3<span class="sc">$</span>selec_method2,r_cas3<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
-<span id="cb217-501"><a href="#cb217-501" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas3<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
-<span id="cb217-502"><a href="#cb217-502" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method4)),</span>
-<span id="cb217-503"><a href="#cb217-503" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas3<span class="sc">$</span>temps1,r_cas3<span class="sc">$</span>temps2,r_cas3<span class="sc">$</span>temps3,r_cas3<span class="sc">$</span>temps4)</span>
-<span id="cb217-504"><a href="#cb217-504" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb217-505"><a href="#cb217-505" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas3)</span>
+<span id="cb217-338"><a href="#cb217-338" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-339"><a href="#cb217-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-340"><a href="#cb217-340" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 1</span></span>
+<span id="cb217-341"><a href="#cb217-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-342"><a href="#cb217-342" aria-hidden="true" tabindex="-1"></a>Quel modèle génère la fonction Simudata ? Combien de variables explicatives sont générées ? Parmi elles, lesquelles sont pertinentes pour la modélisation ? Ecrire l’équation du modèle.</span>
+<span id="cb217-343"><a href="#cb217-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-344"><a href="#cb217-344" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 2</span></span>
+<span id="cb217-345"><a href="#cb217-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-346"><a href="#cb217-346" aria-hidden="true" tabindex="-1"></a>Identifier les 4 méthodes d’estimation mises en oeuvre dans la fonction fun.</span>
+<span id="cb217-347"><a href="#cb217-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-348"><a href="#cb217-348" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 3</span></span>
+<span id="cb217-349"><a href="#cb217-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-350"><a href="#cb217-350" aria-hidden="true" tabindex="-1"></a>Détailler les différentes sorties proposées par la fonction fun.</span>
+<span id="cb217-351"><a href="#cb217-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-352"><a href="#cb217-352" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 4</span></span>
+<span id="cb217-353"><a href="#cb217-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-354"><a href="#cb217-354" aria-hidden="true" tabindex="-1"></a>Remplacer la valeur des options names et title du boxplot réalisé dans l’exemple par les bonnes informations.</span>
+<span id="cb217-355"><a href="#cb217-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-358"><a href="#cb217-358" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-359"><a href="#cb217-359" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(a<span class="sc">$</span>prev_method4),</span>
+<span id="cb217-360"><a href="#cb217-360" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
+<span id="cb217-361"><a href="#cb217-361" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, <span class="dv">100</span>,<span class="st">"et p="</span>, <span class="dv">10</span>),</span>
+<span id="cb217-362"><a href="#cb217-362" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>),</span>
+<span id="cb217-363"><a href="#cb217-363" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span>
+<span id="cb217-364"><a href="#cb217-364" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-365"><a href="#cb217-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-366"><a href="#cb217-366" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 5</span></span>
+<span id="cb217-367"><a href="#cb217-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-368"><a href="#cb217-368" aria-hidden="true" tabindex="-1"></a>Réaliser une étude comparative des méthodes lorsque $n = 50$ et $p = n/10$, $p = n$, $p = 2n$, $p = 10n$. Pour chaque situation, on considèrera $100$ simulations afin de calculer les différents critères. On synthétisera les résultats en terme de qualité de sélection, nombre de variables sélectionnées, erreurs de prévision et temps de calcul.</span>
+<span id="cb217-369"><a href="#cb217-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-370"><a href="#cb217-370" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE}</span></span>
+<span id="cb217-371"><a href="#cb217-371" aria-hidden="true" tabindex="-1"></a><span class="in">#parallelisation</span></span>
+<span id="cb217-372"><a href="#cb217-372" aria-hidden="true" tabindex="-1"></a><span class="in">future::plan(multisession, workers = 2)</span></span>
+<span id="cb217-373"><a href="#cb217-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-374"><a href="#cb217-374" aria-hidden="true" tabindex="-1"></a><span class="in">n = 50</span></span>
+<span id="cb217-375"><a href="#cb217-375" aria-hidden="true" tabindex="-1"></a><span class="in">p_list = c(n/10, n, 2*n, 10*n)</span></span>
+<span id="cb217-376"><a href="#cb217-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-377"><a href="#cb217-377" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas1 = fun(n, p_list[1])</span></span>
+<span id="cb217-378"><a href="#cb217-378" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas2 = fun(n, p_list[2])</span></span>
+<span id="cb217-379"><a href="#cb217-379" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas3 = fun(n, p_list[3])</span></span>
+<span id="cb217-380"><a href="#cb217-380" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas4 = fun(n, p_list[4],1)</span></span>
+<span id="cb217-381"><a href="#cb217-381" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas4bis = fun2(n, p_list[4])</span></span>
+<span id="cb217-382"><a href="#cb217-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-383"><a href="#cb217-383" aria-hidden="true" tabindex="-1"></a><span class="in"># file_path &lt;- file.path("../Data/r_cas1.rds")</span></span>
+<span id="cb217-384"><a href="#cb217-384" aria-hidden="true" tabindex="-1"></a><span class="in"># saveRDS(r_cas1, file = file_path)</span></span>
+<span id="cb217-385"><a href="#cb217-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-386"><a href="#cb217-386" aria-hidden="true" tabindex="-1"></a><span class="in"># quit parallelisation</span></span>
+<span id="cb217-387"><a href="#cb217-387" aria-hidden="true" tabindex="-1"></a><span class="in">future::plan("sequential")</span></span>
+<span id="cb217-388"><a href="#cb217-388" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-389"><a href="#cb217-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-392"><a href="#cb217-392" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-393"><a href="#cb217-393" aria-hidden="true" tabindex="-1"></a><span class="co"># file_path &lt;- file.path("../Data/r_cas1.rds")</span></span>
+<span id="cb217-394"><a href="#cb217-394" aria-hidden="true" tabindex="-1"></a><span class="co"># r_cas1 &lt;- readRDS(file_path)</span></span>
+<span id="cb217-395"><a href="#cb217-395" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-396"><a href="#cb217-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-399"><a href="#cb217-399" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-400"><a href="#cb217-400" aria-hidden="true" tabindex="-1"></a>res_cas1 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb217-401"><a href="#cb217-401" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
+<span id="cb217-402"><a href="#cb217-402" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas1<span class="sc">$</span>selec_method1,r_cas1<span class="sc">$</span>selec_method2,r_cas1<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
+<span id="cb217-403"><a href="#cb217-403" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas1<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
+<span id="cb217-404"><a href="#cb217-404" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method4)),</span>
+<span id="cb217-405"><a href="#cb217-405" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas1<span class="sc">$</span>temps1,r_cas1<span class="sc">$</span>temps2,r_cas1<span class="sc">$</span>temps3,r_cas1<span class="sc">$</span>temps4)</span>
+<span id="cb217-406"><a href="#cb217-406" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb217-407"><a href="#cb217-407" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas1)</span>
+<span id="cb217-408"><a href="#cb217-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-409"><a href="#cb217-409" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method4),</span>
+<span id="cb217-410"><a href="#cb217-410" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
+<span id="cb217-411"><a href="#cb217-411" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">1</span>]),</span>
+<span id="cb217-412"><a href="#cb217-412" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
+<span id="cb217-413"><a href="#cb217-413" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-414"><a href="#cb217-414" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-417"><a href="#cb217-417" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-418"><a href="#cb217-418" aria-hidden="true" tabindex="-1"></a>res_cas2 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb217-419"><a href="#cb217-419" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
+<span id="cb217-420"><a href="#cb217-420" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas2<span class="sc">$</span>selec_method1,r_cas2<span class="sc">$</span>selec_method2,r_cas2<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
+<span id="cb217-421"><a href="#cb217-421" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas2<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
+<span id="cb217-422"><a href="#cb217-422" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method4)),</span>
+<span id="cb217-423"><a href="#cb217-423" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas2<span class="sc">$</span>temps1,r_cas2<span class="sc">$</span>temps2,r_cas2<span class="sc">$</span>temps3,r_cas2<span class="sc">$</span>temps4)</span>
+<span id="cb217-424"><a href="#cb217-424" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb217-425"><a href="#cb217-425" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas2)</span>
+<span id="cb217-426"><a href="#cb217-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-427"><a href="#cb217-427" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method4),</span>
+<span id="cb217-428"><a href="#cb217-428" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
+<span id="cb217-429"><a href="#cb217-429" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">2</span>]),</span>
+<span id="cb217-430"><a href="#cb217-430" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
+<span id="cb217-431"><a href="#cb217-431" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-432"><a href="#cb217-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-435"><a href="#cb217-435" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-436"><a href="#cb217-436" aria-hidden="true" tabindex="-1"></a>res_cas3 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb217-437"><a href="#cb217-437" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
+<span id="cb217-438"><a href="#cb217-438" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas3<span class="sc">$</span>selec_method1,r_cas3<span class="sc">$</span>selec_method2,r_cas3<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
+<span id="cb217-439"><a href="#cb217-439" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas3<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
+<span id="cb217-440"><a href="#cb217-440" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method4)),</span>
+<span id="cb217-441"><a href="#cb217-441" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas3<span class="sc">$</span>temps1,r_cas3<span class="sc">$</span>temps2,r_cas3<span class="sc">$</span>temps3,r_cas3<span class="sc">$</span>temps4)</span>
+<span id="cb217-442"><a href="#cb217-442" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb217-443"><a href="#cb217-443" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas3)</span>
+<span id="cb217-444"><a href="#cb217-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-445"><a href="#cb217-445" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method4),</span>
+<span id="cb217-446"><a href="#cb217-446" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
+<span id="cb217-447"><a href="#cb217-447" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">3</span>]),</span>
+<span id="cb217-448"><a href="#cb217-448" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
+<span id="cb217-449"><a href="#cb217-449" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-450"><a href="#cb217-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-453"><a href="#cb217-453" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-454"><a href="#cb217-454" aria-hidden="true" tabindex="-1"></a>res_cas4 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb217-455"><a href="#cb217-455" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
+<span id="cb217-456"><a href="#cb217-456" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas4<span class="sc">$</span>selec_method1,r_cas4<span class="sc">$</span>selec_method2,r_cas4<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
+<span id="cb217-457"><a href="#cb217-457" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
+<span id="cb217-458"><a href="#cb217-458" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method4)),</span>
+<span id="cb217-459"><a href="#cb217-459" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas4<span class="sc">$</span>temps1,r_cas4<span class="sc">$</span>temps2,r_cas4<span class="sc">$</span>temps3,r_cas4<span class="sc">$</span>temps4)</span>
+<span id="cb217-460"><a href="#cb217-460" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb217-461"><a href="#cb217-461" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas4)</span>
+<span id="cb217-462"><a href="#cb217-462" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-463"><a href="#cb217-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-464"><a href="#cb217-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-465"><a href="#cb217-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-466"><a href="#cb217-466" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method4),</span>
+<span id="cb217-467"><a href="#cb217-467" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
+<span id="cb217-468"><a href="#cb217-468" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">3</span>]),</span>
+<span id="cb217-469"><a href="#cb217-469" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
+<span id="cb217-470"><a href="#cb217-470" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-471"><a href="#cb217-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-474"><a href="#cb217-474" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-475"><a href="#cb217-475" aria-hidden="true" tabindex="-1"></a>res_cas4bis <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb217-476"><a href="#cb217-476" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
+<span id="cb217-477"><a href="#cb217-477" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas4bis<span class="sc">$</span>selec_method1,r_cas4bis<span class="sc">$</span>selec_method2,r_cas4bis<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
+<span id="cb217-478"><a href="#cb217-478" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
+<span id="cb217-479"><a href="#cb217-479" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method4)),</span>
+<span id="cb217-480"><a href="#cb217-480" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas4bis<span class="sc">$</span>temps1,r_cas4bis<span class="sc">$</span>temps2,r_cas4bis<span class="sc">$</span>temps3,r_cas4bis<span class="sc">$</span>temps4)</span>
+<span id="cb217-481"><a href="#cb217-481" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb217-482"><a href="#cb217-482" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas4bis)</span>
+<span id="cb217-483"><a href="#cb217-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-484"><a href="#cb217-484" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas4bis<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas4bis<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas4bis<span class="sc">$</span>prev_method4),</span>
+<span id="cb217-485"><a href="#cb217-485" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
+<span id="cb217-486"><a href="#cb217-486" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">4</span>]),</span>
+<span id="cb217-487"><a href="#cb217-487" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
+<span id="cb217-488"><a href="#cb217-488" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-489"><a href="#cb217-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-490"><a href="#cb217-490" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 6</span></span>
+<span id="cb217-491"><a href="#cb217-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-492"><a href="#cb217-492" aria-hidden="true" tabindex="-1"></a>Réaliser la même étude pour $n = 100$ et $p = n/10$, $p = n$, $p = 2n$, toujours basée sur $100$ simulations dans chaque cas. Considérer de plus le cas $p = 10n$ en ne faisant qu’une seule simulation afin d’en évaluer le temps de calcul. Une fois ce temps analysé, lancer $100$ simulations pour $p = 10n$ mais en omettant la méthode la plus couteuse en temps de calcul.</span>
+<span id="cb217-493"><a href="#cb217-493" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-494"><a href="#cb217-494" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE}</span></span>
+<span id="cb217-495"><a href="#cb217-495" aria-hidden="true" tabindex="-1"></a><span class="in">#parallelisation</span></span>
+<span id="cb217-496"><a href="#cb217-496" aria-hidden="true" tabindex="-1"></a><span class="in">future::plan(multisession, workers = 2)</span></span>
+<span id="cb217-497"><a href="#cb217-497" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-498"><a href="#cb217-498" aria-hidden="true" tabindex="-1"></a><span class="in">n = 100</span></span>
+<span id="cb217-499"><a href="#cb217-499" aria-hidden="true" tabindex="-1"></a><span class="in">p_list = c(n/10, n, 2*n, 10*n)</span></span>
+<span id="cb217-500"><a href="#cb217-500" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-501"><a href="#cb217-501" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas1 = fun(n, p_list[1])</span></span>
+<span id="cb217-502"><a href="#cb217-502" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas2 = fun(n, p_list[2])</span></span>
+<span id="cb217-503"><a href="#cb217-503" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas3 = fun(n, p_list[3])</span></span>
+<span id="cb217-504"><a href="#cb217-504" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas4 = fun(n, p_list[4],1)</span></span>
+<span id="cb217-505"><a href="#cb217-505" aria-hidden="true" tabindex="-1"></a><span class="in">r_cas4bis = fun2(n, p_list[4])</span></span>
 <span id="cb217-506"><a href="#cb217-506" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-507"><a href="#cb217-507" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method4),</span>
-<span id="cb217-508"><a href="#cb217-508" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
-<span id="cb217-509"><a href="#cb217-509" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">3</span>]),</span>
-<span id="cb217-510"><a href="#cb217-510" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
-<span id="cb217-511"><a href="#cb217-511" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb217-512"><a href="#cb217-512" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-515"><a href="#cb217-515" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb217-516"><a href="#cb217-516" aria-hidden="true" tabindex="-1"></a>res_cas4 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
-<span id="cb217-517"><a href="#cb217-517" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
-<span id="cb217-518"><a href="#cb217-518" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas4<span class="sc">$</span>selec_method1,r_cas4<span class="sc">$</span>selec_method2,r_cas4<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
-<span id="cb217-519"><a href="#cb217-519" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
-<span id="cb217-520"><a href="#cb217-520" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method4)),</span>
-<span id="cb217-521"><a href="#cb217-521" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas4<span class="sc">$</span>temps1,r_cas4<span class="sc">$</span>temps2,r_cas4<span class="sc">$</span>temps3,r_cas4<span class="sc">$</span>temps4)</span>
-<span id="cb217-522"><a href="#cb217-522" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb217-523"><a href="#cb217-523" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas4)</span>
-<span id="cb217-524"><a href="#cb217-524" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-525"><a href="#cb217-525" aria-hidden="true" tabindex="-1"></a>res_cas4bis <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
-<span id="cb217-526"><a href="#cb217-526" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
-<span id="cb217-527"><a href="#cb217-527" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas4bis<span class="sc">$</span>selec_method1,r_cas4bis<span class="sc">$</span>selec_method2,r_cas4bis<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
-<span id="cb217-528"><a href="#cb217-528" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
-<span id="cb217-529"><a href="#cb217-529" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method4)),</span>
-<span id="cb217-530"><a href="#cb217-530" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas4bis<span class="sc">$</span>temps1,r_cas4bis<span class="sc">$</span>temps2,r_cas4bis<span class="sc">$</span>temps3,r_cas4bis<span class="sc">$</span>temps4)</span>
-<span id="cb217-531"><a href="#cb217-531" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb217-532"><a href="#cb217-532" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas4bis)</span>
-<span id="cb217-533"><a href="#cb217-533" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-534"><a href="#cb217-534" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-535"><a href="#cb217-535" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method4),</span>
-<span id="cb217-536"><a href="#cb217-536" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
-<span id="cb217-537"><a href="#cb217-537" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">3</span>]),</span>
-<span id="cb217-538"><a href="#cb217-538" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
-<span id="cb217-539"><a href="#cb217-539" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-507"><a href="#cb217-507" aria-hidden="true" tabindex="-1"></a><span class="in"># quit parallelisation</span></span>
+<span id="cb217-508"><a href="#cb217-508" aria-hidden="true" tabindex="-1"></a><span class="in">future::plan("sequential")</span></span>
+<span id="cb217-509"><a href="#cb217-509" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-510"><a href="#cb217-510" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-513"><a href="#cb217-513" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-514"><a href="#cb217-514" aria-hidden="true" tabindex="-1"></a>res_cas1 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb217-515"><a href="#cb217-515" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
+<span id="cb217-516"><a href="#cb217-516" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas1<span class="sc">$</span>selec_method1,r_cas1<span class="sc">$</span>selec_method2,r_cas1<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
+<span id="cb217-517"><a href="#cb217-517" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas1<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
+<span id="cb217-518"><a href="#cb217-518" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas1<span class="sc">$</span>prev_method4)),</span>
+<span id="cb217-519"><a href="#cb217-519" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas1<span class="sc">$</span>temps1,r_cas1<span class="sc">$</span>temps2,r_cas1<span class="sc">$</span>temps3,r_cas1<span class="sc">$</span>temps4)</span>
+<span id="cb217-520"><a href="#cb217-520" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb217-521"><a href="#cb217-521" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas1)</span>
+<span id="cb217-522"><a href="#cb217-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-523"><a href="#cb217-523" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas1<span class="sc">$</span>prev_method4),</span>
+<span id="cb217-524"><a href="#cb217-524" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
+<span id="cb217-525"><a href="#cb217-525" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">1</span>]),</span>
+<span id="cb217-526"><a href="#cb217-526" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
+<span id="cb217-527"><a href="#cb217-527" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-528"><a href="#cb217-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-531"><a href="#cb217-531" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-532"><a href="#cb217-532" aria-hidden="true" tabindex="-1"></a>res_cas2 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb217-533"><a href="#cb217-533" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
+<span id="cb217-534"><a href="#cb217-534" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas2<span class="sc">$</span>selec_method1,r_cas2<span class="sc">$</span>selec_method2,r_cas2<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
+<span id="cb217-535"><a href="#cb217-535" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas2<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
+<span id="cb217-536"><a href="#cb217-536" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas2<span class="sc">$</span>prev_method4)),</span>
+<span id="cb217-537"><a href="#cb217-537" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas2<span class="sc">$</span>temps1,r_cas2<span class="sc">$</span>temps2,r_cas2<span class="sc">$</span>temps3,r_cas2<span class="sc">$</span>temps4)</span>
+<span id="cb217-538"><a href="#cb217-538" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb217-539"><a href="#cb217-539" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas2)</span>
 <span id="cb217-540"><a href="#cb217-540" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-541"><a href="#cb217-541" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas4bis<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas4bis<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas4bis<span class="sc">$</span>prev_method4),</span>
+<span id="cb217-541"><a href="#cb217-541" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas2<span class="sc">$</span>prev_method4),</span>
 <span id="cb217-542"><a href="#cb217-542" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
-<span id="cb217-543"><a href="#cb217-543" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">4</span>]),</span>
+<span id="cb217-543"><a href="#cb217-543" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">2</span>]),</span>
 <span id="cb217-544"><a href="#cb217-544" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
 <span id="cb217-545"><a href="#cb217-545" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb217-546"><a href="#cb217-546" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-547"><a href="#cb217-547" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 7</span></span>
-<span id="cb217-548"><a href="#cb217-548" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-549"><a href="#cb217-549" aria-hidden="true" tabindex="-1"></a>Conclure sur les mérites respectifs de chaque méthode dans le contexte de l’étude.</span>
-<span id="cb217-550"><a href="#cb217-550" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-551"><a href="#cb217-551" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 8</span></span>
-<span id="cb217-552"><a href="#cb217-552" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-553"><a href="#cb217-553" aria-hidden="true" tabindex="-1"></a>Quelles autres types de simulations pourrait-on envisager pour confirmer ou affiner ces conclusions ?</span>
+<span id="cb217-549"><a href="#cb217-549" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-550"><a href="#cb217-550" aria-hidden="true" tabindex="-1"></a>res_cas3 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb217-551"><a href="#cb217-551" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
+<span id="cb217-552"><a href="#cb217-552" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas3<span class="sc">$</span>selec_method1,r_cas3<span class="sc">$</span>selec_method2,r_cas3<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
+<span id="cb217-553"><a href="#cb217-553" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas3<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
+<span id="cb217-554"><a href="#cb217-554" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas3<span class="sc">$</span>prev_method4)),</span>
+<span id="cb217-555"><a href="#cb217-555" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas3<span class="sc">$</span>temps1,r_cas3<span class="sc">$</span>temps2,r_cas3<span class="sc">$</span>temps3,r_cas3<span class="sc">$</span>temps4)</span>
+<span id="cb217-556"><a href="#cb217-556" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb217-557"><a href="#cb217-557" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas3)</span>
+<span id="cb217-558"><a href="#cb217-558" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-559"><a href="#cb217-559" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas3<span class="sc">$</span>prev_method4),</span>
+<span id="cb217-560"><a href="#cb217-560" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
+<span id="cb217-561"><a href="#cb217-561" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">3</span>]),</span>
+<span id="cb217-562"><a href="#cb217-562" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
+<span id="cb217-563"><a href="#cb217-563" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-564"><a href="#cb217-564" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-567"><a href="#cb217-567" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb217-568"><a href="#cb217-568" aria-hidden="true" tabindex="-1"></a>res_cas4 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb217-569"><a href="#cb217-569" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
+<span id="cb217-570"><a href="#cb217-570" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas4<span class="sc">$</span>selec_method1,r_cas4<span class="sc">$</span>selec_method2,r_cas4<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
+<span id="cb217-571"><a href="#cb217-571" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
+<span id="cb217-572"><a href="#cb217-572" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas4<span class="sc">$</span>prev_method4)),</span>
+<span id="cb217-573"><a href="#cb217-573" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas4<span class="sc">$</span>temps1,r_cas4<span class="sc">$</span>temps2,r_cas4<span class="sc">$</span>temps3,r_cas4<span class="sc">$</span>temps4)</span>
+<span id="cb217-574"><a href="#cb217-574" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb217-575"><a href="#cb217-575" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas4)</span>
+<span id="cb217-576"><a href="#cb217-576" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-577"><a href="#cb217-577" aria-hidden="true" tabindex="-1"></a>res_cas4bis <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb217-578"><a href="#cb217-578" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Forward"</span>, <span class="st">"Lasso"</span>, <span class="st">"Adaptative Lasso"</span>, <span class="st">"Gauss-Lasso"</span>), </span>
+<span id="cb217-579"><a href="#cb217-579" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quality_of_selection =</span> <span class="fu">c</span>(r_cas4bis<span class="sc">$</span>selec_method1,r_cas4bis<span class="sc">$</span>selec_method2,r_cas4bis<span class="sc">$</span>selec_method3,<span class="cn">NA</span>),</span>
+<span id="cb217-580"><a href="#cb217-580" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_nb_selected_var =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>taille_method1),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>taille_method2),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>taille_method3),<span class="cn">NA</span>),</span>
+<span id="cb217-581"><a href="#cb217-581" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prevision_error =</span> <span class="fu">c</span>(<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method1),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method2),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method3),<span class="fu">mean</span>(r_cas4bis<span class="sc">$</span>prev_method4)),</span>
+<span id="cb217-582"><a href="#cb217-582" aria-hidden="true" tabindex="-1"></a>  <span class="at">Running_time =</span> <span class="fu">c</span>(r_cas4bis<span class="sc">$</span>temps1,r_cas4bis<span class="sc">$</span>temps2,r_cas4bis<span class="sc">$</span>temps3,r_cas4bis<span class="sc">$</span>temps4)</span>
+<span id="cb217-583"><a href="#cb217-583" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb217-584"><a href="#cb217-584" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(res_cas4bis)</span>
+<span id="cb217-585"><a href="#cb217-585" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-586"><a href="#cb217-586" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-587"><a href="#cb217-587" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method4),</span>
+<span id="cb217-588"><a href="#cb217-588" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
+<span id="cb217-589"><a href="#cb217-589" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">3</span>]),</span>
+<span id="cb217-590"><a href="#cb217-590" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
+<span id="cb217-591"><a href="#cb217-591" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-592"><a href="#cb217-592" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-593"><a href="#cb217-593" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">sqrt</span>(r_cas4<span class="sc">$</span>prev_method1),<span class="fu">sqrt</span>(r_cas4bis<span class="sc">$</span>prev_method2),<span class="fu">sqrt</span>(r_cas4bis<span class="sc">$</span>prev_method3),<span class="fu">sqrt</span>(r_cas4bis<span class="sc">$</span>prev_method4),</span>
+<span id="cb217-594"><a href="#cb217-594" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span><span class="fu">c</span>(<span class="st">"Forward"</span>,<span class="st">"Lasso"</span>,<span class="st">"Adaptative Lasso"</span>,<span class="st">"Gauss-Lasso"</span>),</span>
+<span id="cb217-595"><a href="#cb217-595" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="fu">paste</span>(<span class="st">"Erreur de prévision pour n ="</span>, n,<span class="st">"et p="</span>, p_list[<span class="dv">4</span>]),</span>
+<span id="cb217-596"><a href="#cb217-596" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orchid3"</span>, <span class="st">"palegreen"</span>, <span class="st">"salmon2"</span>, <span class="st">"lightskyblue2"</span>))</span>
+<span id="cb217-597"><a href="#cb217-597" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb217-598"><a href="#cb217-598" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-599"><a href="#cb217-599" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 7</span></span>
+<span id="cb217-600"><a href="#cb217-600" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-601"><a href="#cb217-601" aria-hidden="true" tabindex="-1"></a>Conclure sur les mérites respectifs de chaque méthode dans le contexte de l’étude.</span>
+<span id="cb217-602"><a href="#cb217-602" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-603"><a href="#cb217-603" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 8</span></span>
+<span id="cb217-604"><a href="#cb217-604" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-605"><a href="#cb217-605" aria-hidden="true" tabindex="-1"></a>Quelles autres types de simulations pourrait-on envisager pour confirmer ou affiner ces conclusions ?</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
