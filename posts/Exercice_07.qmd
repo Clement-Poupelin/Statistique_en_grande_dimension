@@ -1,7 +1,8 @@
 ---
 title: "Exercice 07"
 author: "Clément Poupelin"
-date: "`r Sys.Date()`"
+date: "2025-02-25"
+date-modified: "`r Sys.Date()`"
 format: 
   html:
     embed-resources: false
@@ -53,6 +54,33 @@ library(gridExtra)
 ## Fonctions
 
 ::: panel-tabset
+
+### Intercative Boxplot
+
+```{r}
+my_interactive_boxplot <- function(data) {
+  data_long <- reshape2::melt(data)
+  
+  p <- ggplot(data_long,
+              aes(
+                x = variable,
+                y = value,
+                fill = variable,
+                stat = "identity"
+              )) +
+    geom_boxplot() +
+    scale_fill_viridis_d() +
+    labs(title = "Distribution des Variables (Intercative Boxplot)", x = "Variables", y = "Valeurs") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  return(plotly::ggplotly(p))
+}
+```
+
+
+
+
 :::
 
 ## Seed
@@ -64,9 +92,9 @@ set.seed(140400)
 
 # Données
 
-Cette exercice est la suite direct de l'[Exercice 6](../posts/Exercice_06.qmd) où l'on a pu utiliser les méthodes de regressions avec reduction de dimension **PCR** et **PLSR**.
+Cette exercice est la suite direct de l'[Exercice 06](../posts/Exercice_06.qmd) où l'on a pu utiliser les méthodes de regressions avec reduction de dimension **PCR** et **PLSR**.
 
-On va donc reprdre les mêmes données avec le même découpage en *train* et *test*.
+On va donc reprendre les mêmes données avec le même découpage en *train* et *test*.
 
 ```{r}
 Hitters_Without_NA <- Hitters %>% na.omit()
@@ -78,11 +106,12 @@ Hitters_train <- Hitters_Without_NA[index_train, ]
 Hitters_test <- Hitters_Without_NA[-index_train, ]
 ```
 
-NOtre objectif ici sera donc de compléter l'analyse de l'exercice 6 (lien)en utilisant cette fois ci les méthodes de regression pénalisée Ridge et Lasso (méthodes détaillées dans le 6 bonus lien).
+Notre objectif ici sera donc de compléter l'analyse de l'[Exercice 06](../posts/Exercice_06.qmd) en utilisant cette fois ci les méthodes de regression pénalisée **Ridge** et **Lasso** (méthodes détaillées dans l'[Exercice 06 Bonus : Ridge vs Lasso](../posts/Exercice_06Bonus.qmd)).
 
 # Analyse inférentielle
 
-Contrairement à la plupart des autres package *`R`* qui permettent de faire de l’apprentissage, le package *`glmnet`* n’autorise pas l’utilisation de formules.  Il faut donc spécifier explicitement la matrice $X$ et le vecteur $y$.\
+Contrairement à la plupart des autres package *`R`* qui permettent de faire de l’apprentissage, le package *`glmnet`* n’autorise pas l’utilisation de formules.\
+Il faut donc spécifier explicitement la matrice $X$ et le vecteur $y$.\
 
 On peut obtenir la matrice $X$ et notamment le codage des variables qualitatives avec la fonction *`model.matrix`*.
 
@@ -103,22 +132,16 @@ Et ce n'est qu'après que l'on peut mettre en place la modélisation.
 mod.R <- glmnet(X_train, Y_train, alpha = 0) 
 ```
 
-Puis on peut visualiser les chemins de régularisation des estimateurs **Ridge**.
+On peut également visualiser les chemins de régularisation des estimateurs **Ridge**.
 
 ```{r}
 plot(mod.R, xvar = "lambda", label = TRUE)
 ```
 
-:::: success-header
-::: success-icon
-:::
 
-Résultats
-::::
+Ici on voit l'évolution de nos coefficients $\beta$ en fonction des diffrentes valeurs de $\lambda$.\
+Ainsi, sur la gauche on se retrouve dans la situation où il n'y a pas de pénalisation et donc nos coefficients sont les $\beta$ de l'estimation par moindres carrés. Et donc plus $\lambda$ va augmenter, plus on se retrouvera dans une situation où les coefficients vont tendrent vers 0.
 
-::: success
-Ici on voit l'évolution de nos coefficients $\beta$ en fonction des diffrentes valeurs de $\lambda$. Ainsi, sur la gauche on se retrouve dans la situation où il n'y a pas de pénalisation et donc nos coefficients sont les $\beta$ de l'estimation par moindres carrés. Et donc plus $\lambda$ va augmenter, plus on se retrouvera dans une situation où les coefficients vont tendrent vers 0.
-:::
 
 ## Lasso
 
@@ -126,22 +149,16 @@ Ici on voit l'évolution de nos coefficients $\beta$ en fonction des diffrentes 
 mod.L <- glmnet(X_train, Y_train, alpha = 1) 
 ```
 
-Puis on peut visualiser les chemins de régularisation des estimateurs **Lasso**.
+On peut également visualiser les chemins de régularisation des estimateurs **Lasso**.
 
 ```{r}
 plot(mod.L, xvar = "lambda", label = TRUE)
 ```
 
-:::: success-header
-::: success-icon
-:::
 
-Résultats
-::::
+Ici on voit l'évolution de nos coefficients $\beta$ en fonction des diffrentes valeurs de $\lambda$.\
+Ainsi, sur la gauche on se retrouve dans la situation où il n'y a pas de pénalisation et donc nos coefficients sont les $\beta$ de l'estimation par moindres carrés. Et donc plus $\lambda$ va augmenter, plus on se retrouvera dans une situation où les coefficients vont tendrent vers 0.
 
-::: success
-Ici on voit l'évolution de nos coefficients $\beta$ en fonction des diffrentes valeurs de $\lambda$. Ainsi, sur la gauche on se retrouve dans la situation où il n'y a pas de pénalisation et donc nos coefficients sont les $\beta$ de l'estimation par moindres carrés. Et donc plus $\lambda$ va augmenter, plus on se retrouvera dans une situation où les coefficients vont tendrent vers 0.
-:::
 :::::::::
 
 # Selection des paramètres de régularisation
@@ -153,7 +170,7 @@ Pour cela, on utilise la fonction *`cv.glmnet`* qui, comme son nom le laisse sug
 ## Ridge
 
 ```{r}
-ridgeCV <- cv.glmnet(X_train, Y_train, alpha = 0)
+ridgeCV <- cv.glmnet(X_train, Y_train, alpha = 0) 
 plot(ridgeCV)
 ```
 
@@ -166,11 +183,26 @@ On visualise ici les erreurs quadratiques calculées par validation croisée 10 
 D’un point de vu pratique, cela signifie que l’utilisateur peut choisir n’importe quelle valeur de lambda entre les deux traits verticaux.\
 A savoir que si l'on veut diminuer la complexité du modèle on choisira la valeur de droite.
 
-On peut obtenir ces deux valeurs assez facilement.
+::: callout-warning
+Attention, on peut remarquer ici que l'axe verticale de gauche semble toucher le bord du plot. Dans ces cas là, il convient de parametrer les $\lambda$ de telle sorte à "explorer" des valeurs de $\lambda$ plus petite.
+:::
 
 ```{r}
-cat(" Valeur minimale : ", ridgeCV$lambda.min, "\n", "Valeur maximale : ", ridgeCV$lambda.1se)
+ridgeCV2 <- cv.glmnet(X_train, Y_train, alpha = 0, lambda = seq(exp(-1), exp(9), by = 1)) 
+plot(ridgeCV2)
 ```
+Cette fois ci, nos deux axes verticaux sont éloignés du bord du graphe et on voit bien qu'on a pu baisser ma valeur minimal de $\lambda$.
+
+:::: success-header
+::: success-icon
+:::
+
+Résultats
+::::
+
+::: success
+Ici on on obtient $\lambda_{min} =$ `r round(ridgeCV2$lambda.min, 3)` et $\lambda_{1se} =$ `r round(ridgeCV2$lambda.1se, 3)` 
+:::
 
 ## Lasso
 
@@ -188,102 +220,268 @@ On visualise ici les erreurs quadratiques calculées par validation croisée 10 
 D’un point de vu pratique, cela signifie que l’utilisateur peut choisir n’importe quelle valeur de lambda entre les deux traits verticaux.\
 A savoir que si l'on veut diminuer la complexité du modèle on choisira la valeur de droite.
 
-On peut obtenir ces deux valeurs assez facilement.
-
-```{r}
-cat(" Valeur minimale : ", lassoCV$lambda.min, "\n", "Valeur maximale : ", lassoCV$lambda.1se)
-```
+:::: success-header
+::: success-icon
 :::
 
-# Prédiction
+Résultats
+::::
+
+::: success
+Ici on on obtient $\lambda_{min} =$ `r round(lassoCV$lambda.min, 3)` et $\lambda_{1se} =$ `r round(lassoCV$lambda.1se, 3)` 
+:::
+
+:::
+
 
 # Prédiction
 
 On souhaite maintenant prédiction pour le jeu de données *test*.
 
-Une première approche pourrait consister à réajuster le modèle sur toutes les données pour la valeur de $lambda$ sélectionnée.\
-Cette étape est en réalité déjà effectuée par la fonction *`cv.glmnet`*. Il suffit par conséquent d’appliquer la fonction predict à l’objet obtenu avec *`cv.glmnet`* en spécifiant la valeur de $lambda$ souhaitée.
-
-::: panel-tabset
-## Ridge
-
+Une première approche pourrait consister à réajuster le modèle sur toutes les données pour la valeur de $\lambda$ sélectionnée.\
+Cette étape est en réalité déjà effectuée par la fonction *`cv.glmnet`*. Il suffit par conséquent d’appliquer la fonction *`predict`* à l’objet obtenu avec *`cv.glmnet`* en spécifiant la valeur de $\lambda$ souhaitée puis on calcul l'erreur de prediction pour les modèles **Ridge** et **Lasso**.
 ```{r}
 pred.ridge_min <- predict(ridgeCV, newx = X_test, s = "lambda.min")
-err_ridge <- sqrt(mean((pred.ridge_min - Y_test)^2, na.rm=T))
+rmsep_ridge <- sqrt(mean((pred.ridge_min - Y_test)^2, na.rm=T))
+
+pred.lasso_min <- predict(lassoCV, newx = X_test, s = "lambda.min") 
+rmsep_lasso <- sqrt(mean((pred.lasso_min - Y_test)^2, na.rm=T))
 ```
 
-## Lasso
+
+Ainsi on peut obtenir l'erreur de prédiction via le RMSEP pour les 2 modèles et les comparer avec les valeurs obtenues pour les méthodes précédemment testées : **Sélection automatique forward**, **PCR**, **PLSR**.
 
 ```{r}
-pred.lasso_min <- predict(lassoCV, newx = X_test, s = "lambda.min") 
-err_lasso <- sqrt(mean((pred.lasso_min - Y_test)^2, na.rm=T))
-```
-:::
+## Sélection automatique
+########################
+mod0 <- lm(Salary ~ 0, data = Hitters_train)
+mod1 <- lm(Salary ~ ., data = Hitters_train)
+mod_step <- step(
+  mod0,
+  scope = formula(mod1),
+  trace = FALSE,
+  direction = "forward",
+  k = log(nrow(Hitters_train))
+)
 
-Ainsi on peut obtenir l'erreur de prédiction via le RMSEP pour les 2 modèles et les comparer avec les valeurs obtenues à l'exercice 6 (lien).
+hat_Hitters_test_mod_step <- predict(mod_step, Hitters_test)
+rmsep_mod_step <- sqrt(mean((
+  hat_Hitters_test_mod_step - Hitters_test$Salary
+) ** 2))
 
-```{r, echo=FALSE}
-library(pls)
 
 ## PCR
-res.pcr = NULL
-for(i in 1:100){
-  # modele PCR
-  pcr.fit = pcr(Salary~., data = Hitters_train, scale = TRUE, validation = "CV", segments = 10)
-  # RMSEP
-  RMSEP.cv = RMSEP(pcr.fit,'CV')$val[,,]
+########################
+mod_pcr <- pcr(
+  Salary ~ .,
+  scale = TRUE,
+  data = Hitters_train,
+  validation = "CV",
+  segments = 10
+)
+ncomp.rmsep_pcr <- which.min(RMSEP(mod_pcr, estimate = c("CV"))$val["CV", , ]) -
+  1
+hat_Hitters_test_mod_pcr <- predict(mod_pcr, Hitters_test, ncomp = (which.min(RMSEP(
+  mod_pcr, estimate = c("CV")
+)$val["CV", , ]) - 1))
+rmsep_mod_pcr <- sqrt(mean((
+  hat_Hitters_test_mod_pcr - Hitters_test$Salary
+) ** 2))
+
+## PLS
+########################
+mod_pls <- plsr(
+  Salary ~ .,
+  scale = TRUE,
+  data = Hitters_train,
+  validation = "CV",
+  segments = 10
+)
+ncomp.rmsep_pls <- which.min(RMSEP(mod_pls, estimate = c("CV"))$val["CV", , ]) -
+  1
+hat_df_test_salary.pls <- predict(mod_pls, Hitters_test, ncomp = (which.min(RMSEP(
+  mod_pls, estimate = c("CV")
+)$val["CV", , ]) - 1))
+rmsep_mod_pls <- sqrt(mean((
+  hat_df_test_salary.pls - Hitters_test$Salary
+) ** 2))
+```
+
+```{r, fig.height=6, fig.width=8}
+methods <- c("Err_mod_step",
+             "Err_PCR",
+             "Err_PLS",
+             "Err_Ridge",
+             "Err_Lasso_glmnet")
+errors <- c(rmsep_mod_step,
+            rmsep_mod_pcr,
+            rmsep_mod_pls,
+            rmsep_ridge,
+            rmsep_lasso)
+rmsep_pred_df <- data.frame(Method = factor(methods, levels = methods), Error = round(errors, 3))
+
+p <- ggplot(rmsep_pred_df, aes(x = Method, y = Error, fill = Method)) +
+  geom_bar(stat = "identity",
+           width = 0.6,
+           color = "black") +
+  geom_text(aes(label = round(Error, 3)), fontface = "bold", vjust = -1.5, size = 6) +
+  scale_fill_viridis_d() +
+  ylim(0, 450) +
+  theme_minimal() +
+  labs(title = "Erreur pour les différentes méthodes", x = "Méthode", y = "Erreur") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+p
+```
+
+```{r}
+rmsep_pred_df %>% DT::datatable()
+```
+
+:::: success-header
+::: success-icon
+:::
+
+Résultats
+::::
+
+::: success
+On peut voir ici que c'est la méthode **Ridge** qui minimise l'erreur de prédiction.
+:::
+
+
+\
+
+Pour confirmer ou contredire nos résultats, il convient maintenant de tester les méthodes $K$ fois pour btenir $K$ erreurs de prédictions et ainsi regarder la méthode qui, en moyenne, va minimiser cette erreur tout en prenant en compte la variance des erreurs.
+```{r}
+K <- 10
+n <- nrow(Hitters_Without_NA)
+seg <- pls::cvsegments(n, K)
+err_step <- NULL
+err_pcr <- NULL
+err_pls <- NULL
+err_ridge <- NULL
+err_lasso <- NULL
+err_lars <- NULL
+for (i in 1:K) {
+  test <- seg[[i]]
+  mod0 <- lm(Salary ~ 0, data = Hitters_Without_NA, subset = -test)
+  mod1 <- lm(Salary ~ ., data = Hitters_Without_NA, subset = -test)
+  mod_step <- step(
+    mod0,
+    scope = formula(mod1),
+    direction = "forward",
+    k = log(n),
+    trace = 0
+  )
+  mod_step_pred <- predict(mod_step, Hitters_Without_NA[test, ])
+  err_step[i] <- sqrt(mean((mod_step_pred - Hitters_Without_NA[test, 19])^2, na.rm =
+                            T))
   
-  # On stocke les resultats
-  res.pcr = cbind(res.pcr, RMSEP.cv)
+  pcr.fit <- pcr(
+    Salary ~ .,
+    data = Hitters_Without_NA,
+    scale = TRUE,
+    subset = -test,
+    validation = "CV",
+    segments = 10
+  )
+  nb_comp <- which.min(RMSEP(pcr.fit, 'CV')$val[, , 1:10])
+  pcr.pred <- predict(pcr.fit, Hitters_Without_NA[test, ], ncomp = nb_comp)
+  err_pcr[i] <- sqrt(mean((pcr.pred - Hitters_Without_NA[test, 19])^2, na.rm =
+                            T))
+  
+  pls.fit <- plsr(
+    Salary ~ .,
+    data = Hitters_Without_NA,
+    subset = -test,
+    scale = TRUE,
+    validation = "CV"
+  )
+  nb_comp <- which.min(RMSEP(pls.fit, 'CV')$val[, , 1:10])
+  pls.pred <- predict(pls.fit, Hitters_Without_NA[test, ], ncomp = nb_comp)
+  err_pls[i] <- sqrt(mean((pls.pred - Hitters_Without_NA[test, 19])^2, na.rm =
+                            T))
+  
+  train.mat <- model.matrix(Salary ~ ., data = Hitters_Without_NA[-test, ])
+  train.mat <- train.mat[, -1]
+  y <- Hitters_Without_NA[-test, 19]
+  test.mat <- model.matrix(Salary ~ ., data = Hitters_Without_NA[test, ])
+  test.mat <- test.mat[, -1]
+  ytest <- Hitters_Without_NA[test, 19]
+  
+  
+  ridge.cv <- cv.glmnet(train.mat, y, alpha = 0, lambda = seq(1, 5000))
+  lambdachoisi <- ridge.cv$lambda.min
+  ridge.pred <- predict(ridge.cv, test.mat, s = lambdachoisi)
+  err_ridge[i] <- sqrt(mean((ridge.pred - Hitters_Without_NA[test, 19])^2, na.rm =
+                              T))
+  
+  
+  lasso.cv <- cv.glmnet(train.mat, y, alpha = 1)
+  lasso.pred <- predict(lasso.cv, test.mat, s = lasso.cv$lambda.min)
+  err_lasso[i] <- sqrt(mean((lasso.pred - Hitters_Without_NA[test, 19])^2, na.rm =
+                              T))
+  
+  # lars.cv <- cv.lars(train.mat, y)
+  # choix <- lars.cv$index[which.min(lars.cv$cv)]
+  # temp <- lars(train.mat, y)
+  # lars.pred <- predict(temp, train.mat, s=choix, mode='fraction')$fit
+  # err_lars[i] <- sqrt(mean((lars.pred - Hitters_Without_NA[test,19])^2, na.rm=T))
+  
 }
-pcr.mean.cv = apply(res.pcr, MARGIN = 1, FUN = mean)
 
-pcr.fit_final = pcr(Salary~., data = Hitters_train, ncomp = which.min(pcr.mean.cv)-1, scale = TRUE, validation = "CV", segments = 10 )
-
-
-# PLS
-res.pls = NULL
-for(i in 1:100){
-  pls.fit = plsr(Salary~., data = Hitters_train, scale = TRUE, validation = "CV", segments = 10)
-  # RMSEP
-  RMSEP.cv = RMSEP(pls.fit,'CV')$val[,,]
-  # On stocke les resultats
-  res.pls = cbind(res.pls, RMSEP.cv)
-}
-
-pls.mean.cv = apply(res.pls, MARGIN = 1, FUN = mean) 
-pls.fit_final = plsr(Salary~., data = Hitters_train, ncomp = which.min(pls.mean.cv)-1, scale = TRUE, validation = "CV", segments = 10 )
+err_pred_df <- cbind(err_step, err_pcr, err_pls, err_ridge, err_lasso) %>% as.data.frame()
+colnames(err_pred_df) <- c("Err_mod.step", "Err_PCR", "Err_PLS", "Err_Ridge", "Err_Lasso_glmnet")
+```
 
 
-
-# faire une selec forwise-stepwise avec critere BIC sur train puis rmsep sur test
-mod0=lm(Salary~0, data=Hitters_train)
-mod_full=lm(Salary~., data=Hitters_train)
-mod.step = step(mod0, scope = formula(mod_full), trace = FALSE, direction = "both", k = log(nrow(Hitters_train)))
-
-hat_df_test_mod.step = predict(mod.step, Hitters_test)
-rmsep_mod.step = sqrt(mean((hat_df_test_mod.step - Hitters_test$Salary)**2))
-
-
+```{r, message=FALSE, warning=FALSE, fig.height=6, fig.width=8}
+my_interactive_boxplot(err_pred_df)
 ```
 
 ```{r}
-rmsep_pred_df <- data.frame("prediction Ridge" = err_ridge, "prediction Lasso" = err_lasso) 
-rownames(rmsep_pred_df) <- "RMSEP"
-rmsep_pred_df 
+methods <- c("Err_mod.step",
+             "Err_PCR",
+             "Err_PLS",
+             "Err_Ridge",
+             "Err_Lasso_glmnet")
+errors.mean <- sapply(list(err_step, err_pcr, err_pls, err_ridge, err_lasso), function(x) mean(x))
+errors.median <- sapply(list(err_step, err_pcr, err_pls, err_ridge, err_lasso), function(x) median(x))
+q1_values <- sapply(list(err_step, err_pcr, err_pls, err_ridge, err_lasso), function(x) quantile(x, 0.25))
+q3_values <- sapply(list(err_step, err_pcr, err_pls, err_ridge, err_lasso), function(x) quantile(x, 0.75))
+iq_values <- q3_values - q1_values
+err.mean_pred_df <- data.frame(
+  Method = methods,
+  Mean_Error = round(errors.mean, 3),
+  Median_Error = round(errors.median, 3),
+  InterQartile_Error = round(iq_values, 3)
+)
+err.mean_pred_df %>% DT::datatable()
 ```
 
-```{r}
-err_vect = c(err_lasso, err_ridge, rmsep_mod.step, min(RMSEP(pls.fit_final,'CV')$val[,,]), min(RMSEP(pcr.fit_final,'CV')$val[,,]))
-plot(err_vect, type = "h", main = "erreur pour les différentes méthodes")
-points(err_vect, col=1:6)
-legend("topright", 
-       legend=c("Lasso_lars", "Lasso_glmnet", "Ridge", "mod.step", "pls", "pcr"),
-       pch = 1,
-       col = 1:6)
-```
+:::: success-header
+::: success-icon
+:::
+
+Résultats
+::::
+
+::: success
+En analysant les résultats, on constate que la méthode **Ridge** minimise à la fois l'erreur moyenne et l'erreur médiane, suivie de près par la méthode **PCR**, puis **Lasso**. En revanche, les valeurs d'erreurs sont moins variables pour la méthode **Lasso**, suivie de **Ridge**, et enfin **PLSR**.
+
+Cela suggère que, pour choisir la méthode la plus efficace dans notre contexte, il convient de trouver un bon compromis entre la réduction de l'erreur moyenne et la faible variabilité des erreurs. Dans ce cas, les méthodes **Ridge** et **Lasso** semblent offrir le meilleur équilibre. Le choix final pourrait alors dépendre de la préférence accordée à une méthode qui minimise les fluctuations des erreurs.
+:::
+
+::: callout-note 
+Pour les curieux, il pourra être intéressant de faire varier la valeur de $K$ et ainsi remarquer que les méthodes les plus performantes ne sont pas toujours les mêmes.
+:::
 
 # Conclusion
+
+En conclusion, nous avons pu observer l'efficacité des méthodes **Ridge** et **Lasso** par rapport à **PCR**, **PLSR** et la **sélection forward**. Ces deux dernières méthodes se distinguent par une capacité à minimiser les erreurs moyennes tout en offrant une stabilité dans les prédictions.\
+
+Cependant, il est important de noter que **PCR**, **PLSR** et la **sélection forward** présentent aussi de bonnes performances et restent donc des méthodes pertinentes qui peuvent être particulièrement utiles dans certains contextes, en fonction des caractéristiques spécifiques des données et des objectifs de modélisation.\
+Ainsi, le choix de la méthode dépendra du compromis souhaité entre précision et variabilité des résultats.
 
 # Session info
 
@@ -291,245 +489,4 @@ legend("topright",
 sessioninfo::session_info(pkgs = "attached")
 ```
 
-```{r, error=TRUE}
 
-
-library(ISLR)
-
-# Découpage des données ####
-df = na.omit(Hitters)
-dim(df)
-set.seed(234)
-
-pourcentage_a_tirer = 0.75
-indices_train = sample(nrow(df), size = floor(pourcentage_a_tirer * nrow(df)))
-
-df_train = df[indices_train, ]
-dim(df_train)
-
-df_test = df[-indices_train, ] 
-dim(df_test)
-
-####
-# Création des modèles ####
-X.train = model.matrix(Salary~.,data=df_train)[,-1]
-Y.train = df_train$Salary
-
-mod.R <- glmnet(X.train, Y.train, alpha=0) ## Ridge 
-mod.R$beta[,1]
-
-mod.L <- glmnet(X.train, Y.train, alpha=1) ## Lasso
-mod.L$beta[,1]
-
-par(mfrow=c(2,2))
-plot(mod.R, label=TRUE, main = "Ridge")  
-plot(mod.R, xvar="lambda",label=TRUE, main = "Ridge")
-
-plot(mod.L, label=TRUE, main = "Lasso")  
-plot(mod.L, xvar="lambda",label=TRUE, main = "Lasso")
-par(mfrow=c(1,1))
-
-
-####
-# Sélectionn des paramètres de régularisation ####
-
-ridgeCV <- cv.glmnet(X.train, Y.train, alpha=0)
-lassoCV <- cv.glmnet(X.train, Y.train, alpha=1)
-
-par(mfrow=c(1,2))
-plot(ridgeCV, main = "Ridge")
-
-plot(lassoCV, main = "Lasso")
-par(mfrow=c(1,1))
-
-ridgeCV$lambda.min
-ridgeCV$lambda.1se
-
-lassoCV$lambda.min
-lassoCV$lambda.1se
-
-
-####
-# Prédiction de la variable cible pour de nouveaux individus ####
-X.test = model.matrix(Salary~.,data=df_test)[,-1]
-Y.test = df_test$Salary
-
-pred.ridge_min = predict(ridgeCV, newx = X.test, s="lambda.min")
-# predict(ridgeCV, newx = X.test, s="lambda.1se")
-err_ridge = sqrt(mean((pred.ridge_min - Y.test)^2, na.rm=T))
-err_ridge
-# 345.5415
-
-pred.lasso_min = predict(lassoCV, newx = X.test, s="lambda.min")
-# predict(lassoCV, newx = X.test, s="lambda.1se")
-err_lasso = sqrt(mean((pred.lasso_min - Y.test)^2, na.rm=T))
-err_lasso
-# 349.1404
-
-####
-# Lasso avec lars ####
-library(lars)
-lars.cv = cv.lars(X.train, Y.train)
-choix = lars.cv$index[which.min(lars.cv$cv)]
-temp = lars(X.train, Y.train)
-plot(temp) # chemin lasso
-coef(temp, s=choix, mode='fraction') 
-#le resultat est diff qu'avec glmnet parce que le choix de lambda est diff
-#attention: les lambda ne sont pas normalise pareil dans glmnet et dans lars
-#cela n'a pas de sens d'utiliser le lambda choisi par glmnet dans lars et inversement
-#cf le poly section 4.3.3 pour une explication
-
-
-lars.pred = predict(temp, X.train, s=choix, mode='fraction')$fit
-err_lars = sqrt(mean((lars.pred - Y.test)^2, na.rm=T))
-err_lars
-# 499.6627
-
-
-
-####
-# Reprenons les modèles sélectionnés à l'Exo 6 ####
-library(pls)
-
-## PCR
-res.pcr = NULL
-for(i in 1:100){
-  # modele PCR
-  pcr.fit = pcr(Salary~., data = df, scale = TRUE, subset = indices_train, validation = "CV", segments = 10)
-  # RMSEP
-  RMSEP.cv = RMSEP(pcr.fit,'CV')$val[,,]
-  
-  # On stocke les resultats
-  res.pcr = cbind(res.pcr, RMSEP.cv)
-}
-pcr.mean.cv = apply(res.pcr, MARGIN = 1, FUN = mean)
-
-pcr.fit_final = pcr(Salary~., data = df, ncomp = which.min(pcr.mean.cv)-1, scale = TRUE, subset = indices_train, validation = "CV", segments = 10 )
-
-min(RMSEP(pcr.fit_final,'CV')$val[,,])
-#  345.3995
-which.min(RMSEP(pcr.fit_final,'CV')$val[,,])
-# 16 comps
-
-# PLS
-res.pls = NULL
-for(i in 1:100){
-  pls.fit = plsr(Salary~., data = df, scale = TRUE, subset = indices_train, validation = "CV", segments = 10)
-  # RMSEP
-  RMSEP.cv = RMSEP(pls.fit,'CV')$val[,,]
-  # On stocke les resultats
-  res.pls = cbind(res.pls, RMSEP.cv)
-}
-
-pls.mean.cv = apply(res.pls, MARGIN = 1, FUN = mean) 
-pls.fit_final = plsr(Salary~., data = df, ncomp = which.min(pls.mean.cv)-1, scale = TRUE, subset = indices_train, validation = "CV", segments = 10 )
-
-min(RMSEP(pls.fit_final,'CV')$val[,,])
-# 346.1336
-which.min(RMSEP(pls.fit_final,'CV')$val[,,])
-# 8 comps
-
-
-# faire une selec forwise-stepwise avec critere BIC sur train puis rmsep sur test
-mod0=lm(Salary~0, data=df_train)
-mod_full=lm(Salary~., data=df_train)
-mod.step = step(mod0, scope = formula(mod_full), trace = FALSE, direction = "both", k = log(nrow(Hitters_train)))
-
-hat_df_test_mod.step = predict(mod.step, df_test)
-rmsep_mod.step = sqrt(mean((hat_df_test_mod.step - df_test$Salary)**2))
-rmsep_mod.step
-# 370.2405
-
-
-####
-
-
-
-
-err_vect = c(err_lars, err_lasso, err_ridge, rmsep_mod.step, min(RMSEP(pls.fit_final,'CV')$val[,,]), min(RMSEP(pcr.fit_final,'CV')$val[,,]))
-plot(err_vect, type = "h", main = "erreur pour les différentes méthodes")
-points(err_vect, col=1:6)
-legend("topright", 
-       legend=c("Lasso_lars", "Lasso_glmnet", "Ridge", "mod.step", "pls", "pcr"),
-       pch = 1,
-       col = 1:6)
-
-
-
-
-
-# Cette operation peut egalement etre repete pour avoir davantage que 10 decoupes.
-K=10
-n = nrow(df)
-seg = cvsegments(n,K) #library(pls)
-err_reg=NULL; err_pcr=NULL; err_pls=NULL; err_ridge=NULL; err_lasso=NULL; err_lars=NULL
-for(i in 1:K){
-  cat(i)
-  
-  test=seg[[i]]
-  reg=lm(Salary~., data=df, subset=-test)
-  reg0=lm(Salary~0,data=df, subset=-test)
-  resfwd=step(reg0, scope=formula(reg), direction="forward", k=log(n), trace=0)
-  reg.pred=predict(resfwd, df[test,])
-  err_reg[i]=sqrt(mean((reg.pred - df[test,19])^2, na.rm=T))
-  
-  pcr.fit=pcr(Salary~., data=df,scale=TRUE,subset=-test,validation="CV",segments=10)
-  nbcomp=which.min(RMSEP(pcr.fit,'CV')$val[,,1:10])
-  pcr.pred=predict(pcr.fit,df[test,],ncomp=nbcomp)
-  err_pcr[i]=sqrt(mean((pcr.pred-df[test,19])^2,na.rm=T))
-  
-  pls.fit=plsr(Salary~., data=df,subset=-test,scale=TRUE, validation="CV")
-  nbcomp=which.min(RMSEP(pls.fit,'CV')$val[,,1:10])
-  pls.pred=predict(pls.fit,df[test,],ncomp=nbcomp)
-  err_pls[i]=sqrt(mean((pls.pred-df[test,19])^2,na.rm=T))
-  
-  train.mat=model.matrix(Salary~.,data=df[-test,])
-  train.mat=train.mat[,-1]
-  y=df[-test,19]
-  test.mat=model.matrix(Salary~.,data=df[test,])
-  test.mat=test.mat[,-1]
-  ytest=df[test,19]
-  
-  
-  ridge.cv=cv.glmnet(train.mat,y,alpha=0,lambda=seq(1,5000))
-  lambdachoisi=ridge.cv$lambda.min
-  ridge.pred=predict(ridge.cv,test.mat,s=lambdachoisi)
-  err_ridge[i]=sqrt(mean((ridge.pred-df[test,19])^2,na.rm=T))
-  
-  
-  lasso.cv=cv.glmnet(train.mat,y,alpha=1)
-  lasso.pred=predict(lasso.cv,test.mat,s=lasso.cv$lambda.min)
-  err_lasso[i]=sqrt(mean((lasso.pred-df[test,19])^2,na.rm=T))
-  
-  lars.cv = cv.lars(train.mat, y)
-  choix = lars.cv$index[which.min(lars.cv$cv)]
-  temp = lars(train.mat, y)
-  lars.pred = predict(temp, train.mat, s=choix, mode='fraction')$fit
-  err_lars[i] = sqrt(mean((lars.pred - df[test,19])^2, na.rm=T))
-  
-}
-
-
-boxplot(err_reg,err_pcr,err_pls,err_ridge,err_lasso, err_lars,
-        names=c('reg','pcr','pls','ridge','lasso', 'lasso_lars'), 
-        col=2:8, 
-        main="Erreurs des différentes méthodes")
-#abline(h = median(err_pcr), col='red')
-
-mean(err_reg)
-mean(err_pcr)
-mean(err_pls)
-mean(err_ridge)
-mean(err_lasso) # moyenne pas toujours la plus basse (change en relancant)
-mean(err_lars)
-
-# On ne constate pas de grandes differences.
-# Finalement la reg avec selection forward (ici 6 var retenues) est pas mal.
-# Ce n'est pas illogique :
-#    - le jeu de donnees n'est pas de tres grande dimension
-#    - les methodes de reduction de dimension et contraintes
-#      n'apportent pas grand chose
-
-
-
-```
