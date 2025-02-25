@@ -18,7 +18,7 @@ number-sections: false
 editor: visual
 categories: ["Régression linéaire", "Sélection automatique"]
 image: "/img/baseball.png"
-description: "Il s'agit d'une première utilisation des méthodes de regression avec selection de variable via des approches stepwise sur des données de baseball"
+description: "Il s'agit d'une première utilisation des méthodes de régression avec selection de variable via des approches stepwise sur des données de baseball"
 ---
 
 # Intervenant.e.s
@@ -54,7 +54,7 @@ library(gridExtra)
 ## Fonctions
 
 ::: panel-tabset
-### boxplot
+### Boxplot
 
 ```{r}
 my_boxplot <- function(data) {
@@ -69,6 +69,7 @@ my_boxplot <- function(data) {
     theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotation des étiquettes
 }
 ```
+
 
 ### barplot
 
@@ -642,7 +643,7 @@ Pour tenter de trouver un meilleur ajustment, il est important d'analyser d'avan
 
 On obtient alors pour chacune de nos variable une valeur qui, plus elle est élevé, témoigne de la multicolinéarité entre nos variables explicatives.
 
-```{r, fig.height=10, fig.width=16}
+```{r, fig.height=12, fig.width=20}
 vif(mod1) 
 my_VIFplot(vif(mod1))
 ```
@@ -769,7 +770,7 @@ Best_model(selec_auto, criteria_df)
 
 ### Backward
 
-Cette fois ci on va regarder en sélection backward. D'abord, on fait à nouveau avec la fonction regsubset.
+Cette fois ci on va regarder en sélection backward. D'abord, on fait à nouveau avec la fonction *`regsubset`*.
 
 ::::::::: panel-tabset
 #### Modèle
@@ -847,7 +848,7 @@ Best_model(selec_back, criteria_df)
 
 On peut également utiliser la fonction *`step`* de la library *`{stats}`*. Pour cela, on part du plus gros modèle défini précédemment par *mod1.*
 
-La fonction *`step`* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
+La fonction *`step`* nous propose quel critère nous voulons utiliser pour la sélection entre le *BIC*, *AIC* et $C_p$.
 
 ::: panel-tabset
 #### BIC
@@ -905,7 +906,7 @@ Résultats
 ::::
 
 ::: success
-Avec la fonction *`step`* nous avons le modèle utilisant le critère BIC qui nous permet d'avoir toutes nos variables significatives (sauf l'*intercept* ce qui pourrait nous donner envie de faire des modèles sans).
+Avec la fonction *`step`* nous avons le modèle utilisant le critère *BIC* qui nous permet d'avoir toutes nos variables significatives (sauf l'*intercept* ce qui pourrait nous donner envie de faire des modèles sans).
 
 Par contre, nos valeurs de $R^2$ et $R^2_{adjusted}$ sont encore assez faible pour considérer ces modèles comme étant de très bonne qualité.
 :::
@@ -917,12 +918,12 @@ Aussi, si on veut comparer le modèle initial et le modèle final, on peut utili
 anova(mod0, modselect_back_bic, test = "Chisq")
 ```
 
-De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère BIC) propose un meilleur ajustement que celui sans variable.
+De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère *BIC*) propose un meilleur ajustement que celui sans variable.
 :::
 
 ### Forward
 
-Cette fois ci on va regarder en sélection *forward*. D'abord, on fait à nouveau avec la fonction regsubset.
+Cette fois ci on va regarder en sélection *forward*. D'abord, on fait à nouveau avec la fonction *`regsubset`*.
 
 ::::::::: panel-tabset
 #### Modèle
@@ -1000,7 +1001,7 @@ Best_model(selec_forw, criteria_df)
 
 On peut également utiliser la fonction *`step`* de la library *`{stats}`*. Cette fois ci il faut définir en modèle de départ le plus petit modèle (celui composé seulement de l'intercept).
 
-La fonction *`step`* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
+La fonction *`step`* nous propose quel critère nous voulons utiliser pour la sélection entre le *BIC*, *AIC* et $C_p$.
 
 ::: panel-tabset
 #### BIC
@@ -1057,7 +1058,7 @@ Résultats
 ::::
 
 ::: success
-Avec la fonction *`step`* nous avons le modèle utilisant le critère BIC qui nous permet d'avoir toutes nos variables significatives (sauf l'*intercept* ce qui pourrait nous donner envie de faire des modèles sans).
+Avec la fonction *`step`* nous avons le modèle utilisant le critère *BIC* qui nous permet d'avoir toutes nos variables significatives (sauf l'*intercept* ce qui pourrait nous donner envie de faire des modèles sans).
 
 Par contre, nos valeurs de $R^2$ et $R^2_{adjusted}$ sont encore assez faible pour considérer ces modèles comme étant de très bonne qualité.
 :::
@@ -1069,12 +1070,12 @@ Aussi, si on veut comparer le modèle initial et le modèle final, on peut utili
 anova(mod0, modselect_forw_bic, test = "Chisq")
 ```
 
-De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère BIC) propose un meilleur ajustement que celui sans variable.
+De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère *BIC*) propose un meilleur ajustement que celui sans variable.
 :::
 
-### Stepwise
+### Both
 
-Maintenant on va regarder en sélection *stepwise*. D'abord, on fait à nouveau avec la fonction regsubset.
+Maintenant on va regarder en sélection *both*. D'abord, on fait à nouveau avec la fonction *`regsubset`*.
 
 ::::::::: panel-tabset
 #### Modèle
@@ -1152,7 +1153,7 @@ Best_model(selec_seq, criteria_df)
 
 On peut également utiliser la fonction *`step`* de la library *`{stats}`*.
 
-La fonction *`step`* nous propose quel critère nous voulons utiliser pour la sélection entre le BIC, AIC et $C_p$.
+La fonction *`step`* nous propose quel critère nous voulons utiliser pour la sélection entre le *BIC*, *AIC* et $C_p$.
 
 ::: panel-tabset
 #### BIC
@@ -1197,7 +1198,7 @@ Résultats
 ::::
 
 ::: success
-Avec la fonction *`step`* nous avons le modèle utilisant le critère BIC qui nous permet d'avoir toutes nos variables significatives (sauf l'*intercept* ce qui pourrait nous donner envie de faire des modèles sans).
+Avec la fonction *`step`* nous avons le modèle utilisant le critère *BIC* qui nous permet d'avoir toutes nos variables significatives (sauf l'*intercept* ce qui pourrait nous donner envie de faire des modèles sans).
 
 Par contre, nos valeurs de $R^2$ et $R^2_{adjusted}$ sont encore assez faible pour considérer ces modèles comme étant de très bonne qualité.
 :::
@@ -1209,7 +1210,7 @@ Aussi, si on veut comparer le modèle initial et le modèle final, on peut utili
 anova(mod0, modselect_seq_bic, test = "Chisq")
 ```
 
-De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère BIC) propose un meilleur ajustement que celui sans variable.
+De manière logique on voit donc tout de même que le modèle avec nos variable explicatives sélectionnées (ici celui avec selection via le critère *BIC*) propose un meilleur ajustement que celui sans variable.
 :::
 :::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1226,7 +1227,7 @@ cat(round(r2-summary(selec_seq)$rsq) %>% mean(),
     round(bic-summary(selec_seq)$bic) %>% mean())
 ```
 
-on voit une grosse différence seulement pour le BIC donc regardons plus en détail via les représentations visuelles de l'évolution du critère.
+on voit une grosse différence seulement pour le *BIC* donc regardons plus en détail via les représentations visuelles de l'évolution du critère.
 
 ```{r, fig.height=14, fig.width=26}
 grid.arrange(Criteria_plot(bic, crit_name = "BIC"),
@@ -1238,9 +1239,9 @@ On voit que les valeurs sont différentes mais en fait le comportement est ident
 
 # Conclusion
 
-À la lumière des résultats de notre analyse, on peut envisager le modèle *both* car bien qu'il n'ait pas montré de grandes améliorations en termes de $R^2$ et $R^2_{adjusted}$, il permet de réduire le nombre de variables tout en maintenant celles qui sont significatives. Ce modèle est donc plus parcimonieux tout en conservant des variables importantes. Cependant, une réflexion supplémentaire pourrait être menée sur l'éventuelle suppression de l'*intercept*, ce qui nécessiterait une validation supplémentaire.
+À la lumière des résultats de notre analyse, on peut envisager le modèle *both* car bien qu'il n'ait pas montré de grandes améliorations en termes de $R^2$ et $R^2_{adjusted}$, il a une démarche plus "souple" pour permettre de réduire le nombre de variables tout en maintenant celles qui sont significatives. Ce modèle est donc plus parcimonieux tout en conservant des variables importantes. Cependant, une réflexion supplémentaire pourrait être menée sur l'éventuelle suppression de l'*intercept*, ce qui nécessiterait une validation supplémentaire.
 
-En ce qui concerne le choix final du modèle, on peut opter pour celui qui maximise le critère BIC, ce qui nous mène à un modèle avec 6 variables. Le BIC est particulièrement utile pour privilégier un modèle plus simple et plus parcimonieux, ce qui est un atout lorsqu'on cherche à éviter un surajustement. Toutefois, il est important de noter que la qualité de l'ajustement n'est pas optimale, ce qui suggère qu'il pourrait manquer certaines informations pour expliquer pleinement la variable cible (le salaire).
+En ce qui concerne le choix final du modèle, on peut opter pour celui qui maximise le critère *BIC*, ce qui nous mène à un modèle avec 6 variables. Le *BIC* est particulièrement utile pour privilégier un modèle plus simple et plus parcimonieux, ce qui est un atout lorsqu'on cherche à éviter un surajustement. Toutefois, il est important de noter que la qualité de l'ajustement n'est pas optimale, ce qui suggère qu'il pourrait manquer certaines informations pour expliquer pleinement la variable cible (le salaire).
 
 Enfin, la validité interne est un aspect crucial qui n'a pas été suffisamment exploré dans cette analyse. Il aurait été pertinent de vérifier que toutes les hypothèses sous-jacentes des modèles étaient satisfaites. Cela aurait permis de renforcer la robustesse de nos résultats et de garantir que les conclusions qu'on sont fiables.
 
