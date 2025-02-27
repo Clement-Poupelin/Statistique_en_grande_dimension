@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2025-02-20">
 <meta name="description" content="Utilisation des précédentes techniques de selections de variable et de validation croisée dans le cadre de données de grandes dimension avec le jeu de données Caravan">
 
-<title>Statistique en grande dimension - Exercice 04</title>
+<title>Exercice 4 – Statistique en grande dimension</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,7 +25,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -36,7 +36,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -85,7 +85,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -94,6 +100,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -107,10 +114,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="https://www.univ-nantes.fr/" class="navbar-brand navbar-brand-logo">
     <img src="../img/logo_univ_nantes_complet.png" alt="" class="navbar-logo">
     </a>
@@ -119,80 +126,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../TP_StatGdeDim.pdf" rel="" target=""><i class="bi bi-file-earmark-font-fill" role="img">
+    <a class="nav-link" href="../TP_StatGdeDim.pdf"> <i class="bi bi-file-earmark-font-fill" role="img">
 </i> 
- <span class="menu-text">Feuille de TP</span></a>
+<span class="menu-text">Feuille de TP</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="https://clement-poupelin.github.io/Statistique_en_grande_dimension/" rel="" target="">
- <span class="menu-text">Home</span></a>
+    <a class="nav-link" href="https://clement-poupelin.github.io/Statistique_en_grande_dimension/"> 
+<span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-github" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-github" role="link" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-github" role="img">
 </i> 
  <span class="menu-text"></span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-bi-github">    
         <li>
-    <a class="dropdown-item" href="https://github.com/Clement-Poupelin" rel="" target="">
+    <a class="dropdown-item" href="https://github.com/Clement-Poupelin">
  <span class="dropdown-text">Clément Poupelin</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://github.com/nonomtrt" rel="" target="">
+    <a class="dropdown-item" href="https://github.com/nonomtrt">
  <span class="dropdown-text">Noémie Matrat</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-linkedin" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-linkedin" role="link" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-linkedin" role="img">
 </i> 
  <span class="menu-text"></span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-bi-linkedin">    
         <li>
-    <a class="dropdown-item" href="http://www.linkedin.com/in/cl%C3%A9ment-poupelin-7675311a7/" rel="" target="">
+    <a class="dropdown-item" href="http://www.linkedin.com/in/cl%C3%A9ment-poupelin-7675311a7/">
  <span class="dropdown-text">Clément Poupelin</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://www.linkedin.com/in/no%C3%A9mie-matrat-86a34a200/" rel="" target="">
+    <a class="dropdown-item" href="https://www.linkedin.com/in/no%C3%A9mie-matrat-86a34a200/">
  <span class="dropdown-text">Noémie Matrat</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item compact">
-    <a class="nav-link" href="mailto:clementjc.poupelin@gmail.com" rel="" target=""><i class="bi bi-envelope" role="img">
+    <a class="nav-link" href="mailto:clementjc.poupelin@gmail.com"> <i class="bi bi-envelope" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="http://clement-poupelin.github.io/" rel="" target=""><i class="bi bi-person-circle" role="img">
+    <a class="nav-link" href="http://clement-poupelin.github.io/"> <i class="bi bi-person-circle" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.instagram.com/clement__poupelin" rel="" target=""><i class="bi bi-instagram" role="img">
+    <a class="nav-link" href="https://www.instagram.com/clement__poupelin"> <i class="bi bi-instagram" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
+          </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -260,6 +267,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+
 <section id="setup" class="level1">
 <h1>Setup</h1>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
@@ -267,8 +275,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Données</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ISLR)         <span class="co"># Caravan data </span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)        <span class="co"># manipulation des données</span></span>
@@ -293,8 +301,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>my_boxplot <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Transformer les données en format long pour ggplot</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  data_long <span class="ot">&lt;-</span> reshape2<span class="sc">::</span><span class="fu">melt</span>(data)</span>
@@ -314,8 +322,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>my_VIFplot <span class="ot">&lt;-</span> <span class="cf">function</span>(vif) {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  vif_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Variable =</span> <span class="fu">names</span>(vif), <span class="at">VIF =</span> vif)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -364,8 +372,8 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <p>Les détails sur l’information représentée par nos différentes variables se trouvent sur <a href="http://www.liacs.nl/~putten/library/cc2000/data.html">cette page</a>. Le détail ne sera donc pas afficher ici car un peu trop long mais je vous invite à jeter un oeil pour mieux comprendre les données.</p>
 <p>Aussi, à la vu des dimensions, on se passera d’afficher le <em>summary()</em>. Mais n’oublions pas de vérifier s’il y a des valeurs manquantes.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Y-at-il des valeurs manquantes : "</span>, <span class="fu">anyNA</span>(Caravan))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -382,12 +390,16 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <p>On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">my_boxplot</span>(Caravan)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_04_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="1536"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_04_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="1536"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="success-header">
@@ -401,12 +413,16 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 </div>
 <p>Ainsi, ssi l’on veut mieux voir la distribution de nos variables, on peut enlever <em>MOSTYPE</em>.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">my_boxplot</span>(Caravan[,<span class="sc">-</span><span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_04_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="1536"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_04_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="1536"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -417,8 +433,8 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data_subset <span class="ot">&lt;-</span> Caravan[,<span class="dv">1</span><span class="sc">:</span><span class="dv">43</span>]</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>data_long <span class="ot">&lt;-</span> reshape2<span class="sc">::</span><span class="fu">melt</span>(<span class="fu">as.matrix</span>(data_subset))</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -432,7 +448,11 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_04_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_04_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="success-header">
@@ -474,8 +494,8 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <p>Avec une Analyse en Composantes Principales (PCA) on peut regarder un peu le comportement de nos données.</p>
 <p>En effet, Cette méthode respose sur la transformation des variables d’origine en nouvelles variables non corrélées, appelées composantes principales, qui capturent successivement la plus grande variance possible des données.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>res_pca <span class="ot">&lt;-</span> FactoMineR<span class="sc">::</span><span class="fu">PCA</span>(Caravan, </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">quali.sup =</span> <span class="fu">c</span>(<span class="fu">which</span>(<span class="fu">colnames</span>(Caravan) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Purchase"</span>))),</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">graph =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -488,8 +508,8 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <p>Tout d’abord, on peut commencer par regarder le pourcentage de variance expliqué par nos différentes composantes principales.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_eig</span>(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  res_pca,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ncp =</span> <span class="dv">15</span>,</span>
@@ -501,7 +521,11 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_04_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_04_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="success-header">
@@ -519,8 +543,8 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <p>Ainsi, des individus proches sur le graphique ont des caractéristiques similaires par rapport aux variables utilisées.</p>
 <p>Puis, le placement d’un individu en fonction des axes peut permettre de savoir comment le jouer se caractérise par rapport aux variables qui contribuent le plus à ces axes.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_pca_ind</span>(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  res_pca,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="st">"none"</span>,</span>
@@ -531,7 +555,11 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_04_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="768"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_04_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="success-header">
@@ -554,8 +582,8 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <li><p>Si l’angle est proche de 90°, alors les variables ne sont pas corrélées</p></li>
 </ul>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_pca_var</span>(</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  res_pca,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.var =</span> <span class="st">"cos2"</span>,</span>
@@ -564,7 +592,11 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_04_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="1152"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_04_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="success-header">
@@ -590,8 +622,8 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <h2 class="anchored" data-anchor-id="modèle-brut">Modèle brut</h2>
 <p>Ajustons un modèle de régression logistique modélisant la probabilité de souscrire une assurance caravane en fonction de toutes les autres variables à disposition</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Caravan<span class="sc">$</span>Purchase<span class="sc">~</span>.,</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> binomial,</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                Caravan)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -599,8 +631,8 @@ A savoir que les données sociodémographiques sont dérivées des codes postaux
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: glm.fit: des probabilités ont été ajustées numériquement à 0 ou 1</code></pre>
 </div>
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -711,12 +743,16 @@ Number of Fisher Scoring iterations: 17</code></pre>
 <p>on a ici un modèle avec beaucoup de variable. Mais si on analyse le summary, on constate que seulement 6 varaibales sont significative.</p>
 <p>Regardons un peu le VIF pour toutes les variables.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">my_VIFplot</span>(<span class="fu">vif</span>(mod1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_04_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="2688"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_04_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="2688"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>On constate la présence de beaucoup de variables avec un VIF très élevé et donc une forte colinéarité indiquant bien qu’il va falloir sélectionner les variables à garder dans notre modèle.</p>
@@ -763,8 +799,8 @@ Number of Fisher Scoring iterations: 17</code></pre>
 <p>Après toute ces modélisations, rappelons nous tout de même l’objectif de l’assureur est de démarcher des clients de manière ciblée pour leurs faire souscrire une assurance caravane. On pourrait alors de demander : s’il démarchait les clients de façon aléatoire, sans tenir compte de leurs caractéristiques, quel serait environ son taux de réussite ?</p>
 <p>Pour cela il suffit juste de ce rappeler du pourcentage donné précédemment qui nous disait la proportion de oui actuellement.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">table</span>(Caravan<span class="sc">$</span>Purchase)<span class="sc">*</span><span class="dv">100</span><span class="sc">/</span><span class="fu">nrow</span>(Caravan), <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -784,8 +820,8 @@ Number of Fisher Scoring iterations: 17</code></pre>
 <section id="session-info" class="level1">
 <h1>Session info</h1>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">pkgs =</span> <span class="st">"attached"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -820,8 +856,8 @@ Number of Fisher Scoring iterations: 17</code></pre>
 </div>
 </div>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>car <span class="ot">&lt;-</span> Caravan</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 3 --------------------------------------------------------------</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -855,8 +891,8 @@ Number of Fisher Scoring iterations: 17</code></pre>
 </details>
 </div>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 4 --------------------------------------------------------------</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>mod_start <span class="ot">=</span> <span class="fu">glm</span>(car<span class="sc">$</span>Purchase<span class="sc">~</span><span class="dv">1</span>, <span class="at">family =</span> binomial, car)</span>
@@ -966,8 +1002,8 @@ Number of Fisher Scoring iterations: 17</code></pre>
 </details>
 </div>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 5 --------------------------------------------------------------</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#demarche aléatoire conduit à 6%</span></span>
@@ -1048,8 +1084,8 @@ Number of Fisher Scoring iterations: 17</code></pre>
 </details>
 </div>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 7 --------------------------------------------------------------</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimer le taux de réussite du démarchage (c’est à dire le nombre de vrais</span></span>
@@ -1083,8 +1119,8 @@ Number of Fisher Scoring iterations: 17</code></pre>
 </details>
 </div>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 8 --------------------------------------------------------------</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1107,8 +1143,8 @@ Number of Fisher Scoring iterations: 17</code></pre>
 </details>
 </div>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 9 --------------------------------------------------------------</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimer de même le taux de réussite pour chaque modèle lorsque le seuil</span></span>
@@ -1215,6 +1251,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
   }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
   const toggleColorMode = (alternate) => {
     // Switch the stylesheets
     const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
@@ -1281,13 +1344,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -1322,18 +1387,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1365,7 +1419,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -1417,10 +1493,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/clement-poupelin\.github\.io\/Statistique_en_grande_dimension\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1430,8 +1523,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1443,7 +1545,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1487,6 +1712,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1512,6 +1738,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1599,21 +1851,21 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## Packages</span></span>
 <span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, warning=FALSE}</span></span>
-<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Données</span></span>
-<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ISLR)         <span class="co"># Caravan data </span></span>
-<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)        <span class="co"># manipulation des données</span></span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a><span class="in"># Données</span></span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a><span class="in">library(ISLR)         # Caravan data </span></span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)        # manipulation des données</span></span>
 <span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)          <span class="co"># pour VIF</span></span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a><span class="in">library(car)          # pour VIF</span></span>
 <span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Plots</span></span>
-<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a><span class="do">## ggplot</span></span>
-<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a><span class="in"># Plots</span></span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a><span class="in">## ggplot</span></span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a><span class="in">library(gridExtra)</span></span>
 <span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a></span>
@@ -1703,7 +1955,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-138"><a href="#cb28-138" aria-hidden="true" tabindex="-1"></a>On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.</span>
 <span id="cb28-139"><a href="#cb28-139" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-140"><a href="#cb28-140" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, fig.height=8, fig.width=16}</span></span>
-<span id="cb28-141"><a href="#cb28-141" aria-hidden="true" tabindex="-1"></a><span class="fu">my_boxplot</span>(Caravan)</span>
+<span id="cb28-141"><a href="#cb28-141" aria-hidden="true" tabindex="-1"></a><span class="in">my_boxplot(Caravan)</span></span>
 <span id="cb28-142"><a href="#cb28-142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-143"><a href="#cb28-143" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-144"><a href="#cb28-144" aria-hidden="true" tabindex="-1"></a>:::: success-header</span>
@@ -1720,7 +1972,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-155"><a href="#cb28-155" aria-hidden="true" tabindex="-1"></a>Ainsi, ssi l'on veut mieux voir la distribution de nos variables, on peut enlever *MOSTYPE*.</span>
 <span id="cb28-156"><a href="#cb28-156" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-157"><a href="#cb28-157" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, fig.height=8, fig.width=16}</span></span>
-<span id="cb28-158"><a href="#cb28-158" aria-hidden="true" tabindex="-1"></a><span class="fu">my_boxplot</span>(Caravan[,<span class="sc">-</span><span class="dv">1</span>])</span>
+<span id="cb28-158"><a href="#cb28-158" aria-hidden="true" tabindex="-1"></a><span class="in">my_boxplot(Caravan[,-1])</span></span>
 <span id="cb28-159"><a href="#cb28-159" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-160"><a href="#cb28-160" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-161"><a href="#cb28-161" aria-hidden="true" tabindex="-1"></a><span class="fu">## Heatmap</span></span>
@@ -1833,14 +2085,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-274"><a href="#cb28-274" aria-hidden="true" tabindex="-1"></a>Puis, le placement d'un individu en fonction des axes peut permettre de savoir comment le jouer se caractérise par rapport aux variables qui contribuent le plus à ces axes.</span>
 <span id="cb28-275"><a href="#cb28-275" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-276"><a href="#cb28-276" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=6, fig.width=8}</span></span>
-<span id="cb28-277"><a href="#cb28-277" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_pca_ind</span>(</span>
-<span id="cb28-278"><a href="#cb28-278" aria-hidden="true" tabindex="-1"></a>  res_pca,</span>
-<span id="cb28-279"><a href="#cb28-279" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="st">"none"</span>,</span>
-<span id="cb28-280"><a href="#cb28-280" aria-hidden="true" tabindex="-1"></a>  <span class="at">pointsize =</span> <span class="dv">2</span>,</span>
-<span id="cb28-281"><a href="#cb28-281" aria-hidden="true" tabindex="-1"></a>  <span class="at">habillage =</span> <span class="fu">as.factor</span>(Caravan<span class="sc">$</span>Purchase),</span>
-<span id="cb28-282"><a href="#cb28-282" aria-hidden="true" tabindex="-1"></a>  <span class="at">addEllipses =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb28-283"><a href="#cb28-283" aria-hidden="true" tabindex="-1"></a>  <span class="at">ellipse.level =</span> <span class="fl">0.95</span></span>
-<span id="cb28-284"><a href="#cb28-284" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-277"><a href="#cb28-277" aria-hidden="true" tabindex="-1"></a><span class="in">factoextra::fviz_pca_ind(</span></span>
+<span id="cb28-278"><a href="#cb28-278" aria-hidden="true" tabindex="-1"></a><span class="in">  res_pca,</span></span>
+<span id="cb28-279"><a href="#cb28-279" aria-hidden="true" tabindex="-1"></a><span class="in">  label = "none",</span></span>
+<span id="cb28-280"><a href="#cb28-280" aria-hidden="true" tabindex="-1"></a><span class="in">  pointsize = 2,</span></span>
+<span id="cb28-281"><a href="#cb28-281" aria-hidden="true" tabindex="-1"></a><span class="in">  habillage = as.factor(Caravan$Purchase),</span></span>
+<span id="cb28-282"><a href="#cb28-282" aria-hidden="true" tabindex="-1"></a><span class="in">  addEllipses = TRUE,</span></span>
+<span id="cb28-283"><a href="#cb28-283" aria-hidden="true" tabindex="-1"></a><span class="in">  ellipse.level = 0.95</span></span>
+<span id="cb28-284"><a href="#cb28-284" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb28-285"><a href="#cb28-285" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-286"><a href="#cb28-286" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-287"><a href="#cb28-287" aria-hidden="true" tabindex="-1"></a>:::: success-header</span>
@@ -1869,12 +2121,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-310"><a href="#cb28-310" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Si l’angle est proche de 90°, alors les variables ne sont pas corrélées</span>
 <span id="cb28-311"><a href="#cb28-311" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-312"><a href="#cb28-312" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=10, fig.width=12}</span></span>
-<span id="cb28-313"><a href="#cb28-313" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_pca_var</span>(</span>
-<span id="cb28-314"><a href="#cb28-314" aria-hidden="true" tabindex="-1"></a>  res_pca,</span>
-<span id="cb28-315"><a href="#cb28-315" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.var =</span> <span class="st">"cos2"</span>,</span>
-<span id="cb28-316"><a href="#cb28-316" aria-hidden="true" tabindex="-1"></a>  <span class="at">gradient.cols =</span> <span class="fu">rainbow</span>(<span class="at">n =</span> <span class="dv">8</span>, <span class="at">start =</span> .<span class="dv">6</span>, <span class="at">end =</span> .<span class="dv">9</span>),</span>
-<span id="cb28-317"><a href="#cb28-317" aria-hidden="true" tabindex="-1"></a>  <span class="at">repel =</span> <span class="cn">TRUE</span></span>
-<span id="cb28-318"><a href="#cb28-318" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-313"><a href="#cb28-313" aria-hidden="true" tabindex="-1"></a><span class="in">factoextra::fviz_pca_var(</span></span>
+<span id="cb28-314"><a href="#cb28-314" aria-hidden="true" tabindex="-1"></a><span class="in">  res_pca,</span></span>
+<span id="cb28-315"><a href="#cb28-315" aria-hidden="true" tabindex="-1"></a><span class="in">  col.var = "cos2",</span></span>
+<span id="cb28-316"><a href="#cb28-316" aria-hidden="true" tabindex="-1"></a><span class="in">  gradient.cols = rainbow(n = 8, start = .6, end = .9),</span></span>
+<span id="cb28-317"><a href="#cb28-317" aria-hidden="true" tabindex="-1"></a><span class="in">  repel = TRUE</span></span>
+<span id="cb28-318"><a href="#cb28-318" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb28-319"><a href="#cb28-319" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-320"><a href="#cb28-320" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-321"><a href="#cb28-321" aria-hidden="true" tabindex="-1"></a></span>
@@ -1911,7 +2163,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-354"><a href="#cb28-354" aria-hidden="true" tabindex="-1"></a>Regardons un peu le VIF pour toutes les variables.</span>
 <span id="cb28-355"><a href="#cb28-355" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-356"><a href="#cb28-356" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=22, fig.width=28}</span></span>
-<span id="cb28-357"><a href="#cb28-357" aria-hidden="true" tabindex="-1"></a><span class="fu">my_VIFplot</span>(<span class="fu">vif</span>(mod1))</span>
+<span id="cb28-357"><a href="#cb28-357" aria-hidden="true" tabindex="-1"></a><span class="in">my_VIFplot(vif(mod1))</span></span>
 <span id="cb28-358"><a href="#cb28-358" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-359"><a href="#cb28-359" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-360"><a href="#cb28-360" aria-hidden="true" tabindex="-1"></a>On constate la présence de beaucoup de variables avec un VIF très élevé et donc une forte colinéarité indiquant bien qu'il va falloir sélectionner les variables à garder dans notre modèle.</span>
@@ -1963,355 +2215,360 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-410"><a href="#cb28-410" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-411"><a href="#cb28-411" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-412"><a href="#cb28-412" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, eval=FALSE}</span></span>
-<span id="cb28-413"><a href="#cb28-413" aria-hidden="true" tabindex="-1"></a>car <span class="ot">&lt;-</span> Caravan</span>
-<span id="cb28-414"><a href="#cb28-414" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 3 --------------------------------------------------------------</span></span>
+<span id="cb28-413"><a href="#cb28-413" aria-hidden="true" tabindex="-1"></a><span class="in">car &lt;- Caravan</span></span>
+<span id="cb28-414"><a href="#cb28-414" aria-hidden="true" tabindex="-1"></a><span class="in"># Question 3 --------------------------------------------------------------</span></span>
 <span id="cb28-415"><a href="#cb28-415" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-416"><a href="#cb28-416" aria-hidden="true" tabindex="-1"></a>mod_full <span class="ot">=</span> <span class="fu">glm</span>(car<span class="sc">$</span>Purchase<span class="sc">~</span>., <span class="at">family =</span> binomial, car)</span>
-<span id="cb28-417"><a href="#cb28-417" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_full)</span>
+<span id="cb28-416"><a href="#cb28-416" aria-hidden="true" tabindex="-1"></a><span class="in">mod_full = glm(car$Purchase~., family = binomial, car)</span></span>
+<span id="cb28-417"><a href="#cb28-417" aria-hidden="true" tabindex="-1"></a><span class="in">summary(mod_full)</span></span>
 <span id="cb28-418"><a href="#cb28-418" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-419"><a href="#cb28-419" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
-<span id="cb28-420"><a href="#cb28-420" aria-hidden="true" tabindex="-1"></a><span class="fu">vif</span>(mod_full) <span class="co"># quelques de vif elevé </span></span>
+<span id="cb28-419"><a href="#cb28-419" aria-hidden="true" tabindex="-1"></a><span class="in">library(car)</span></span>
+<span id="cb28-420"><a href="#cb28-420" aria-hidden="true" tabindex="-1"></a><span class="in">vif(mod_full) # quelques de vif elevé </span></span>
 <span id="cb28-421"><a href="#cb28-421" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-422"><a href="#cb28-422" aria-hidden="true" tabindex="-1"></a><span class="do">## courbe ROC</span></span>
-<span id="cb28-423"><a href="#cb28-423" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pROC)</span>
-<span id="cb28-424"><a href="#cb28-424" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PresenceAbsence) </span>
-<span id="cb28-425"><a href="#cb28-425" aria-hidden="true" tabindex="-1"></a>df_rocr_mod <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow=</span><span class="fu">nrow</span>(<span class="fu">as.matrix</span>(car<span class="sc">$</span>Purchase)), <span class="at">ncol =</span> <span class="dv">3</span>)</span>
-<span id="cb28-426"><a href="#cb28-426" aria-hidden="true" tabindex="-1"></a>df_rocr_mod[,<span class="dv">1</span>] <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(<span class="fu">as.matrix</span>(car<span class="sc">$</span>Purchase))</span>
-<span id="cb28-427"><a href="#cb28-427" aria-hidden="true" tabindex="-1"></a>df_rocr_mod[,<span class="dv">2</span>] <span class="ot">=</span> <span class="fu">as.numeric</span>(mod_full<span class="sc">$</span>y)</span>
-<span id="cb28-428"><a href="#cb28-428" aria-hidden="true" tabindex="-1"></a>df_rocr_mod[,<span class="dv">3</span>] <span class="ot">=</span> mod_full<span class="sc">$</span>fitted</span>
-<span id="cb28-429"><a href="#cb28-429" aria-hidden="true" tabindex="-1"></a>df_rocr_mod <span class="ot">=</span> <span class="fu">as.data.frame</span>(df_rocr_mod)</span>
-<span id="cb28-430"><a href="#cb28-430" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(df_rocr_mod)[[<span class="dv">2</span>]] <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'ID'</span>, <span class="st">"Observed"</span>, <span class="st">"Predicted"</span>)</span>
-<span id="cb28-431"><a href="#cb28-431" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(df_rocr_mod)[[<span class="dv">2</span>]]</span>
-<span id="cb28-432"><a href="#cb28-432" aria-hidden="true" tabindex="-1"></a><span class="co"># matrice de confusion </span></span>
-<span id="cb28-433"><a href="#cb28-433" aria-hidden="true" tabindex="-1"></a><span class="fu">cmx</span>(df_rocr_mod, <span class="at">threshold =</span> <span class="fl">0.5</span>)</span>
+<span id="cb28-422"><a href="#cb28-422" aria-hidden="true" tabindex="-1"></a><span class="in">## courbe ROC</span></span>
+<span id="cb28-423"><a href="#cb28-423" aria-hidden="true" tabindex="-1"></a><span class="in">library(pROC)</span></span>
+<span id="cb28-424"><a href="#cb28-424" aria-hidden="true" tabindex="-1"></a><span class="in">library(PresenceAbsence) </span></span>
+<span id="cb28-425"><a href="#cb28-425" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod = matrix(0, nrow=nrow(as.matrix(car$Purchase)), ncol = 3)</span></span>
+<span id="cb28-426"><a href="#cb28-426" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod[,1] = 1:nrow(as.matrix(car$Purchase))</span></span>
+<span id="cb28-427"><a href="#cb28-427" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod[,2] = as.numeric(mod_full$y)</span></span>
+<span id="cb28-428"><a href="#cb28-428" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod[,3] = mod_full$fitted</span></span>
+<span id="cb28-429"><a href="#cb28-429" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod = as.data.frame(df_rocr_mod)</span></span>
+<span id="cb28-430"><a href="#cb28-430" aria-hidden="true" tabindex="-1"></a><span class="in">dimnames(df_rocr_mod)[[2]] = c('ID', "Observed", "Predicted")</span></span>
+<span id="cb28-431"><a href="#cb28-431" aria-hidden="true" tabindex="-1"></a><span class="in">dimnames(df_rocr_mod)[[2]]</span></span>
+<span id="cb28-432"><a href="#cb28-432" aria-hidden="true" tabindex="-1"></a><span class="in"># matrice de confusion </span></span>
+<span id="cb28-433"><a href="#cb28-433" aria-hidden="true" tabindex="-1"></a><span class="in">cmx(df_rocr_mod, threshold = 0.5)</span></span>
 <span id="cb28-434"><a href="#cb28-434" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-435"><a href="#cb28-435" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcul de la specificite et de la sensibilite</span></span>
-<span id="cb28-436"><a href="#cb28-436" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity</span>(<span class="fu">cmx</span>(df_rocr_mod,<span class="at">threshold=</span><span class="fl">0.5</span>))</span>
-<span id="cb28-437"><a href="#cb28-437" aria-hidden="true" tabindex="-1"></a><span class="fu">specificity</span>(<span class="fu">cmx</span>(df_rocr_mod,<span class="at">threshold=</span><span class="fl">0.5</span>))</span>
-<span id="cb28-438"><a href="#cb28-438" aria-hidden="true" tabindex="-1"></a><span class="co"># Courbe ROC pour le modele logistique CHD</span></span>
-<span id="cb28-439"><a href="#cb28-439" aria-hidden="true" tabindex="-1"></a><span class="fu">roc.plot.calculate</span>(df_rocr_mod)</span>
-<span id="cb28-440"><a href="#cb28-440" aria-hidden="true" tabindex="-1"></a><span class="fu">auc.roc.plot</span>(df_rocr_mod) <span class="co"># graphe courbe ROC</span></span>
+<span id="cb28-435"><a href="#cb28-435" aria-hidden="true" tabindex="-1"></a><span class="in"># Calcul de la specificite et de la sensibilite</span></span>
+<span id="cb28-436"><a href="#cb28-436" aria-hidden="true" tabindex="-1"></a><span class="in">sensitivity(cmx(df_rocr_mod,threshold=0.5))</span></span>
+<span id="cb28-437"><a href="#cb28-437" aria-hidden="true" tabindex="-1"></a><span class="in">specificity(cmx(df_rocr_mod,threshold=0.5))</span></span>
+<span id="cb28-438"><a href="#cb28-438" aria-hidden="true" tabindex="-1"></a><span class="in"># Courbe ROC pour le modele logistique CHD</span></span>
+<span id="cb28-439"><a href="#cb28-439" aria-hidden="true" tabindex="-1"></a><span class="in">roc.plot.calculate(df_rocr_mod)</span></span>
+<span id="cb28-440"><a href="#cb28-440" aria-hidden="true" tabindex="-1"></a><span class="in">auc.roc.plot(df_rocr_mod) # graphe courbe ROC</span></span>
 <span id="cb28-441"><a href="#cb28-441" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-442"><a href="#cb28-442" aria-hidden="true" tabindex="-1"></a><span class="fu">auc</span>(df_rocr_mod) <span class="co"># calcul AUC </span></span>
+<span id="cb28-442"><a href="#cb28-442" aria-hidden="true" tabindex="-1"></a><span class="in">auc(df_rocr_mod) # calcul AUC </span></span>
 <span id="cb28-443"><a href="#cb28-443" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-444"><a href="#cb28-444" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-445"><a href="#cb28-445" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, eval=FALSE}</span></span>
-<span id="cb28-446"><a href="#cb28-446" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 4 --------------------------------------------------------------</span></span>
+<span id="cb28-446"><a href="#cb28-446" aria-hidden="true" tabindex="-1"></a><span class="in"># Question 4 --------------------------------------------------------------</span></span>
 <span id="cb28-447"><a href="#cb28-447" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-448"><a href="#cb28-448" aria-hidden="true" tabindex="-1"></a>mod_start <span class="ot">=</span> <span class="fu">glm</span>(car<span class="sc">$</span>Purchase<span class="sc">~</span><span class="dv">1</span>, <span class="at">family =</span> binomial, car)</span>
+<span id="cb28-448"><a href="#cb28-448" aria-hidden="true" tabindex="-1"></a><span class="in">mod_start = glm(car$Purchase~1, family = binomial, car)</span></span>
 <span id="cb28-449"><a href="#cb28-449" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-450"><a href="#cb28-450" aria-hidden="true" tabindex="-1"></a><span class="co"># AIC k = 2 </span></span>
-<span id="cb28-451"><a href="#cb28-451" aria-hidden="true" tabindex="-1"></a>mod_both_AIC <span class="ot">=</span> <span class="fu">step</span>(mod_start, <span class="at">scope =</span> <span class="fu">formula</span>(mod_full), <span class="at">trace =</span> <span class="cn">FALSE</span>, <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">k=</span><span class="dv">2</span>)</span>
+<span id="cb28-450"><a href="#cb28-450" aria-hidden="true" tabindex="-1"></a><span class="in"># AIC k = 2 </span></span>
+<span id="cb28-451"><a href="#cb28-451" aria-hidden="true" tabindex="-1"></a><span class="in">mod_both_AIC = step(mod_start, scope = formula(mod_full), trace = FALSE, direction = "both", k=2)</span></span>
 <span id="cb28-452"><a href="#cb28-452" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-453"><a href="#cb28-453" aria-hidden="true" tabindex="-1"></a><span class="co"># BIC k = log(n)</span></span>
-<span id="cb28-454"><a href="#cb28-454" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="fu">dim</span>(car)[<span class="dv">1</span>]</span>
-<span id="cb28-455"><a href="#cb28-455" aria-hidden="true" tabindex="-1"></a>mod_both_BIC <span class="ot">=</span> <span class="fu">step</span>(mod_start, <span class="at">scope =</span> <span class="fu">formula</span>(mod_full), <span class="at">trace =</span> <span class="cn">FALSE</span>, <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">k =</span> <span class="fu">log</span>(n))</span>
+<span id="cb28-453"><a href="#cb28-453" aria-hidden="true" tabindex="-1"></a><span class="in"># BIC k = log(n)</span></span>
+<span id="cb28-454"><a href="#cb28-454" aria-hidden="true" tabindex="-1"></a><span class="in">n = dim(car)[1]</span></span>
+<span id="cb28-455"><a href="#cb28-455" aria-hidden="true" tabindex="-1"></a><span class="in">mod_both_BIC = step(mod_start, scope = formula(mod_full), trace = FALSE, direction = "both", k = log(n))</span></span>
 <span id="cb28-456"><a href="#cb28-456" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-457"><a href="#cb28-457" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_both_AIC)</span>
-<span id="cb28-458"><a href="#cb28-458" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_both_BIC)</span>
+<span id="cb28-457"><a href="#cb28-457" aria-hidden="true" tabindex="-1"></a><span class="in">summary(mod_both_AIC)</span></span>
+<span id="cb28-458"><a href="#cb28-458" aria-hidden="true" tabindex="-1"></a><span class="in">summary(mod_both_BIC)</span></span>
 <span id="cb28-459"><a href="#cb28-459" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-460"><a href="#cb28-460" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-461"><a href="#cb28-461" aria-hidden="true" tabindex="-1"></a><span class="fu">vif</span>(mod_both_AIC)</span>
-<span id="cb28-462"><a href="#cb28-462" aria-hidden="true" tabindex="-1"></a><span class="fu">vif</span>(mod_both_BIC)</span>
+<span id="cb28-461"><a href="#cb28-461" aria-hidden="true" tabindex="-1"></a><span class="in">vif(mod_both_AIC)</span></span>
+<span id="cb28-462"><a href="#cb28-462" aria-hidden="true" tabindex="-1"></a><span class="in">vif(mod_both_BIC)</span></span>
 <span id="cb28-463"><a href="#cb28-463" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-464"><a href="#cb28-464" aria-hidden="true" tabindex="-1"></a><span class="co"># on a encore un peu de colinearité pour des var du modèle selec avec AIC</span></span>
-<span id="cb28-465"><a href="#cb28-465" aria-hidden="true" tabindex="-1"></a><span class="co"># plus de colinearité pour le model selec avec BIC</span></span>
+<span id="cb28-464"><a href="#cb28-464" aria-hidden="true" tabindex="-1"></a><span class="in"># on a encore un peu de colinearité pour des var du modèle selec avec AIC</span></span>
+<span id="cb28-465"><a href="#cb28-465" aria-hidden="true" tabindex="-1"></a><span class="in"># plus de colinearité pour le model selec avec BIC</span></span>
 <span id="cb28-466"><a href="#cb28-466" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-467"><a href="#cb28-467" aria-hidden="true" tabindex="-1"></a><span class="co"># Il serait preferable de garder le mod_both_BIC</span></span>
-<span id="cb28-468"><a href="#cb28-468" aria-hidden="true" tabindex="-1"></a><span class="co">#mais on peut aussi enlever les variables au vif elevé </span></span>
+<span id="cb28-467"><a href="#cb28-467" aria-hidden="true" tabindex="-1"></a><span class="in"># Il serait preferable de garder le mod_both_BIC</span></span>
+<span id="cb28-468"><a href="#cb28-468" aria-hidden="true" tabindex="-1"></a><span class="in">#mais on peut aussi enlever les variables au vif elevé </span></span>
 <span id="cb28-469"><a href="#cb28-469" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-470"><a href="#cb28-470" aria-hidden="true" tabindex="-1"></a>mod_both_AIC_2<span class="fl">.0</span> <span class="ot">=</span> <span class="fu">glm</span>(<span class="at">formula =</span> car<span class="sc">$</span>Purchase <span class="sc">~</span> PPERSAUT <span class="sc">+</span> MKOOPKLA <span class="sc">+</span> PBRAND <span class="sc">+</span> APLEZIER <span class="sc">+</span> </span>
-<span id="cb28-471"><a href="#cb28-471" aria-hidden="true" tabindex="-1"></a>                         MOPLLAAG <span class="sc">+</span> MBERBOER <span class="sc">+</span> MRELGE <span class="sc">+</span> PWALAND <span class="sc">+</span> AFIETS <span class="sc">+</span> MINK123M <span class="sc">+</span> </span>
-<span id="cb28-472"><a href="#cb28-472" aria-hidden="true" tabindex="-1"></a>                         MINKGEM <span class="sc">+</span> MGEMLEEF <span class="sc">+</span> PWAPART <span class="sc">+</span> ABYSTAND <span class="sc">+</span> ABRAND <span class="sc">+</span> </span>
-<span id="cb28-473"><a href="#cb28-473" aria-hidden="true" tabindex="-1"></a>                         AWERKT <span class="sc">+</span> MGODPR <span class="sc">+</span> MSKC <span class="sc">+</span> MOPLHOOG <span class="sc">+</span> MBERMIDD, <span class="at">family =</span> binomial, </span>
-<span id="cb28-474"><a href="#cb28-474" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data =</span> car)</span>
-<span id="cb28-475"><a href="#cb28-475" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_both_AIC_2<span class="fl">.0</span>)</span>
-<span id="cb28-476"><a href="#cb28-476" aria-hidden="true" tabindex="-1"></a><span class="fu">vif</span>(mod_both_AIC_2<span class="fl">.0</span>)</span>
+<span id="cb28-470"><a href="#cb28-470" aria-hidden="true" tabindex="-1"></a><span class="in">mod_both_AIC_2.0 = glm(formula = car$Purchase ~ PPERSAUT + MKOOPKLA + PBRAND + APLEZIER + </span></span>
+<span id="cb28-471"><a href="#cb28-471" aria-hidden="true" tabindex="-1"></a><span class="in">                         MOPLLAAG + MBERBOER + MRELGE + PWALAND + AFIETS + MINK123M + </span></span>
+<span id="cb28-472"><a href="#cb28-472" aria-hidden="true" tabindex="-1"></a><span class="in">                         MINKGEM + MGEMLEEF + PWAPART + ABYSTAND + ABRAND + </span></span>
+<span id="cb28-473"><a href="#cb28-473" aria-hidden="true" tabindex="-1"></a><span class="in">                         AWERKT + MGODPR + MSKC + MOPLHOOG + MBERMIDD, family = binomial, </span></span>
+<span id="cb28-474"><a href="#cb28-474" aria-hidden="true" tabindex="-1"></a><span class="in">                       data = car)</span></span>
+<span id="cb28-475"><a href="#cb28-475" aria-hidden="true" tabindex="-1"></a><span class="in">summary(mod_both_AIC_2.0)</span></span>
+<span id="cb28-476"><a href="#cb28-476" aria-hidden="true" tabindex="-1"></a><span class="in">vif(mod_both_AIC_2.0)</span></span>
 <span id="cb28-477"><a href="#cb28-477" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-478"><a href="#cb28-478" aria-hidden="true" tabindex="-1"></a><span class="co"># on analyse tout de même tout les modèle </span></span>
+<span id="cb28-478"><a href="#cb28-478" aria-hidden="true" tabindex="-1"></a><span class="in"># on analyse tout de même tout les modèle </span></span>
 <span id="cb28-479"><a href="#cb28-479" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-480"><a href="#cb28-480" aria-hidden="true" tabindex="-1"></a><span class="do">#####</span></span>
-<span id="cb28-481"><a href="#cb28-481" aria-hidden="true" tabindex="-1"></a><span class="co"># df_rocr_mod_both_AIC</span></span>
-<span id="cb28-482"><a href="#cb28-482" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_AIC <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow=</span><span class="fu">nrow</span>(<span class="fu">as.matrix</span>(car<span class="sc">$</span>Purchase)), <span class="at">ncol =</span> <span class="dv">3</span>)</span>
-<span id="cb28-483"><a href="#cb28-483" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_AIC[,<span class="dv">1</span>] <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(<span class="fu">as.matrix</span>(car<span class="sc">$</span>Purchase))</span>
-<span id="cb28-484"><a href="#cb28-484" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_AIC[,<span class="dv">2</span>] <span class="ot">=</span> <span class="fu">as.numeric</span>(mod_both_AIC<span class="sc">$</span>y)</span>
-<span id="cb28-485"><a href="#cb28-485" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_AIC[,<span class="dv">3</span>] <span class="ot">=</span> mod_both_AIC<span class="sc">$</span>fitted</span>
-<span id="cb28-486"><a href="#cb28-486" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_AIC <span class="ot">=</span> <span class="fu">as.data.frame</span>(df_rocr_mod_both_AIC)</span>
-<span id="cb28-487"><a href="#cb28-487" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(df_rocr_mod_both_AIC)[[<span class="dv">2</span>]] <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'ID'</span>, <span class="st">"Observed"</span>, <span class="st">"Predicted"</span>)</span>
-<span id="cb28-488"><a href="#cb28-488" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(df_rocr_mod_both_AIC)[[<span class="dv">2</span>]]</span>
-<span id="cb28-489"><a href="#cb28-489" aria-hidden="true" tabindex="-1"></a><span class="co"># matrice de confusion </span></span>
-<span id="cb28-490"><a href="#cb28-490" aria-hidden="true" tabindex="-1"></a><span class="fu">cmx</span>(df_rocr_mod_both_AIC, <span class="at">threshold =</span> <span class="fl">0.5</span>)</span>
+<span id="cb28-480"><a href="#cb28-480" aria-hidden="true" tabindex="-1"></a><span class="in">#####</span></span>
+<span id="cb28-481"><a href="#cb28-481" aria-hidden="true" tabindex="-1"></a><span class="in"># df_rocr_mod_both_AIC</span></span>
+<span id="cb28-482"><a href="#cb28-482" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_AIC = matrix(0, nrow=nrow(as.matrix(car$Purchase)), ncol = 3)</span></span>
+<span id="cb28-483"><a href="#cb28-483" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_AIC[,1] = 1:nrow(as.matrix(car$Purchase))</span></span>
+<span id="cb28-484"><a href="#cb28-484" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_AIC[,2] = as.numeric(mod_both_AIC$y)</span></span>
+<span id="cb28-485"><a href="#cb28-485" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_AIC[,3] = mod_both_AIC$fitted</span></span>
+<span id="cb28-486"><a href="#cb28-486" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_AIC = as.data.frame(df_rocr_mod_both_AIC)</span></span>
+<span id="cb28-487"><a href="#cb28-487" aria-hidden="true" tabindex="-1"></a><span class="in">dimnames(df_rocr_mod_both_AIC)[[2]] = c('ID', "Observed", "Predicted")</span></span>
+<span id="cb28-488"><a href="#cb28-488" aria-hidden="true" tabindex="-1"></a><span class="in">dimnames(df_rocr_mod_both_AIC)[[2]]</span></span>
+<span id="cb28-489"><a href="#cb28-489" aria-hidden="true" tabindex="-1"></a><span class="in"># matrice de confusion </span></span>
+<span id="cb28-490"><a href="#cb28-490" aria-hidden="true" tabindex="-1"></a><span class="in">cmx(df_rocr_mod_both_AIC, threshold = 0.5)</span></span>
 <span id="cb28-491"><a href="#cb28-491" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-492"><a href="#cb28-492" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcul de la specificite et de la sensibilite</span></span>
-<span id="cb28-493"><a href="#cb28-493" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity</span>(<span class="fu">cmx</span>(df_rocr_mod_both_AIC,<span class="at">threshold=</span><span class="fl">0.5</span>))</span>
-<span id="cb28-494"><a href="#cb28-494" aria-hidden="true" tabindex="-1"></a><span class="fu">specificity</span>(<span class="fu">cmx</span>(df_rocr_mod_both_AIC,<span class="at">threshold=</span><span class="fl">0.5</span>))</span>
-<span id="cb28-495"><a href="#cb28-495" aria-hidden="true" tabindex="-1"></a><span class="co"># Courbe ROC pour le modele logistique CHD</span></span>
-<span id="cb28-496"><a href="#cb28-496" aria-hidden="true" tabindex="-1"></a><span class="fu">roc.plot.calculate</span>(df_rocr_mod_both_AIC)</span>
+<span id="cb28-492"><a href="#cb28-492" aria-hidden="true" tabindex="-1"></a><span class="in"># Calcul de la specificite et de la sensibilite</span></span>
+<span id="cb28-493"><a href="#cb28-493" aria-hidden="true" tabindex="-1"></a><span class="in">sensitivity(cmx(df_rocr_mod_both_AIC,threshold=0.5))</span></span>
+<span id="cb28-494"><a href="#cb28-494" aria-hidden="true" tabindex="-1"></a><span class="in">specificity(cmx(df_rocr_mod_both_AIC,threshold=0.5))</span></span>
+<span id="cb28-495"><a href="#cb28-495" aria-hidden="true" tabindex="-1"></a><span class="in"># Courbe ROC pour le modele logistique CHD</span></span>
+<span id="cb28-496"><a href="#cb28-496" aria-hidden="true" tabindex="-1"></a><span class="in">roc.plot.calculate(df_rocr_mod_both_AIC)</span></span>
 <span id="cb28-497"><a href="#cb28-497" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-498"><a href="#cb28-498" aria-hidden="true" tabindex="-1"></a><span class="co"># df_rocr_mod_both_AIC_2.0</span></span>
-<span id="cb28-499"><a href="#cb28-499" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_AIC_2<span class="fl">.0</span> <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow=</span><span class="fu">nrow</span>(<span class="fu">as.matrix</span>(car<span class="sc">$</span>Purchase)), <span class="at">ncol =</span> <span class="dv">3</span>)</span>
-<span id="cb28-500"><a href="#cb28-500" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_AIC_2<span class="fl">.0</span>[,<span class="dv">1</span>] <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(<span class="fu">as.matrix</span>(car<span class="sc">$</span>Purchase))</span>
-<span id="cb28-501"><a href="#cb28-501" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_AIC_2<span class="fl">.0</span>[,<span class="dv">2</span>] <span class="ot">=</span> <span class="fu">as.numeric</span>(mod_both_AIC_2<span class="fl">.0</span><span class="sc">$</span>y)</span>
-<span id="cb28-502"><a href="#cb28-502" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_AIC_2<span class="fl">.0</span>[,<span class="dv">3</span>] <span class="ot">=</span> mod_both_AIC_2<span class="fl">.0</span><span class="sc">$</span>fitted</span>
-<span id="cb28-503"><a href="#cb28-503" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_AIC_2<span class="fl">.0</span> <span class="ot">=</span> <span class="fu">as.data.frame</span>(df_rocr_mod_both_AIC_2<span class="fl">.0</span>)</span>
-<span id="cb28-504"><a href="#cb28-504" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(df_rocr_mod_both_AIC_2<span class="fl">.0</span>)[[<span class="dv">2</span>]] <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'ID'</span>, <span class="st">"Observed"</span>, <span class="st">"Predicted"</span>)</span>
-<span id="cb28-505"><a href="#cb28-505" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(df_rocr_mod_both_AIC_2<span class="fl">.0</span>)[[<span class="dv">2</span>]]</span>
-<span id="cb28-506"><a href="#cb28-506" aria-hidden="true" tabindex="-1"></a><span class="co"># matrice de confusion </span></span>
-<span id="cb28-507"><a href="#cb28-507" aria-hidden="true" tabindex="-1"></a><span class="fu">cmx</span>(df_rocr_mod_both_AIC_2<span class="fl">.0</span>, <span class="at">threshold =</span> <span class="fl">0.5</span>)</span>
+<span id="cb28-498"><a href="#cb28-498" aria-hidden="true" tabindex="-1"></a><span class="in"># df_rocr_mod_both_AIC_2.0</span></span>
+<span id="cb28-499"><a href="#cb28-499" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_AIC_2.0 = matrix(0, nrow=nrow(as.matrix(car$Purchase)), ncol = 3)</span></span>
+<span id="cb28-500"><a href="#cb28-500" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_AIC_2.0[,1] = 1:nrow(as.matrix(car$Purchase))</span></span>
+<span id="cb28-501"><a href="#cb28-501" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_AIC_2.0[,2] = as.numeric(mod_both_AIC_2.0$y)</span></span>
+<span id="cb28-502"><a href="#cb28-502" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_AIC_2.0[,3] = mod_both_AIC_2.0$fitted</span></span>
+<span id="cb28-503"><a href="#cb28-503" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_AIC_2.0 = as.data.frame(df_rocr_mod_both_AIC_2.0)</span></span>
+<span id="cb28-504"><a href="#cb28-504" aria-hidden="true" tabindex="-1"></a><span class="in">dimnames(df_rocr_mod_both_AIC_2.0)[[2]] = c('ID', "Observed", "Predicted")</span></span>
+<span id="cb28-505"><a href="#cb28-505" aria-hidden="true" tabindex="-1"></a><span class="in">dimnames(df_rocr_mod_both_AIC_2.0)[[2]]</span></span>
+<span id="cb28-506"><a href="#cb28-506" aria-hidden="true" tabindex="-1"></a><span class="in"># matrice de confusion </span></span>
+<span id="cb28-507"><a href="#cb28-507" aria-hidden="true" tabindex="-1"></a><span class="in">cmx(df_rocr_mod_both_AIC_2.0, threshold = 0.5)</span></span>
 <span id="cb28-508"><a href="#cb28-508" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-509"><a href="#cb28-509" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcul de la specificite et de la sensibilite</span></span>
-<span id="cb28-510"><a href="#cb28-510" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity</span>(<span class="fu">cmx</span>(df_rocr_mod_both_AIC_2<span class="fl">.0</span>,<span class="at">threshold=</span><span class="fl">0.5</span>))</span>
-<span id="cb28-511"><a href="#cb28-511" aria-hidden="true" tabindex="-1"></a><span class="fu">specificity</span>(<span class="fu">cmx</span>(df_rocr_mod_both_AIC_2<span class="fl">.0</span>,<span class="at">threshold=</span><span class="fl">0.5</span>))</span>
-<span id="cb28-512"><a href="#cb28-512" aria-hidden="true" tabindex="-1"></a><span class="co"># Courbe ROC pour le modele logistique CHD</span></span>
-<span id="cb28-513"><a href="#cb28-513" aria-hidden="true" tabindex="-1"></a><span class="fu">roc.plot.calculate</span>(df_rocr_mod_both_AIC_2<span class="fl">.0</span>)</span>
+<span id="cb28-509"><a href="#cb28-509" aria-hidden="true" tabindex="-1"></a><span class="in"># Calcul de la specificite et de la sensibilite</span></span>
+<span id="cb28-510"><a href="#cb28-510" aria-hidden="true" tabindex="-1"></a><span class="in">sensitivity(cmx(df_rocr_mod_both_AIC_2.0,threshold=0.5))</span></span>
+<span id="cb28-511"><a href="#cb28-511" aria-hidden="true" tabindex="-1"></a><span class="in">specificity(cmx(df_rocr_mod_both_AIC_2.0,threshold=0.5))</span></span>
+<span id="cb28-512"><a href="#cb28-512" aria-hidden="true" tabindex="-1"></a><span class="in"># Courbe ROC pour le modele logistique CHD</span></span>
+<span id="cb28-513"><a href="#cb28-513" aria-hidden="true" tabindex="-1"></a><span class="in">roc.plot.calculate(df_rocr_mod_both_AIC_2.0)</span></span>
 <span id="cb28-514"><a href="#cb28-514" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-515"><a href="#cb28-515" aria-hidden="true" tabindex="-1"></a><span class="co"># df_rocr_mod_both_BIC</span></span>
-<span id="cb28-516"><a href="#cb28-516" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_BIC <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow=</span><span class="fu">nrow</span>(<span class="fu">as.matrix</span>(car<span class="sc">$</span>Purchase)), <span class="at">ncol =</span> <span class="dv">3</span>)</span>
-<span id="cb28-517"><a href="#cb28-517" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_BIC[,<span class="dv">1</span>] <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(<span class="fu">as.matrix</span>(car<span class="sc">$</span>Purchase))</span>
-<span id="cb28-518"><a href="#cb28-518" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_BIC[,<span class="dv">2</span>] <span class="ot">=</span> <span class="fu">as.numeric</span>(mod_both_BIC<span class="sc">$</span>y)</span>
-<span id="cb28-519"><a href="#cb28-519" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_BIC[,<span class="dv">3</span>] <span class="ot">=</span> mod_both_BIC<span class="sc">$</span>fitted</span>
-<span id="cb28-520"><a href="#cb28-520" aria-hidden="true" tabindex="-1"></a>df_rocr_mod_both_BIC <span class="ot">=</span> <span class="fu">as.data.frame</span>(df_rocr_mod_both_BIC)</span>
-<span id="cb28-521"><a href="#cb28-521" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(df_rocr_mod_both_BIC)[[<span class="dv">2</span>]] <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'ID'</span>, <span class="st">"Observed"</span>, <span class="st">"Predicted"</span>)</span>
-<span id="cb28-522"><a href="#cb28-522" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(df_rocr_mod_both_BIC)[[<span class="dv">2</span>]]</span>
-<span id="cb28-523"><a href="#cb28-523" aria-hidden="true" tabindex="-1"></a><span class="co"># matrice de confusion </span></span>
-<span id="cb28-524"><a href="#cb28-524" aria-hidden="true" tabindex="-1"></a><span class="fu">cmx</span>(df_rocr_mod_both_BIC, <span class="at">threshold =</span> <span class="fl">0.5</span>)</span>
+<span id="cb28-515"><a href="#cb28-515" aria-hidden="true" tabindex="-1"></a><span class="in"># df_rocr_mod_both_BIC</span></span>
+<span id="cb28-516"><a href="#cb28-516" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_BIC = matrix(0, nrow=nrow(as.matrix(car$Purchase)), ncol = 3)</span></span>
+<span id="cb28-517"><a href="#cb28-517" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_BIC[,1] = 1:nrow(as.matrix(car$Purchase))</span></span>
+<span id="cb28-518"><a href="#cb28-518" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_BIC[,2] = as.numeric(mod_both_BIC$y)</span></span>
+<span id="cb28-519"><a href="#cb28-519" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_BIC[,3] = mod_both_BIC$fitted</span></span>
+<span id="cb28-520"><a href="#cb28-520" aria-hidden="true" tabindex="-1"></a><span class="in">df_rocr_mod_both_BIC = as.data.frame(df_rocr_mod_both_BIC)</span></span>
+<span id="cb28-521"><a href="#cb28-521" aria-hidden="true" tabindex="-1"></a><span class="in">dimnames(df_rocr_mod_both_BIC)[[2]] = c('ID', "Observed", "Predicted")</span></span>
+<span id="cb28-522"><a href="#cb28-522" aria-hidden="true" tabindex="-1"></a><span class="in">dimnames(df_rocr_mod_both_BIC)[[2]]</span></span>
+<span id="cb28-523"><a href="#cb28-523" aria-hidden="true" tabindex="-1"></a><span class="in"># matrice de confusion </span></span>
+<span id="cb28-524"><a href="#cb28-524" aria-hidden="true" tabindex="-1"></a><span class="in">cmx(df_rocr_mod_both_BIC, threshold = 0.5)</span></span>
 <span id="cb28-525"><a href="#cb28-525" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-526"><a href="#cb28-526" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcul de la specificite et de la sensibilite</span></span>
-<span id="cb28-527"><a href="#cb28-527" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity</span>(<span class="fu">cmx</span>(df_rocr_mod_both_BIC,<span class="at">threshold=</span><span class="fl">0.5</span>))</span>
-<span id="cb28-528"><a href="#cb28-528" aria-hidden="true" tabindex="-1"></a><span class="fu">specificity</span>(<span class="fu">cmx</span>(df_rocr_mod_both_BIC,<span class="at">threshold=</span><span class="fl">0.5</span>))</span>
-<span id="cb28-529"><a href="#cb28-529" aria-hidden="true" tabindex="-1"></a><span class="co"># Courbe ROC pour le modele logistique CHD</span></span>
-<span id="cb28-530"><a href="#cb28-530" aria-hidden="true" tabindex="-1"></a><span class="fu">roc.plot.calculate</span>(df_rocr_mod_both_BIC)</span>
-<span id="cb28-531"><a href="#cb28-531" aria-hidden="true" tabindex="-1"></a><span class="do">#####</span></span>
+<span id="cb28-526"><a href="#cb28-526" aria-hidden="true" tabindex="-1"></a><span class="in"># Calcul de la specificite et de la sensibilite</span></span>
+<span id="cb28-527"><a href="#cb28-527" aria-hidden="true" tabindex="-1"></a><span class="in">sensitivity(cmx(df_rocr_mod_both_BIC,threshold=0.5))</span></span>
+<span id="cb28-528"><a href="#cb28-528" aria-hidden="true" tabindex="-1"></a><span class="in">specificity(cmx(df_rocr_mod_both_BIC,threshold=0.5))</span></span>
+<span id="cb28-529"><a href="#cb28-529" aria-hidden="true" tabindex="-1"></a><span class="in"># Courbe ROC pour le modele logistique CHD</span></span>
+<span id="cb28-530"><a href="#cb28-530" aria-hidden="true" tabindex="-1"></a><span class="in">roc.plot.calculate(df_rocr_mod_both_BIC)</span></span>
+<span id="cb28-531"><a href="#cb28-531" aria-hidden="true" tabindex="-1"></a><span class="in">#####</span></span>
 <span id="cb28-532"><a href="#cb28-532" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-533"><a href="#cb28-533" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
-<span id="cb28-534"><a href="#cb28-534" aria-hidden="true" tabindex="-1"></a><span class="fu">auc.roc.plot</span>(df_rocr_mod, <span class="at">main =</span> <span class="st">"ROC plot mod_full"</span>)</span>
-<span id="cb28-535"><a href="#cb28-535" aria-hidden="true" tabindex="-1"></a><span class="fu">auc.roc.plot</span>(df_rocr_mod_both_AIC, <span class="at">main =</span> <span class="st">"ROC plot mod_both_AIC"</span>)</span>
-<span id="cb28-536"><a href="#cb28-536" aria-hidden="true" tabindex="-1"></a><span class="fu">auc.roc.plot</span>(df_rocr_mod_both_AIC_2<span class="fl">.0</span>, <span class="at">main =</span> <span class="st">"ROC plot mod_both_AIC_2.0"</span>)</span>
-<span id="cb28-537"><a href="#cb28-537" aria-hidden="true" tabindex="-1"></a><span class="fu">auc.roc.plot</span>(df_rocr_mod_both_BIC, <span class="at">main =</span> <span class="st">"ROC plot mod_both_BIC"</span>) <span class="co"># graphe courbe ROC</span></span>
-<span id="cb28-538"><a href="#cb28-538" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb28-533"><a href="#cb28-533" aria-hidden="true" tabindex="-1"></a><span class="in">par(mfrow=c(2,2))</span></span>
+<span id="cb28-534"><a href="#cb28-534" aria-hidden="true" tabindex="-1"></a><span class="in">auc.roc.plot(df_rocr_mod, main = "ROC plot mod_full")</span></span>
+<span id="cb28-535"><a href="#cb28-535" aria-hidden="true" tabindex="-1"></a><span class="in">auc.roc.plot(df_rocr_mod_both_AIC, main = "ROC plot mod_both_AIC")</span></span>
+<span id="cb28-536"><a href="#cb28-536" aria-hidden="true" tabindex="-1"></a><span class="in">auc.roc.plot(df_rocr_mod_both_AIC_2.0, main = "ROC plot mod_both_AIC_2.0")</span></span>
+<span id="cb28-537"><a href="#cb28-537" aria-hidden="true" tabindex="-1"></a><span class="in">auc.roc.plot(df_rocr_mod_both_BIC, main = "ROC plot mod_both_BIC") # graphe courbe ROC</span></span>
+<span id="cb28-538"><a href="#cb28-538" aria-hidden="true" tabindex="-1"></a><span class="in">par(mfrow=c(1,1))</span></span>
 <span id="cb28-539"><a href="#cb28-539" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-540"><a href="#cb28-540" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-541"><a href="#cb28-541" aria-hidden="true" tabindex="-1"></a><span class="co"># On veut maximiser l'AUC, ici les valeurs sont très proche </span></span>
-<span id="cb28-542"><a href="#cb28-542" aria-hidden="true" tabindex="-1"></a><span class="co"># donc on peut quand même préféré le petit modele (BIC) meme si AUC plus faible</span></span>
+<span id="cb28-541"><a href="#cb28-541" aria-hidden="true" tabindex="-1"></a><span class="in"># On veut maximiser l'AUC, ici les valeurs sont très proche </span></span>
+<span id="cb28-542"><a href="#cb28-542" aria-hidden="true" tabindex="-1"></a><span class="in"># donc on peut quand même préféré le petit modele (BIC) meme si AUC plus faible</span></span>
 <span id="cb28-543"><a href="#cb28-543" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-544"><a href="#cb28-544" aria-hidden="true" tabindex="-1"></a><span class="do">## On compare avec anova </span></span>
+<span id="cb28-544"><a href="#cb28-544" aria-hidden="true" tabindex="-1"></a><span class="in">## On compare avec anova </span></span>
 <span id="cb28-545"><a href="#cb28-545" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-546"><a href="#cb28-546" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod_full, mod_both_AIC_2<span class="fl">.0</span>)</span>
+<span id="cb28-546"><a href="#cb28-546" aria-hidden="true" tabindex="-1"></a><span class="in">anova(mod_full, mod_both_AIC_2.0)</span></span>
 <span id="cb28-547"><a href="#cb28-547" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-548"><a href="#cb28-548" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod_full, mod_both_BIC)</span>
+<span id="cb28-548"><a href="#cb28-548" aria-hidden="true" tabindex="-1"></a><span class="in">anova(mod_full, mod_both_BIC)</span></span>
 <span id="cb28-549"><a href="#cb28-549" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-550"><a href="#cb28-550" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod_both_AIC_2<span class="fl">.0</span>, mod_both_BIC)</span>
-<span id="cb28-551"><a href="#cb28-551" aria-hidden="true" tabindex="-1"></a><span class="do">### INTERPRETATION ???????</span></span>
+<span id="cb28-550"><a href="#cb28-550" aria-hidden="true" tabindex="-1"></a><span class="in">anova(mod_both_AIC_2.0, mod_both_BIC)</span></span>
+<span id="cb28-551"><a href="#cb28-551" aria-hidden="true" tabindex="-1"></a><span class="in">### INTERPRETATION ???????</span></span>
 <span id="cb28-552"><a href="#cb28-552" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-553"><a href="#cb28-553" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-554"><a href="#cb28-554" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, error=TRUE, eval=FALSE}</span></span>
-<span id="cb28-555"><a href="#cb28-555" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 5 --------------------------------------------------------------</span></span>
+<span id="cb28-555"><a href="#cb28-555" aria-hidden="true" tabindex="-1"></a><span class="in"># Question 5 --------------------------------------------------------------</span></span>
 <span id="cb28-556"><a href="#cb28-556" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-557"><a href="#cb28-557" aria-hidden="true" tabindex="-1"></a><span class="co">#demarche aléatoire conduit à 6%</span></span>
-<span id="cb28-558"><a href="#cb28-558" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">table</span>(car<span class="sc">$</span>Purchase)<span class="sc">*</span><span class="dv">100</span><span class="sc">/</span>n, <span class="dv">3</span>)</span>
+<span id="cb28-557"><a href="#cb28-557" aria-hidden="true" tabindex="-1"></a><span class="in">#demarche aléatoire conduit à 6%</span></span>
+<span id="cb28-558"><a href="#cb28-558" aria-hidden="true" tabindex="-1"></a><span class="in">round(table(car$Purchase)*100/n, 3)</span></span>
 <span id="cb28-559"><a href="#cb28-559" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-560"><a href="#cb28-560" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-561"><a href="#cb28-561" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 6 --------------------------------------------------------------</span></span>
+<span id="cb28-561"><a href="#cb28-561" aria-hidden="true" tabindex="-1"></a><span class="in"># Question 6 --------------------------------------------------------------</span></span>
 <span id="cb28-562"><a href="#cb28-562" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-563"><a href="#cb28-563" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-564"><a href="#cb28-564" aria-hidden="true" tabindex="-1"></a>mod_full.probs<span class="ot">=</span><span class="fu">predict</span>(mod_full, car, <span class="at">type=</span><span class="st">"response"</span>)<span class="co"># --&gt; donne les proba</span></span>
-<span id="cb28-565"><a href="#cb28-565" aria-hidden="true" tabindex="-1"></a>mod_full.pred<span class="ot">=</span><span class="fu">rep</span>(<span class="st">"No"</span>, n)</span>
-<span id="cb28-566"><a href="#cb28-566" aria-hidden="true" tabindex="-1"></a>mod_full.pred[mod_full.probs<span class="sc">&gt;</span>.<span class="dv">5</span>]<span class="ot">=</span><span class="st">"Yes"</span></span>
-<span id="cb28-567"><a href="#cb28-567" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(mod_full.pred, car<span class="sc">$</span>Purchase)</span>
-<span id="cb28-568"><a href="#cb28-568" aria-hidden="true" tabindex="-1"></a><span class="co"># taux de reussitz de démarchage </span></span>
-<span id="cb28-569"><a href="#cb28-569" aria-hidden="true" tabindex="-1"></a><span class="co"># (i.e, le nb de vrais positifs par rapport au nb de positifs prédit)</span></span>
-<span id="cb28-570"><a href="#cb28-570" aria-hidden="true" tabindex="-1"></a><span class="co"># 7/(8+7) = 0.4666667</span></span>
-<span id="cb28-571"><a href="#cb28-571" aria-hidden="true" tabindex="-1"></a><span class="co"># on arrive à prévoir les souscriptions d'assurances dans 47% des cas</span></span>
-<span id="cb28-572"><a href="#cb28-572" aria-hidden="true" tabindex="-1"></a><span class="co"># (8+341)/n = 6% erreur de classification</span></span>
-<span id="cb28-573"><a href="#cb28-573" aria-hidden="true" tabindex="-1"></a><span class="co"># (7+5466)/n = 94% precision ou accuracy</span></span>
-<span id="cb28-574"><a href="#cb28-574" aria-hidden="true" tabindex="-1"></a><span class="co"># sensibility = 7/(7+341) =0.02</span></span>
-<span id="cb28-575"><a href="#cb28-575" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(mod_full.pred <span class="sc">==</span> car<span class="sc">$</span>Purchase) <span class="co"># ne marche pas ??</span></span>
-<span id="cb28-576"><a href="#cb28-576" aria-hidden="true" tabindex="-1"></a><span class="co"># = 0</span></span>
+<span id="cb28-564"><a href="#cb28-564" aria-hidden="true" tabindex="-1"></a><span class="in">mod_full.probs=predict(mod_full, car, type="response")# --&gt; donne les proba</span></span>
+<span id="cb28-565"><a href="#cb28-565" aria-hidden="true" tabindex="-1"></a><span class="in">mod_full.pred=rep("No", n)</span></span>
+<span id="cb28-566"><a href="#cb28-566" aria-hidden="true" tabindex="-1"></a><span class="in">mod_full.pred[mod_full.probs&gt;.5]="Yes"</span></span>
+<span id="cb28-567"><a href="#cb28-567" aria-hidden="true" tabindex="-1"></a><span class="in">table(mod_full.pred, car$Purchase)</span></span>
+<span id="cb28-568"><a href="#cb28-568" aria-hidden="true" tabindex="-1"></a><span class="in"># taux de reussitz de démarchage </span></span>
+<span id="cb28-569"><a href="#cb28-569" aria-hidden="true" tabindex="-1"></a><span class="in"># (i.e, le nb de vrais positifs par rapport au nb de positifs prédit)</span></span>
+<span id="cb28-570"><a href="#cb28-570" aria-hidden="true" tabindex="-1"></a><span class="in"># 7/(8+7) = 0.4666667</span></span>
+<span id="cb28-571"><a href="#cb28-571" aria-hidden="true" tabindex="-1"></a><span class="in"># on arrive à prévoir les souscriptions d'assurances dans 47% des cas</span></span>
+<span id="cb28-572"><a href="#cb28-572" aria-hidden="true" tabindex="-1"></a><span class="in"># (8+341)/n = 6% erreur de classification</span></span>
+<span id="cb28-573"><a href="#cb28-573" aria-hidden="true" tabindex="-1"></a><span class="in"># (7+5466)/n = 94% precision ou accuracy</span></span>
+<span id="cb28-574"><a href="#cb28-574" aria-hidden="true" tabindex="-1"></a><span class="in"># sensibility = 7/(7+341) =0.02</span></span>
+<span id="cb28-575"><a href="#cb28-575" aria-hidden="true" tabindex="-1"></a><span class="in">mean(mod_full.pred == car$Purchase) # ne marche pas ??</span></span>
+<span id="cb28-576"><a href="#cb28-576" aria-hidden="true" tabindex="-1"></a><span class="in"># = 0</span></span>
 <span id="cb28-577"><a href="#cb28-577" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-578"><a href="#cb28-578" aria-hidden="true" tabindex="-1"></a>mod_both_AIC_2.<span class="fl">0.</span>probs<span class="ot">=</span><span class="fu">predict</span>(mod_both_AIC_2<span class="fl">.0</span>, car, <span class="at">type=</span><span class="st">"response"</span>)<span class="co"># --&gt; donne les proba</span></span>
-<span id="cb28-579"><a href="#cb28-579" aria-hidden="true" tabindex="-1"></a>mod_both_AIC_2.<span class="fl">0.</span>pred<span class="ot">=</span><span class="fu">rep</span>(<span class="st">"No"</span>, n)</span>
-<span id="cb28-580"><a href="#cb28-580" aria-hidden="true" tabindex="-1"></a>mod_both_AIC_2.<span class="fl">0.</span>pred[mod_both_AIC_2.<span class="fl">0.</span>probs<span class="sc">&gt;</span>.<span class="dv">5</span>]<span class="ot">=</span><span class="st">"Yes"</span></span>
-<span id="cb28-581"><a href="#cb28-581" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(mod_both_AIC_2.<span class="fl">0.</span>pred, car<span class="sc">$</span>Purchase)</span>
-<span id="cb28-582"><a href="#cb28-582" aria-hidden="true" tabindex="-1"></a><span class="co"># refaire l'analyse du dessus </span></span>
+<span id="cb28-578"><a href="#cb28-578" aria-hidden="true" tabindex="-1"></a><span class="in">mod_both_AIC_2.0.probs=predict(mod_both_AIC_2.0, car, type="response")# --&gt; donne les proba</span></span>
+<span id="cb28-579"><a href="#cb28-579" aria-hidden="true" tabindex="-1"></a><span class="in">mod_both_AIC_2.0.pred=rep("No", n)</span></span>
+<span id="cb28-580"><a href="#cb28-580" aria-hidden="true" tabindex="-1"></a><span class="in">mod_both_AIC_2.0.pred[mod_both_AIC_2.0.probs&gt;.5]="Yes"</span></span>
+<span id="cb28-581"><a href="#cb28-581" aria-hidden="true" tabindex="-1"></a><span class="in">table(mod_both_AIC_2.0.pred, car$Purchase)</span></span>
+<span id="cb28-582"><a href="#cb28-582" aria-hidden="true" tabindex="-1"></a><span class="in"># refaire l'analyse du dessus </span></span>
 <span id="cb28-583"><a href="#cb28-583" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-584"><a href="#cb28-584" aria-hidden="true" tabindex="-1"></a>mod_both_BIC.probs<span class="ot">=</span><span class="fu">predict</span>(mod_both_BIC, car, <span class="at">type=</span><span class="st">"response"</span>)<span class="co"># --&gt; donne les proba</span></span>
-<span id="cb28-585"><a href="#cb28-585" aria-hidden="true" tabindex="-1"></a>mod_both_BIC.pred<span class="ot">=</span><span class="fu">rep</span>(<span class="st">"No"</span>, n)</span>
-<span id="cb28-586"><a href="#cb28-586" aria-hidden="true" tabindex="-1"></a>mod_both_BIC.pred[mod_both_BIC.probs<span class="sc">&gt;</span>.<span class="dv">5</span>]<span class="ot">=</span><span class="st">"Yes"</span></span>
-<span id="cb28-587"><a href="#cb28-587" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(mod_both_BIC.pred, car<span class="sc">$</span>Purchase)</span>
-<span id="cb28-588"><a href="#cb28-588" aria-hidden="true" tabindex="-1"></a><span class="co"># refaire l'analyse du dessus </span></span>
+<span id="cb28-584"><a href="#cb28-584" aria-hidden="true" tabindex="-1"></a><span class="in">mod_both_BIC.probs=predict(mod_both_BIC, car, type="response")# --&gt; donne les proba</span></span>
+<span id="cb28-585"><a href="#cb28-585" aria-hidden="true" tabindex="-1"></a><span class="in">mod_both_BIC.pred=rep("No", n)</span></span>
+<span id="cb28-586"><a href="#cb28-586" aria-hidden="true" tabindex="-1"></a><span class="in">mod_both_BIC.pred[mod_both_BIC.probs&gt;.5]="Yes"</span></span>
+<span id="cb28-587"><a href="#cb28-587" aria-hidden="true" tabindex="-1"></a><span class="in">table(mod_both_BIC.pred, car$Purchase)</span></span>
+<span id="cb28-588"><a href="#cb28-588" aria-hidden="true" tabindex="-1"></a><span class="in"># refaire l'analyse du dessus </span></span>
 <span id="cb28-589"><a href="#cb28-589" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-590"><a href="#cb28-590" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-591"><a href="#cb28-591" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-592"><a href="#cb28-592" aria-hidden="true" tabindex="-1"></a><span class="co">#  % de clients ayant une proba &gt;0.5</span></span>
-<span id="cb28-593"><a href="#cb28-593" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">sum</span>(<span class="fu">fitted.values</span>(mod_full)<span class="sc">&gt;</span><span class="fl">0.5</span>)<span class="sc">*</span><span class="dv">100</span><span class="sc">/</span>n, <span class="dv">3</span>)</span>
-<span id="cb28-594"><a href="#cb28-594" aria-hidden="true" tabindex="-1"></a><span class="co"># 0.26%</span></span>
-<span id="cb28-595"><a href="#cb28-595" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">fitted.values</span>(mod_full))</span>
-<span id="cb28-596"><a href="#cb28-596" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(<span class="fu">fitted.values</span>(mod_full), <span class="fl">0.94</span>) <span class="co"># seuil pour que ce % corresponde à environ 6% des clients</span></span>
-<span id="cb28-597"><a href="#cb28-597" aria-hidden="true" tabindex="-1"></a><span class="co"># 0.1807236 </span></span>
+<span id="cb28-592"><a href="#cb28-592" aria-hidden="true" tabindex="-1"></a><span class="in">#  % de clients ayant une proba &gt;0.5</span></span>
+<span id="cb28-593"><a href="#cb28-593" aria-hidden="true" tabindex="-1"></a><span class="in">round(sum(fitted.values(mod_full)&gt;0.5)*100/n, 3)</span></span>
+<span id="cb28-594"><a href="#cb28-594" aria-hidden="true" tabindex="-1"></a><span class="in"># 0.26%</span></span>
+<span id="cb28-595"><a href="#cb28-595" aria-hidden="true" tabindex="-1"></a><span class="in">boxplot(fitted.values(mod_full))</span></span>
+<span id="cb28-596"><a href="#cb28-596" aria-hidden="true" tabindex="-1"></a><span class="in">quantile(fitted.values(mod_full), 0.94) # seuil pour que ce % corresponde à environ 6% des clients</span></span>
+<span id="cb28-597"><a href="#cb28-597" aria-hidden="true" tabindex="-1"></a><span class="in"># 0.1807236 </span></span>
 <span id="cb28-598"><a href="#cb28-598" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-599"><a href="#cb28-599" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">sum</span>(<span class="fu">fitted.values</span>(mod_both_AIC_2<span class="fl">.0</span>)<span class="sc">&gt;</span><span class="fl">0.5</span>)<span class="sc">*</span><span class="dv">100</span><span class="sc">/</span>n, <span class="dv">3</span>)</span>
-<span id="cb28-600"><a href="#cb28-600" aria-hidden="true" tabindex="-1"></a><span class="co"># 0.223</span></span>
-<span id="cb28-601"><a href="#cb28-601" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">fitted.values</span>(mod_both_AIC_2<span class="fl">.0</span>))</span>
-<span id="cb28-602"><a href="#cb28-602" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(<span class="fu">fitted.values</span>(mod_both_AIC_2<span class="fl">.0</span>), <span class="fl">0.94</span>)</span>
-<span id="cb28-603"><a href="#cb28-603" aria-hidden="true" tabindex="-1"></a><span class="co"># 0.1759159</span></span>
+<span id="cb28-599"><a href="#cb28-599" aria-hidden="true" tabindex="-1"></a><span class="in">round(sum(fitted.values(mod_both_AIC_2.0)&gt;0.5)*100/n, 3)</span></span>
+<span id="cb28-600"><a href="#cb28-600" aria-hidden="true" tabindex="-1"></a><span class="in"># 0.223</span></span>
+<span id="cb28-601"><a href="#cb28-601" aria-hidden="true" tabindex="-1"></a><span class="in">boxplot(fitted.values(mod_both_AIC_2.0))</span></span>
+<span id="cb28-602"><a href="#cb28-602" aria-hidden="true" tabindex="-1"></a><span class="in">quantile(fitted.values(mod_both_AIC_2.0), 0.94)</span></span>
+<span id="cb28-603"><a href="#cb28-603" aria-hidden="true" tabindex="-1"></a><span class="in"># 0.1759159</span></span>
 <span id="cb28-604"><a href="#cb28-604" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-605"><a href="#cb28-605" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">sum</span>(<span class="fu">fitted.values</span>(mod_both_BIC)<span class="sc">&gt;</span><span class="fl">0.5</span>)<span class="sc">*</span><span class="dv">100</span><span class="sc">/</span>n, <span class="dv">3</span>)</span>
-<span id="cb28-606"><a href="#cb28-606" aria-hidden="true" tabindex="-1"></a><span class="co"># 0.137</span></span>
-<span id="cb28-607"><a href="#cb28-607" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">fitted.values</span>(mod_both_BIC))</span>
-<span id="cb28-608"><a href="#cb28-608" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(<span class="fu">fitted.values</span>(mod_both_BIC), <span class="fl">0.94</span>)</span>
-<span id="cb28-609"><a href="#cb28-609" aria-hidden="true" tabindex="-1"></a><span class="co"># 0.1659636 </span></span>
+<span id="cb28-605"><a href="#cb28-605" aria-hidden="true" tabindex="-1"></a><span class="in">round(sum(fitted.values(mod_both_BIC)&gt;0.5)*100/n, 3)</span></span>
+<span id="cb28-606"><a href="#cb28-606" aria-hidden="true" tabindex="-1"></a><span class="in"># 0.137</span></span>
+<span id="cb28-607"><a href="#cb28-607" aria-hidden="true" tabindex="-1"></a><span class="in">boxplot(fitted.values(mod_both_BIC))</span></span>
+<span id="cb28-608"><a href="#cb28-608" aria-hidden="true" tabindex="-1"></a><span class="in">quantile(fitted.values(mod_both_BIC), 0.94)</span></span>
+<span id="cb28-609"><a href="#cb28-609" aria-hidden="true" tabindex="-1"></a><span class="in"># 0.1659636 </span></span>
 <span id="cb28-610"><a href="#cb28-610" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-611"><a href="#cb28-611" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-612"><a href="#cb28-612" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-613"><a href="#cb28-613" aria-hidden="true" tabindex="-1"></a><span class="do">########</span></span>
-<span id="cb28-614"><a href="#cb28-614" aria-hidden="true" tabindex="-1"></a><span class="co"># On décide dans la suite de fixer ce seuil à 0.2 et on cherche à sélectionner </span></span>
-<span id="cb28-615"><a href="#cb28-615" aria-hidden="true" tabindex="-1"></a><span class="co"># le meilleur modèle parmi les 3 précédents.</span></span>
+<span id="cb28-613"><a href="#cb28-613" aria-hidden="true" tabindex="-1"></a><span class="in">########</span></span>
+<span id="cb28-614"><a href="#cb28-614" aria-hidden="true" tabindex="-1"></a><span class="in"># On décide dans la suite de fixer ce seuil à 0.2 et on cherche à sélectionner </span></span>
+<span id="cb28-615"><a href="#cb28-615" aria-hidden="true" tabindex="-1"></a><span class="in"># le meilleur modèle parmi les 3 précédents.</span></span>
 <span id="cb28-616"><a href="#cb28-616" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-617"><a href="#cb28-617" aria-hidden="true" tabindex="-1"></a><span class="co"># on change le seuil</span></span>
-<span id="cb28-618"><a href="#cb28-618" aria-hidden="true" tabindex="-1"></a>mod_full.pred[mod_full.probs<span class="sc">&gt;</span><span class="fl">0.2</span>]<span class="ot">=</span><span class="dv">1</span> <span class="co"># = "Yes"</span></span>
-<span id="cb28-619"><a href="#cb28-619" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(mod_full.pred, car<span class="sc">$</span>Purchase)</span>
-<span id="cb28-620"><a href="#cb28-620" aria-hidden="true" tabindex="-1"></a><span class="co"># taux de reussite demarchage (vrais positifs par rapport au positifs predits)</span></span>
-<span id="cb28-621"><a href="#cb28-621" aria-hidden="true" tabindex="-1"></a><span class="co"># 87/(197+87) = 0.306338 = 30.6%</span></span>
+<span id="cb28-617"><a href="#cb28-617" aria-hidden="true" tabindex="-1"></a><span class="in"># on change le seuil</span></span>
+<span id="cb28-618"><a href="#cb28-618" aria-hidden="true" tabindex="-1"></a><span class="in">mod_full.pred[mod_full.probs&gt;0.2]=1 # = "Yes"</span></span>
+<span id="cb28-619"><a href="#cb28-619" aria-hidden="true" tabindex="-1"></a><span class="in">table(mod_full.pred, car$Purchase)</span></span>
+<span id="cb28-620"><a href="#cb28-620" aria-hidden="true" tabindex="-1"></a><span class="in"># taux de reussite demarchage (vrais positifs par rapport au positifs predits)</span></span>
+<span id="cb28-621"><a href="#cb28-621" aria-hidden="true" tabindex="-1"></a><span class="in"># 87/(197+87) = 0.306338 = 30.6%</span></span>
 <span id="cb28-622"><a href="#cb28-622" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-623"><a href="#cb28-623" aria-hidden="true" tabindex="-1"></a><span class="do">### refaire pour les autres modèles </span></span>
+<span id="cb28-623"><a href="#cb28-623" aria-hidden="true" tabindex="-1"></a><span class="in">### refaire pour les autres modèles </span></span>
 <span id="cb28-624"><a href="#cb28-624" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-625"><a href="#cb28-625" aria-hidden="true" tabindex="-1"></a>mod_both_AIC_2.<span class="fl">0.</span>pred[mod_both_AIC_2.<span class="fl">0.</span>probs<span class="sc">&gt;</span><span class="fl">0.2</span>]<span class="ot">=</span><span class="dv">1</span></span>
-<span id="cb28-626"><a href="#cb28-626" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(mod_both_AIC_2.<span class="fl">0.</span>pred, car<span class="sc">$</span>Purchase)</span>
-<span id="cb28-627"><a href="#cb28-627" aria-hidden="true" tabindex="-1"></a><span class="co"># 0.2929688</span></span>
+<span id="cb28-625"><a href="#cb28-625" aria-hidden="true" tabindex="-1"></a><span class="in">mod_both_AIC_2.0.pred[mod_both_AIC_2.0.probs&gt;0.2]=1</span></span>
+<span id="cb28-626"><a href="#cb28-626" aria-hidden="true" tabindex="-1"></a><span class="in">table(mod_both_AIC_2.0.pred, car$Purchase)</span></span>
+<span id="cb28-627"><a href="#cb28-627" aria-hidden="true" tabindex="-1"></a><span class="in"># 0.2929688</span></span>
 <span id="cb28-628"><a href="#cb28-628" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-629"><a href="#cb28-629" aria-hidden="true" tabindex="-1"></a>mod_both_BIC.pred[mod_both_BIC.probs<span class="sc">&gt;</span><span class="fl">0.2</span>]<span class="ot">=</span><span class="dv">1</span></span>
-<span id="cb28-630"><a href="#cb28-630" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(mod_both_BIC.pred, car<span class="sc">$</span>Purchase)</span>
-<span id="cb28-631"><a href="#cb28-631" aria-hidden="true" tabindex="-1"></a><span class="co"># 0.2673797</span></span>
+<span id="cb28-629"><a href="#cb28-629" aria-hidden="true" tabindex="-1"></a><span class="in">mod_both_BIC.pred[mod_both_BIC.probs&gt;0.2]=1</span></span>
+<span id="cb28-630"><a href="#cb28-630" aria-hidden="true" tabindex="-1"></a><span class="in">table(mod_both_BIC.pred, car$Purchase)</span></span>
+<span id="cb28-631"><a href="#cb28-631" aria-hidden="true" tabindex="-1"></a><span class="in"># 0.2673797</span></span>
 <span id="cb28-632"><a href="#cb28-632" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-633"><a href="#cb28-633" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-634"><a href="#cb28-634" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, error=TRUE, eval=FALSE}</span></span>
-<span id="cb28-635"><a href="#cb28-635" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 7 --------------------------------------------------------------</span></span>
+<span id="cb28-635"><a href="#cb28-635" aria-hidden="true" tabindex="-1"></a><span class="in"># Question 7 --------------------------------------------------------------</span></span>
 <span id="cb28-636"><a href="#cb28-636" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-637"><a href="#cb28-637" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimer le taux de réussite du démarchage (c’est à dire le nombre de vrais</span></span>
-<span id="cb28-638"><a href="#cb28-638" aria-hidden="true" tabindex="-1"></a><span class="co"># positifs par rapport au nombre de positifs prédits) sur </span></span>
-<span id="cb28-639"><a href="#cb28-639" aria-hidden="true" tabindex="-1"></a><span class="co"># l’échantillon d’apprentissage pour chaque modèle</span></span>
+<span id="cb28-637"><a href="#cb28-637" aria-hidden="true" tabindex="-1"></a><span class="in"># Estimer le taux de réussite du démarchage (c’est à dire le nombre de vrais</span></span>
+<span id="cb28-638"><a href="#cb28-638" aria-hidden="true" tabindex="-1"></a><span class="in"># positifs par rapport au nombre de positifs prédits) sur </span></span>
+<span id="cb28-639"><a href="#cb28-639" aria-hidden="true" tabindex="-1"></a><span class="in"># l’échantillon d’apprentissage pour chaque modèle</span></span>
 <span id="cb28-640"><a href="#cb28-640" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-641"><a href="#cb28-641" aria-hidden="true" tabindex="-1"></a><span class="co"># fct de cout : freq vrai posi parmi les posi preddit</span></span>
-<span id="cb28-642"><a href="#cb28-642" aria-hidden="true" tabindex="-1"></a>cost <span class="ot">=</span> <span class="cf">function</span>(r, p){</span>
-<span id="cb28-643"><a href="#cb28-643" aria-hidden="true" tabindex="-1"></a>  <span class="co"># r = reponse</span></span>
-<span id="cb28-644"><a href="#cb28-644" aria-hidden="true" tabindex="-1"></a>  <span class="co"># p = prevision</span></span>
-<span id="cb28-645"><a href="#cb28-645" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">=</span> <span class="fu">sum</span>(p<span class="sc">&gt;</span><span class="fl">0.2</span> <span class="sc">&amp;</span> r<span class="sc">==</span><span class="dv">1</span>)<span class="sc">/</span><span class="fu">sum</span>(p<span class="sc">&gt;</span><span class="fl">0.2</span>)</span>
-<span id="cb28-646"><a href="#cb28-646" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(s)</span>
-<span id="cb28-647"><a href="#cb28-647" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-641"><a href="#cb28-641" aria-hidden="true" tabindex="-1"></a><span class="in"># fct de cout : freq vrai posi parmi les posi preddit</span></span>
+<span id="cb28-642"><a href="#cb28-642" aria-hidden="true" tabindex="-1"></a><span class="in">cost = function(r, p){</span></span>
+<span id="cb28-643"><a href="#cb28-643" aria-hidden="true" tabindex="-1"></a><span class="in">  # r = reponse</span></span>
+<span id="cb28-644"><a href="#cb28-644" aria-hidden="true" tabindex="-1"></a><span class="in">  # p = prevision</span></span>
+<span id="cb28-645"><a href="#cb28-645" aria-hidden="true" tabindex="-1"></a><span class="in">  s = sum(p&gt;0.2 &amp; r==1)/sum(p&gt;0.2)</span></span>
+<span id="cb28-646"><a href="#cb28-646" aria-hidden="true" tabindex="-1"></a><span class="in">  return(s)</span></span>
+<span id="cb28-647"><a href="#cb28-647" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
 <span id="cb28-648"><a href="#cb28-648" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-649"><a href="#cb28-649" aria-hidden="true" tabindex="-1"></a><span class="fu">cost</span>(mod_full<span class="sc">$</span>y, <span class="fu">fitted.values</span>(mod_full))</span>
-<span id="cb28-650"><a href="#cb28-650" aria-hidden="true" tabindex="-1"></a><span class="co"># 0.306338 = 30.6 % </span></span>
-<span id="cb28-651"><a href="#cb28-651" aria-hidden="true" tabindex="-1"></a><span class="co"># on obtient effectivement le même resultat que calculé précédement </span></span>
+<span id="cb28-649"><a href="#cb28-649" aria-hidden="true" tabindex="-1"></a><span class="in">cost(mod_full$y, fitted.values(mod_full))</span></span>
+<span id="cb28-650"><a href="#cb28-650" aria-hidden="true" tabindex="-1"></a><span class="in"># 0.306338 = 30.6 % </span></span>
+<span id="cb28-651"><a href="#cb28-651" aria-hidden="true" tabindex="-1"></a><span class="in"># on obtient effectivement le même resultat que calculé précédement </span></span>
 <span id="cb28-652"><a href="#cb28-652" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-653"><a href="#cb28-653" aria-hidden="true" tabindex="-1"></a><span class="fu">cost</span>(mod_both_AIC_2<span class="fl">.0</span><span class="sc">$</span>y, <span class="fu">fitted.values</span>(mod_both_AIC_2<span class="fl">.0</span>))</span>
-<span id="cb28-654"><a href="#cb28-654" aria-hidden="true" tabindex="-1"></a><span class="co">#  0.2929688</span></span>
-<span id="cb28-655"><a href="#cb28-655" aria-hidden="true" tabindex="-1"></a><span class="co"># ca correspond </span></span>
+<span id="cb28-653"><a href="#cb28-653" aria-hidden="true" tabindex="-1"></a><span class="in">cost(mod_both_AIC_2.0$y, fitted.values(mod_both_AIC_2.0))</span></span>
+<span id="cb28-654"><a href="#cb28-654" aria-hidden="true" tabindex="-1"></a><span class="in">#  0.2929688</span></span>
+<span id="cb28-655"><a href="#cb28-655" aria-hidden="true" tabindex="-1"></a><span class="in"># ca correspond </span></span>
 <span id="cb28-656"><a href="#cb28-656" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-657"><a href="#cb28-657" aria-hidden="true" tabindex="-1"></a><span class="fu">cost</span>(mod_both_BIC<span class="sc">$</span>y, <span class="fu">fitted.values</span>(mod_both_BIC))</span>
-<span id="cb28-658"><a href="#cb28-658" aria-hidden="true" tabindex="-1"></a><span class="co"># 0.2673797</span></span>
-<span id="cb28-659"><a href="#cb28-659" aria-hidden="true" tabindex="-1"></a><span class="co"># ca correspond </span></span>
+<span id="cb28-657"><a href="#cb28-657" aria-hidden="true" tabindex="-1"></a><span class="in">cost(mod_both_BIC$y, fitted.values(mod_both_BIC))</span></span>
+<span id="cb28-658"><a href="#cb28-658" aria-hidden="true" tabindex="-1"></a><span class="in"># 0.2673797</span></span>
+<span id="cb28-659"><a href="#cb28-659" aria-hidden="true" tabindex="-1"></a><span class="in"># ca correspond </span></span>
 <span id="cb28-660"><a href="#cb28-660" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-661"><a href="#cb28-661" aria-hidden="true" tabindex="-1"></a><span class="do">## Selection  du modele complet</span></span>
-<span id="cb28-662"><a href="#cb28-662" aria-hidden="true" tabindex="-1"></a><span class="co"># MAIS les resultats sont trop optimistes car ils sontobtenus via l'echant d'apprent</span></span>
-<span id="cb28-663"><a href="#cb28-663" aria-hidden="true" tabindex="-1"></a><span class="co"># Dans ce cas, il n'est pas etonnant que le plus gros mod (mod_full) soit selectionné </span></span>
-<span id="cb28-664"><a href="#cb28-664" aria-hidden="true" tabindex="-1"></a><span class="co"># il faut évaluer l'erreur sur echant test</span></span>
+<span id="cb28-661"><a href="#cb28-661" aria-hidden="true" tabindex="-1"></a><span class="in">## Selection  du modele complet</span></span>
+<span id="cb28-662"><a href="#cb28-662" aria-hidden="true" tabindex="-1"></a><span class="in"># MAIS les resultats sont trop optimistes car ils sontobtenus via l'echant d'apprent</span></span>
+<span id="cb28-663"><a href="#cb28-663" aria-hidden="true" tabindex="-1"></a><span class="in"># Dans ce cas, il n'est pas etonnant que le plus gros mod (mod_full) soit selectionné </span></span>
+<span id="cb28-664"><a href="#cb28-664" aria-hidden="true" tabindex="-1"></a><span class="in"># il faut évaluer l'erreur sur echant test</span></span>
 <span id="cb28-665"><a href="#cb28-665" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-666"><a href="#cb28-666" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-667"><a href="#cb28-667" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-668"><a href="#cb28-668" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-669"><a href="#cb28-669" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, error=TRUE, eval=FALSE}</span></span>
-<span id="cb28-670"><a href="#cb28-670" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 8 --------------------------------------------------------------</span></span>
-<span id="cb28-671"><a href="#cb28-671" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
+<span id="cb28-670"><a href="#cb28-670" aria-hidden="true" tabindex="-1"></a><span class="in"># Question 8 --------------------------------------------------------------</span></span>
+<span id="cb28-671"><a href="#cb28-671" aria-hidden="true" tabindex="-1"></a><span class="in">library(boot)</span></span>
 <span id="cb28-672"><a href="#cb28-672" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-673"><a href="#cb28-673" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">cv.glm</span>(<span class="at">data =</span> car, <span class="at">glmfit =</span> mod_full, <span class="at">cost =</span> cost, <span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb28-674"><a href="#cb28-674" aria-hidden="true" tabindex="-1"></a>res2 <span class="ot">=</span> <span class="fu">cv.glm</span>(car, mod_both_AIC_2<span class="fl">.0</span>, cost, <span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb28-675"><a href="#cb28-675" aria-hidden="true" tabindex="-1"></a>res3 <span class="ot">=</span> <span class="fu">cv.glm</span>(car, mod_both_BIC, cost, <span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb28-676"><a href="#cb28-676" aria-hidden="true" tabindex="-1"></a><span class="do">## marche pas. pourquoi??? (voir photo code pour réponse)</span></span>
+<span id="cb28-673"><a href="#cb28-673" aria-hidden="true" tabindex="-1"></a><span class="in">res = cv.glm(data = car, glmfit = mod_full, cost = cost, K=10)</span></span>
+<span id="cb28-674"><a href="#cb28-674" aria-hidden="true" tabindex="-1"></a><span class="in">res2 = cv.glm(car, mod_both_AIC_2.0, cost, K=10)</span></span>
+<span id="cb28-675"><a href="#cb28-675" aria-hidden="true" tabindex="-1"></a><span class="in">res3 = cv.glm(car, mod_both_BIC, cost, K=10)</span></span>
+<span id="cb28-676"><a href="#cb28-676" aria-hidden="true" tabindex="-1"></a><span class="in">## marche pas. pourquoi??? (voir photo code pour réponse)</span></span>
 <span id="cb28-677"><a href="#cb28-677" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-678"><a href="#cb28-678" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>delta</span>
-<span id="cb28-679"><a href="#cb28-679" aria-hidden="true" tabindex="-1"></a>res2<span class="sc">$</span>delta</span>
-<span id="cb28-680"><a href="#cb28-680" aria-hidden="true" tabindex="-1"></a>res3<span class="sc">$</span>delta</span>
+<span id="cb28-678"><a href="#cb28-678" aria-hidden="true" tabindex="-1"></a><span class="in">res$delta</span></span>
+<span id="cb28-679"><a href="#cb28-679" aria-hidden="true" tabindex="-1"></a><span class="in">res2$delta</span></span>
+<span id="cb28-680"><a href="#cb28-680" aria-hidden="true" tabindex="-1"></a><span class="in">res3$delta</span></span>
 <span id="cb28-681"><a href="#cb28-681" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-682"><a href="#cb28-682" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-683"><a href="#cb28-683" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(car)</span>
-<span id="cb28-684"><a href="#cb28-684" aria-hidden="true" tabindex="-1"></a><span class="do">###### test #####</span></span>
-<span id="cb28-685"><a href="#cb28-685" aria-hidden="true" tabindex="-1"></a>mod_test <span class="ot">=</span> <span class="fu">glm</span>(Caravan<span class="sc">$</span>Purchase<span class="sc">~</span>., <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">data =</span> Caravan)</span>
-<span id="cb28-686"><a href="#cb28-686" aria-hidden="true" tabindex="-1"></a><span class="fu">cv.glm</span>(Caravan, mod_test, <span class="at">cost =</span> cost, <span class="at">K=</span><span class="dv">10</span>)</span>
+<span id="cb28-683"><a href="#cb28-683" aria-hidden="true" tabindex="-1"></a><span class="in">dim(car)</span></span>
+<span id="cb28-684"><a href="#cb28-684" aria-hidden="true" tabindex="-1"></a><span class="in">###### test #####</span></span>
+<span id="cb28-685"><a href="#cb28-685" aria-hidden="true" tabindex="-1"></a><span class="in">mod_test = glm(Caravan$Purchase~., family = "binomial", data = Caravan)</span></span>
+<span id="cb28-686"><a href="#cb28-686" aria-hidden="true" tabindex="-1"></a><span class="in">cv.glm(Caravan, mod_test, cost = cost, K=10)</span></span>
 <span id="cb28-687"><a href="#cb28-687" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-688"><a href="#cb28-688" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(Caravan)</span>
+<span id="cb28-688"><a href="#cb28-688" aria-hidden="true" tabindex="-1"></a><span class="in">summary(Caravan)</span></span>
 <span id="cb28-689"><a href="#cb28-689" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-690"><a href="#cb28-690" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-691"><a href="#cb28-691" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-692"><a href="#cb28-692" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, error=TRUE, eval=FALSE}</span></span>
-<span id="cb28-693"><a href="#cb28-693" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 9 --------------------------------------------------------------</span></span>
+<span id="cb28-693"><a href="#cb28-693" aria-hidden="true" tabindex="-1"></a><span class="in"># Question 9 --------------------------------------------------------------</span></span>
 <span id="cb28-694"><a href="#cb28-694" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-695"><a href="#cb28-695" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimer de même le taux de réussite pour chaque modèle lorsque le seuil</span></span>
-<span id="cb28-696"><a href="#cb28-696" aria-hidden="true" tabindex="-1"></a><span class="co"># varie de 0.10 à 0.30 par pas de 0.01</span></span>
+<span id="cb28-695"><a href="#cb28-695" aria-hidden="true" tabindex="-1"></a><span class="in"># Estimer de même le taux de réussite pour chaque modèle lorsque le seuil</span></span>
+<span id="cb28-696"><a href="#cb28-696" aria-hidden="true" tabindex="-1"></a><span class="in"># varie de 0.10 à 0.30 par pas de 0.01</span></span>
 <span id="cb28-697"><a href="#cb28-697" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-698"><a href="#cb28-698" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-699"><a href="#cb28-699" aria-hidden="true" tabindex="-1"></a>mat<span class="ot">=</span><span class="fu">matrix</span>(<span class="at">nrow=</span><span class="dv">3</span>,<span class="at">ncol=</span><span class="dv">21</span>)</span>
-<span id="cb28-700"><a href="#cb28-700" aria-hidden="true" tabindex="-1"></a>k<span class="ot">=</span><span class="dv">0</span></span>
-<span id="cb28-701"><a href="#cb28-701" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(s <span class="cf">in</span> <span class="fu">seq</span>(<span class="fl">0.1</span>,<span class="fl">0.3</span>,<span class="fl">0.01</span>)){</span>
-<span id="cb28-702"><a href="#cb28-702" aria-hidden="true" tabindex="-1"></a>  k<span class="ot">=</span>k<span class="sc">+</span><span class="dv">1</span></span>
-<span id="cb28-703"><a href="#cb28-703" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(k) <span class="co"># Concatenate and Print</span></span>
-<span id="cb28-704"><a href="#cb28-704" aria-hidden="true" tabindex="-1"></a>  res<span class="ot">=</span><span class="fu">cv.glm</span>(Caravan,mod_full,cost,<span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb28-705"><a href="#cb28-705" aria-hidden="true" tabindex="-1"></a>  res2<span class="ot">=</span><span class="fu">cv.glm</span>(Caravan,mod_both_AIC_2<span class="fl">.0</span>,cost,<span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb28-706"><a href="#cb28-706" aria-hidden="true" tabindex="-1"></a>  res3<span class="ot">=</span><span class="fu">cv.glm</span>(Caravan,mod_both_BIC,cost,<span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb28-707"><a href="#cb28-707" aria-hidden="true" tabindex="-1"></a>  mat[<span class="dv">1</span>,k]<span class="ot">=</span>res<span class="sc">$</span>delta[<span class="dv">1</span>]</span>
-<span id="cb28-708"><a href="#cb28-708" aria-hidden="true" tabindex="-1"></a>  mat[<span class="dv">2</span>,k]<span class="ot">=</span>res2<span class="sc">$</span>delta[<span class="dv">1</span>]</span>
-<span id="cb28-709"><a href="#cb28-709" aria-hidden="true" tabindex="-1"></a>  mat[<span class="dv">3</span>,k]<span class="ot">=</span>res3<span class="sc">$</span>delta[<span class="dv">1</span>]</span>
-<span id="cb28-710"><a href="#cb28-710" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb28-711"><a href="#cb28-711" aria-hidden="true" tabindex="-1"></a><span class="fu">matplot</span>(<span class="fu">seq</span>(<span class="fl">0.1</span>,<span class="fl">0.3</span>,<span class="fl">0.01</span>),<span class="fu">t</span>(mat),<span class="at">type=</span><span class="st">'l'</span>)</span>
-<span id="cb28-712"><a href="#cb28-712" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">'topleft'</span>,<span class="fu">c</span>(<span class="st">'Tout'</span>,<span class="st">'AIC'</span>,<span class="st">'BIC'</span>),<span class="at">col=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="at">lty=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb28-699"><a href="#cb28-699" aria-hidden="true" tabindex="-1"></a><span class="in">mat=matrix(nrow=3,ncol=21)</span></span>
+<span id="cb28-700"><a href="#cb28-700" aria-hidden="true" tabindex="-1"></a><span class="in">k=0</span></span>
+<span id="cb28-701"><a href="#cb28-701" aria-hidden="true" tabindex="-1"></a><span class="in">for(s in seq(0.1,0.3,0.01)){</span></span>
+<span id="cb28-702"><a href="#cb28-702" aria-hidden="true" tabindex="-1"></a><span class="in">  k=k+1</span></span>
+<span id="cb28-703"><a href="#cb28-703" aria-hidden="true" tabindex="-1"></a><span class="in">  cat(k) # Concatenate and Print</span></span>
+<span id="cb28-704"><a href="#cb28-704" aria-hidden="true" tabindex="-1"></a><span class="in">  res=cv.glm(Caravan,mod_full,cost,K=10)</span></span>
+<span id="cb28-705"><a href="#cb28-705" aria-hidden="true" tabindex="-1"></a><span class="in">  res2=cv.glm(Caravan,mod_both_AIC_2.0,cost,K=10)</span></span>
+<span id="cb28-706"><a href="#cb28-706" aria-hidden="true" tabindex="-1"></a><span class="in">  res3=cv.glm(Caravan,mod_both_BIC,cost,K=10)</span></span>
+<span id="cb28-707"><a href="#cb28-707" aria-hidden="true" tabindex="-1"></a><span class="in">  mat[1,k]=res$delta[1]</span></span>
+<span id="cb28-708"><a href="#cb28-708" aria-hidden="true" tabindex="-1"></a><span class="in">  mat[2,k]=res2$delta[1]</span></span>
+<span id="cb28-709"><a href="#cb28-709" aria-hidden="true" tabindex="-1"></a><span class="in">  mat[3,k]=res3$delta[1]</span></span>
+<span id="cb28-710"><a href="#cb28-710" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb28-711"><a href="#cb28-711" aria-hidden="true" tabindex="-1"></a><span class="in">matplot(seq(0.1,0.3,0.01),t(mat),type='l')</span></span>
+<span id="cb28-712"><a href="#cb28-712" aria-hidden="true" tabindex="-1"></a><span class="in">legend('topleft',c('Tout','AIC','BIC'),col=1:3,lty=1:3)</span></span>
 <span id="cb28-713"><a href="#cb28-713" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-714"><a href="#cb28-714" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-715"><a href="#cb28-715" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-716"><a href="#cb28-716" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-717"><a href="#cb28-717" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-718"><a href="#cb28-718" aria-hidden="true" tabindex="-1"></a><span class="co">#repetition 5 fois (tres long)</span></span>
-<span id="cb28-719"><a href="#cb28-719" aria-hidden="true" tabindex="-1"></a>res_seuil<span class="ot">=</span><span class="cn">NULL</span></span>
-<span id="cb28-720"><a href="#cb28-720" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>){</span>
-<span id="cb28-721"><a href="#cb28-721" aria-hidden="true" tabindex="-1"></a>  mat<span class="ot">=</span><span class="fu">matrix</span>(<span class="at">nrow=</span><span class="dv">3</span>,<span class="at">ncol=</span><span class="dv">21</span>)</span>
-<span id="cb28-722"><a href="#cb28-722" aria-hidden="true" tabindex="-1"></a>  k<span class="ot">=</span><span class="dv">0</span></span>
-<span id="cb28-723"><a href="#cb28-723" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(s <span class="cf">in</span> <span class="fu">seq</span>(<span class="fl">0.1</span>,<span class="fl">0.3</span>,<span class="fl">0.01</span>)){</span>
-<span id="cb28-724"><a href="#cb28-724" aria-hidden="true" tabindex="-1"></a>    k<span class="ot">=</span>k<span class="sc">+</span><span class="dv">1</span></span>
-<span id="cb28-725"><a href="#cb28-725" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(k)</span>
-<span id="cb28-726"><a href="#cb28-726" aria-hidden="true" tabindex="-1"></a>    res<span class="ot">=</span><span class="fu">cv.glm</span>(Caravan,mod,cost,<span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb28-727"><a href="#cb28-727" aria-hidden="true" tabindex="-1"></a>    res2<span class="ot">=</span><span class="fu">cv.glm</span>(Caravan,mod2,cost,<span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb28-728"><a href="#cb28-728" aria-hidden="true" tabindex="-1"></a>    res3<span class="ot">=</span><span class="fu">cv.glm</span>(Caravan,mod3,cost,<span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb28-729"><a href="#cb28-729" aria-hidden="true" tabindex="-1"></a>    mat[<span class="dv">1</span>,k]<span class="ot">=</span>res<span class="sc">$</span>delta[<span class="dv">1</span>]</span>
-<span id="cb28-730"><a href="#cb28-730" aria-hidden="true" tabindex="-1"></a>    mat[<span class="dv">2</span>,k]<span class="ot">=</span>res2<span class="sc">$</span>delta[<span class="dv">1</span>]</span>
-<span id="cb28-731"><a href="#cb28-731" aria-hidden="true" tabindex="-1"></a>    mat[<span class="dv">3</span>,k]<span class="ot">=</span>res3<span class="sc">$</span>delta[<span class="dv">1</span>]</span>
-<span id="cb28-732"><a href="#cb28-732" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb28-733"><a href="#cb28-733" aria-hidden="true" tabindex="-1"></a>  res_seuil[[i]]<span class="ot">=</span>mat</span>
-<span id="cb28-734"><a href="#cb28-734" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-718"><a href="#cb28-718" aria-hidden="true" tabindex="-1"></a><span class="in">#repetition 5 fois (tres long)</span></span>
+<span id="cb28-719"><a href="#cb28-719" aria-hidden="true" tabindex="-1"></a><span class="in">res_seuil=NULL</span></span>
+<span id="cb28-720"><a href="#cb28-720" aria-hidden="true" tabindex="-1"></a><span class="in">for(i in 1:5){</span></span>
+<span id="cb28-721"><a href="#cb28-721" aria-hidden="true" tabindex="-1"></a><span class="in">  mat=matrix(nrow=3,ncol=21)</span></span>
+<span id="cb28-722"><a href="#cb28-722" aria-hidden="true" tabindex="-1"></a><span class="in">  k=0</span></span>
+<span id="cb28-723"><a href="#cb28-723" aria-hidden="true" tabindex="-1"></a><span class="in">  for(s in seq(0.1,0.3,0.01)){</span></span>
+<span id="cb28-724"><a href="#cb28-724" aria-hidden="true" tabindex="-1"></a><span class="in">    k=k+1</span></span>
+<span id="cb28-725"><a href="#cb28-725" aria-hidden="true" tabindex="-1"></a><span class="in">    cat(k)</span></span>
+<span id="cb28-726"><a href="#cb28-726" aria-hidden="true" tabindex="-1"></a><span class="in">    res=cv.glm(Caravan,mod,cost,K=10)</span></span>
+<span id="cb28-727"><a href="#cb28-727" aria-hidden="true" tabindex="-1"></a><span class="in">    res2=cv.glm(Caravan,mod2,cost,K=10)</span></span>
+<span id="cb28-728"><a href="#cb28-728" aria-hidden="true" tabindex="-1"></a><span class="in">    res3=cv.glm(Caravan,mod3,cost,K=10)</span></span>
+<span id="cb28-729"><a href="#cb28-729" aria-hidden="true" tabindex="-1"></a><span class="in">    mat[1,k]=res$delta[1]</span></span>
+<span id="cb28-730"><a href="#cb28-730" aria-hidden="true" tabindex="-1"></a><span class="in">    mat[2,k]=res2$delta[1]</span></span>
+<span id="cb28-731"><a href="#cb28-731" aria-hidden="true" tabindex="-1"></a><span class="in">    mat[3,k]=res3$delta[1]</span></span>
+<span id="cb28-732"><a href="#cb28-732" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb28-733"><a href="#cb28-733" aria-hidden="true" tabindex="-1"></a><span class="in">  res_seuil[[i]]=mat</span></span>
+<span id="cb28-734"><a href="#cb28-734" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
 <span id="cb28-735"><a href="#cb28-735" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-736"><a href="#cb28-736" aria-hidden="true" tabindex="-1"></a><span class="fu">matplot</span>(<span class="fu">seq</span>(<span class="fl">0.1</span>,<span class="fl">0.3</span>,<span class="fl">0.01</span>),<span class="fu">t</span>(res_seuil[[<span class="dv">1</span>]]),<span class="at">type=</span><span class="st">'l'</span>,<span class="at">ylim=</span><span class="fu">c</span>(<span class="fl">0.15</span>,<span class="fl">0.35</span>),<span class="at">lty=</span><span class="dv">2</span>)</span>
-<span id="cb28-737"><a href="#cb28-737" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>) <span class="fu">matplot</span>(<span class="fu">seq</span>(<span class="fl">0.1</span>,<span class="fl">0.3</span>,<span class="fl">0.01</span>),<span class="fu">t</span>(res_seuil[[i]]),<span class="at">type=</span><span class="st">'l'</span>,<span class="at">lty=</span><span class="dv">2</span>,<span class="at">add=</span>T)</span>
-<span id="cb28-738"><a href="#cb28-738" aria-hidden="true" tabindex="-1"></a>res_moy<span class="ot">=</span>res_seuil[[<span class="dv">1</span>]]</span>
-<span id="cb28-739"><a href="#cb28-739" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>) res_moy<span class="ot">=</span>res_moy<span class="sc">+</span>res_seuil[[i]]</span>
-<span id="cb28-740"><a href="#cb28-740" aria-hidden="true" tabindex="-1"></a><span class="fu">matplot</span>(<span class="fu">seq</span>(<span class="fl">0.1</span>,<span class="fl">0.3</span>,<span class="fl">0.01</span>),<span class="fu">t</span>(res_moy)<span class="sc">/</span><span class="dv">5</span>,<span class="at">type=</span><span class="st">'l'</span>,<span class="at">lty=</span><span class="dv">1</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">add=</span>T)</span>
-<span id="cb28-741"><a href="#cb28-741" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">'topleft'</span>,<span class="fu">c</span>(<span class="st">'Tout'</span>,<span class="st">'AIC'</span>,<span class="st">'BIC'</span>),<span class="at">col=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="at">lty=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb28-736"><a href="#cb28-736" aria-hidden="true" tabindex="-1"></a><span class="in">matplot(seq(0.1,0.3,0.01),t(res_seuil[[1]]),type='l',ylim=c(0.15,0.35),lty=2)</span></span>
+<span id="cb28-737"><a href="#cb28-737" aria-hidden="true" tabindex="-1"></a><span class="in">for(i in 2:5) matplot(seq(0.1,0.3,0.01),t(res_seuil[[i]]),type='l',lty=2,add=T)</span></span>
+<span id="cb28-738"><a href="#cb28-738" aria-hidden="true" tabindex="-1"></a><span class="in">res_moy=res_seuil[[1]]</span></span>
+<span id="cb28-739"><a href="#cb28-739" aria-hidden="true" tabindex="-1"></a><span class="in">for(i in 2:5) res_moy=res_moy+res_seuil[[i]]</span></span>
+<span id="cb28-740"><a href="#cb28-740" aria-hidden="true" tabindex="-1"></a><span class="in">matplot(seq(0.1,0.3,0.01),t(res_moy)/5,type='l',lty=1,lwd=2,add=T)</span></span>
+<span id="cb28-741"><a href="#cb28-741" aria-hidden="true" tabindex="-1"></a><span class="in">legend('topleft',c('Tout','AIC','BIC'),col=1:3,lty=1:3)</span></span>
 <span id="cb28-742"><a href="#cb28-742" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-743"><a href="#cb28-743" aria-hidden="true" tabindex="-1"></a><span class="co">#On observe que les courbes deviennent tres variables lorsque le seuil grandit. Il y a meme des valeurs manquantes</span></span>
-<span id="cb28-744"><a href="#cb28-744" aria-hidden="true" tabindex="-1"></a><span class="co">#C'est parcequ'il y a tres peu de positifs predits dans ce cas (voire aucun dans certains folds) et donc l'estimation de l'erreur est tres peu precise</span></span>
-<span id="cb28-745"><a href="#cb28-745" aria-hidden="true" tabindex="-1"></a><span class="co">#Le meilleur modele semble celui par BIC. </span></span>
-<span id="cb28-746"><a href="#cb28-746" aria-hidden="true" tabindex="-1"></a><span class="co">#Si on veut avoir a la fois un taux de demarchage optimum et un nombre de positifs pas trop faible, un seuil de 0.2 semble pas mal</span></span>
+<span id="cb28-743"><a href="#cb28-743" aria-hidden="true" tabindex="-1"></a><span class="in">#On observe que les courbes deviennent tres variables lorsque le seuil grandit. Il y a meme des valeurs manquantes</span></span>
+<span id="cb28-744"><a href="#cb28-744" aria-hidden="true" tabindex="-1"></a><span class="in">#C'est parcequ'il y a tres peu de positifs predits dans ce cas (voire aucun dans certains folds) et donc l'estimation de l'erreur est tres peu precise</span></span>
+<span id="cb28-745"><a href="#cb28-745" aria-hidden="true" tabindex="-1"></a><span class="in">#Le meilleur modele semble celui par BIC. </span></span>
+<span id="cb28-746"><a href="#cb28-746" aria-hidden="true" tabindex="-1"></a><span class="in">#Si on veut avoir a la fois un taux de demarchage optimum et un nombre de positifs pas trop faible, un seuil de 0.2 semble pas mal</span></span>
 <span id="cb28-747"><a href="#cb28-747" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-748"><a href="#cb28-748" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-749"><a href="#cb28-749" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
-    <div class="nav-footer-left">Copyright 2025, Clément Poupelin</div>   
+    <div class="nav-footer-left">
+<p>Copyright 2025, Clément Poupelin</p>
+</div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
-    <div class="nav-footer-right">This blog is built with <a href="https://quarto.org/">Quarto</a></div>
+    <div class="nav-footer-right">
+<p>This blog is built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
   </div>
 </footer>
+
 
 
 

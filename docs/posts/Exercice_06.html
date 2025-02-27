@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2025-02-23">
 <meta name="description" content="On reprend les données de baseball en mettant en pratique les techniques de PCR et PLSR">
 
-<title>Statistique en grande dimension - Exercice 06</title>
+<title>Exercice 06 – Statistique en grande dimension</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,7 +25,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -36,7 +36,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -85,7 +85,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -94,17 +100,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
-
 <script src="../site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../custom.css">
 </head>
@@ -112,10 +145,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="https://www.univ-nantes.fr/" class="navbar-brand navbar-brand-logo">
     <img src="../img/logo_univ_nantes_complet.png" alt="" class="navbar-logo">
     </a>
@@ -124,80 +157,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../TP_StatGdeDim.pdf" rel="" target=""><i class="bi bi-file-earmark-font-fill" role="img">
+    <a class="nav-link" href="../TP_StatGdeDim.pdf"> <i class="bi bi-file-earmark-font-fill" role="img">
 </i> 
- <span class="menu-text">Feuille de TP</span></a>
+<span class="menu-text">Feuille de TP</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="https://clement-poupelin.github.io/Statistique_en_grande_dimension/" rel="" target="">
- <span class="menu-text">Home</span></a>
+    <a class="nav-link" href="https://clement-poupelin.github.io/Statistique_en_grande_dimension/"> 
+<span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-github" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-github" role="link" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-github" role="img">
 </i> 
  <span class="menu-text"></span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-bi-github">    
         <li>
-    <a class="dropdown-item" href="https://github.com/Clement-Poupelin" rel="" target="">
+    <a class="dropdown-item" href="https://github.com/Clement-Poupelin">
  <span class="dropdown-text">Clément Poupelin</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://github.com/nonomtrt" rel="" target="">
+    <a class="dropdown-item" href="https://github.com/nonomtrt">
  <span class="dropdown-text">Noémie Matrat</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-linkedin" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bi-linkedin" role="link" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-linkedin" role="img">
 </i> 
  <span class="menu-text"></span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-bi-linkedin">    
         <li>
-    <a class="dropdown-item" href="http://www.linkedin.com/in/cl%C3%A9ment-poupelin-7675311a7/" rel="" target="">
+    <a class="dropdown-item" href="http://www.linkedin.com/in/cl%C3%A9ment-poupelin-7675311a7/">
  <span class="dropdown-text">Clément Poupelin</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://www.linkedin.com/in/no%C3%A9mie-matrat-86a34a200/" rel="" target="">
+    <a class="dropdown-item" href="https://www.linkedin.com/in/no%C3%A9mie-matrat-86a34a200/">
  <span class="dropdown-text">Noémie Matrat</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item compact">
-    <a class="nav-link" href="mailto:clementjc.poupelin@gmail.com" rel="" target=""><i class="bi bi-envelope" role="img">
+    <a class="nav-link" href="mailto:clementjc.poupelin@gmail.com"> <i class="bi bi-envelope" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="http://clement-poupelin.github.io/" rel="" target=""><i class="bi bi-person-circle" role="img">
+    <a class="nav-link" href="http://clement-poupelin.github.io/"> <i class="bi bi-person-circle" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.instagram.com/clement__poupelin" rel="" target=""><i class="bi bi-instagram" role="img">
+    <a class="nav-link" href="https://www.instagram.com/clement__poupelin"> <i class="bi bi-instagram" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
+          </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -275,6 +308,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+
 <section id="intervenant.e.s" class="level1">
 <h1>Intervenant.e.s</h1>
 <section id="rédaction" class="level3">
@@ -322,8 +356,8 @@ Le choix entre ces deux méthodes dépend du contexte : la <strong>PCR</strong> 
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Données</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ISLR)         <span class="co"># Hitters data </span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)        <span class="co"># manipulation des données</span></span>
@@ -345,8 +379,8 @@ Le choix entre ces deux méthodes dépend du contexte : la <strong>PCR</strong> 
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>my_validationplot <span class="ot">&lt;-</span> <span class="cf">function</span>(mod, data) {</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  msep.cv <span class="ot">&lt;-</span> <span class="fu">MSEP</span>(mod, <span class="at">estimate =</span> <span class="fu">c</span>(<span class="st">"CV"</span>, <span class="st">"adjCV"</span>))</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  rmsep.cv <span class="ot">&lt;-</span> <span class="fu">RMSEP</span>(mod, <span class="at">estimate =</span> <span class="fu">c</span>(<span class="st">"CV"</span>, <span class="st">"adjCV"</span>))</span>
@@ -425,8 +459,8 @@ Le choix entre ces deux méthodes dépend du contexte : la <strong>PCR</strong> 
 </div>
 <div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">140400</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
@@ -441,7 +475,7 @@ Le choix entre ces deux méthodes dépend du contexte : la <strong>PCR</strong> 
 Parmi les variables, on trouve les informations suivantes :</p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-hover table-condensed table-sm table-striped small" data-quarto-postprocess="true">
+<table class="table table-hover table-condensed caption-top table-sm table-striped small" data-quarto-postprocess="true">
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><span style=" font-weight: bold;    ">AtBat</span></td>
@@ -531,16 +565,16 @@ Parmi les variables, on trouve les informations suivantes :</p>
 </div>
 <p>Comme pour l’<a href="../posts/Exercice_01.html">Exercice 1</a>, on va commencer par se débarasser des variables manquantes.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Hitters_Without_NA <span class="ot">&lt;-</span> Hitters <span class="sc">%&gt;%</span> <span class="fu">na.omit</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Comme cela fait maintenant plusieurs fois que l’on fait affaire à ce jeu de données, on se passera des analyses descritpives faites en <a href="../posts/Exercice_01.html">Exercice 1</a>.</p>
 <p>Ainsi, on va pouvoir tout de suite commencer par faire le découpage de notre jeu de données en échantillon <em>train</em> et <em>test</em>. Le jeu de données <em>train</em> contiendra 3/4 des individus sans valeurs manquantes de Hitters, tirés aléatoirement. Le reste du jeu de données composera l’échantillon <em>test</em>.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>percent_to_draw <span class="ot">&lt;-</span> <span class="fl">0.75</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>index_train <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(Hitters_Without_NA), <span class="at">size =</span> <span class="fu">floor</span>(percent_to_draw <span class="sc">*</span> <span class="fu">nrow</span>(Hitters_Without_NA)))</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -558,8 +592,8 @@ Parmi les variables, on trouve les informations suivantes :</p>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mod_pcr <span class="ot">&lt;-</span> <span class="fu">pcr</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  Salary <span class="sc">~</span> .,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> <span class="cn">TRUE</span>,</span>
@@ -602,8 +636,8 @@ Salary     57.09     58.10     58.89     59.19</code></pre>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mod_pls <span class="ot">&lt;-</span> <span class="fu">plsr</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  Salary <span class="sc">~</span> .,</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> <span class="cn">TRUE</span>,</span>
@@ -665,27 +699,35 @@ Note
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(<span class="fu">my_validationplot</span>(mod_pcr, Hitters_train)<span class="sc">$</span>RMSEP,</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>             <span class="fu">my_validationplot</span>(mod_pcr, Hitters_train)<span class="sc">$</span>Exp_Var,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="1728"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="1728"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(<span class="fu">my_validationplot</span>(mod_pls, Hitters_train)<span class="sc">$</span>RMSEP,</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>             <span class="fu">my_validationplot</span>(mod_pls, Hitters_train)<span class="sc">$</span>Exp_Var,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="Exercice_06_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="1728"></p>
+<div>
+<figure class="figure">
+<p><img src="Exercice_06_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="1728"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -704,8 +746,8 @@ Ensuite la courbe remonte à nouveau pour redescendre progressivement. Et concer
 </div>
 <p>Et on peut alors récupérer le nombre de composantes à garder qui minimsent le MSEP et RMSEP.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ncomp.rmsep_pcr <span class="ot">&lt;-</span> <span class="fu">which.min</span>(<span class="fu">RMSEP</span>(mod_pcr, <span class="at">estimate =</span> <span class="fu">c</span>(<span class="st">"CV"</span>))<span class="sc">$</span>val[<span class="st">"CV"</span>,,])<span class="sc">-</span><span class="dv">1</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ncomp.rmsep_pls <span class="ot">&lt;-</span> <span class="fu">which.min</span>(<span class="fu">RMSEP</span>(mod_pls, <span class="at">estimate =</span> <span class="fu">c</span>(<span class="st">"CV"</span>))<span class="sc">$</span>val[<span class="st">"CV"</span>,,])<span class="sc">-</span><span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -724,8 +766,8 @@ Ensuite la courbe remonte à nouveau pour redescendre progressivement. Et concer
 <h1>Prédiction</h1>
 <p>On va calculer le RMSEP calculé à partir de la prédiction pour l’échantillon test.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>hat_Hitters_test_mod_pcr <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod_pcr,</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                                    Hitters_test,</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ncomp =</span> (<span class="fu">which.min</span>(<span class="fu">RMSEP</span>(mod_pcr, <span class="at">estimate =</span> <span class="fu">c</span>(<span class="st">"CV"</span>))<span class="sc">$</span>val[<span class="st">"CV"</span>, , ]) <span class="sc">-</span> <span class="dv">1</span>))</span>
@@ -738,8 +780,8 @@ Ensuite la courbe remonte à nouveau pour redescendre progressivement. Et concer
 </details>
 </div>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>rmsep_pred_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">"prediction PCR"</span> <span class="ot">=</span> rmsep_mod_pcr_pred, <span class="st">"prediction PLS"</span> <span class="ot">=</span> rmsep_mod_pls_pred) </span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(rmsep_pred_df) <span class="ot">&lt;-</span> <span class="st">"RMSEP"</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>rmsep_pred_df </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -760,8 +802,8 @@ RMSEP       369.5149       373.6123</code></pre>
 <section id="session-info" class="level1">
 <h1>Session info</h1>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">pkgs =</span> <span class="st">"attached"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -853,6 +895,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
   }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
   const toggleColorMode = (alternate) => {
     // Switch the stylesheets
     const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
@@ -919,13 +988,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -960,18 +1031,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1003,7 +1063,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -1055,10 +1137,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/clement-poupelin\.github\.io\/Statistique_en_grande_dimension\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1068,8 +1167,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1081,7 +1189,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1125,6 +1356,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1150,6 +1382,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1272,18 +1530,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb18-61"><a href="#cb18-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## Packages</span></span>
 <span id="cb18-62"><a href="#cb18-62" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-63"><a href="#cb18-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, setup, warning=FALSE, message=FALSE}</span></span>
-<span id="cb18-64"><a href="#cb18-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Données</span></span>
-<span id="cb18-65"><a href="#cb18-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ISLR)         <span class="co"># Hitters data </span></span>
-<span id="cb18-66"><a href="#cb18-66" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)        <span class="co"># manipulation des données</span></span>
+<span id="cb18-64"><a href="#cb18-64" aria-hidden="true" tabindex="-1"></a><span class="in"># Données</span></span>
+<span id="cb18-65"><a href="#cb18-65" aria-hidden="true" tabindex="-1"></a><span class="in">library(ISLR)         # Hitters data </span></span>
+<span id="cb18-66"><a href="#cb18-66" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)        # manipulation des données</span></span>
 <span id="cb18-67"><a href="#cb18-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-68"><a href="#cb18-68" aria-hidden="true" tabindex="-1"></a><span class="co"># Infrence</span></span>
-<span id="cb18-69"><a href="#cb18-69" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pls) <span class="do">## PCR et PLSR</span></span>
+<span id="cb18-68"><a href="#cb18-68" aria-hidden="true" tabindex="-1"></a><span class="in"># Infrence</span></span>
+<span id="cb18-69"><a href="#cb18-69" aria-hidden="true" tabindex="-1"></a><span class="in">library(pls) ## PCR et PLSR</span></span>
 <span id="cb18-70"><a href="#cb18-70" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-71"><a href="#cb18-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-72"><a href="#cb18-72" aria-hidden="true" tabindex="-1"></a><span class="co"># Plots</span></span>
-<span id="cb18-73"><a href="#cb18-73" aria-hidden="true" tabindex="-1"></a><span class="do">## ggplot</span></span>
-<span id="cb18-74"><a href="#cb18-74" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb18-75"><a href="#cb18-75" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb18-72"><a href="#cb18-72" aria-hidden="true" tabindex="-1"></a><span class="in"># Plots</span></span>
+<span id="cb18-73"><a href="#cb18-73" aria-hidden="true" tabindex="-1"></a><span class="in">## ggplot</span></span>
+<span id="cb18-74"><a href="#cb18-74" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
+<span id="cb18-75"><a href="#cb18-75" aria-hidden="true" tabindex="-1"></a><span class="in">library(gridExtra)</span></span>
 <span id="cb18-76"><a href="#cb18-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb18-77"><a href="#cb18-77" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-78"><a href="#cb18-78" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fonctions</span></span>
@@ -1380,22 +1638,22 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb18-173"><a href="#cb18-173" aria-hidden="true" tabindex="-1"></a>Parmi les variables, on trouve les informations suivantes :</span>
 <span id="cb18-174"><a href="#cb18-174" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-175"><a href="#cb18-175" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, echo=FALSE, message=FALSE, warning=FALSE}</span></span>
-<span id="cb18-176"><a href="#cb18-176" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb18-177"><a href="#cb18-177" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
-<span id="cb18-178"><a href="#cb18-178" aria-hidden="true" tabindex="-1"></a>identity_keys <span class="ot">&lt;-</span> <span class="fu">cell_spec</span>(</span>
-<span id="cb18-179"><a href="#cb18-179" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">colnames</span>(Hitters), <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb18-180"><a href="#cb18-180" aria-hidden="true" tabindex="-1"></a>identity_values <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Number of times at bat in 1986"</span>, <span class="st">"Number of hits in 1986"</span>, <span class="st">"Number of home runs in 1986"</span>, <span class="st">"Number of runs in 1986"</span>, <span class="st">"Number of runs batted in in 1986"</span>, <span class="st">"Number of walks in 1986"</span>, <span class="st">"Number of years in the major leagues"</span>, <span class="st">"Number of times at bat during his career"</span>, <span class="st">"Number of hits during his career"</span>, <span class="st">"Number of home runs during his career"</span>, <span class="st">"Number of runs during his career"</span>, <span class="st">"Number of runs batted in during his career"</span>, <span class="st">"Number of walks during his career"</span>, <span class="st">"A factor with levels A and N indicating player's league at the end of 1986"</span>, <span class="st">"A factor with levels E and W indicating player's division at the end of 1986"</span>, <span class="st">"Number of put outs in 1986"</span>, <span class="st">"Number of assists in 1986"</span>, <span class="st">"Number of errors in 1986"</span>, <span class="st">"1987 annual salary on opening day in thousands of dollars"</span>, <span class="st">"A factor with levels A and N indicating player's league at the beginning of 1987"</span>)</span>
-<span id="cb18-181"><a href="#cb18-181" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb18-182"><a href="#cb18-182" aria-hidden="true" tabindex="-1"></a>  <span class="at">keys =</span> identity_keys, </span>
-<span id="cb18-183"><a href="#cb18-183" aria-hidden="true" tabindex="-1"></a>  <span class="at">values =</span> identity_values, </span>
-<span id="cb18-184"><a href="#cb18-184" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb18-185"><a href="#cb18-185" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(</span>
-<span id="cb18-186"><a href="#cb18-186" aria-hidden="true" tabindex="-1"></a>    <span class="at">format =</span> <span class="st">"html"</span>, </span>
-<span id="cb18-187"><a href="#cb18-187" aria-hidden="true" tabindex="-1"></a>    <span class="at">booktabs =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb18-188"><a href="#cb18-188" aria-hidden="true" tabindex="-1"></a>    <span class="at">escape =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb18-189"><a href="#cb18-189" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="cn">NULL</span></span>
-<span id="cb18-190"><a href="#cb18-190" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb18-191"><a href="#cb18-191" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"hover"</span>, <span class="st">"condensed"</span>))</span>
+<span id="cb18-176"><a href="#cb18-176" aria-hidden="true" tabindex="-1"></a><span class="in">library(tidyverse)</span></span>
+<span id="cb18-177"><a href="#cb18-177" aria-hidden="true" tabindex="-1"></a><span class="in">library(kableExtra)</span></span>
+<span id="cb18-178"><a href="#cb18-178" aria-hidden="true" tabindex="-1"></a><span class="in">identity_keys &lt;- cell_spec(</span></span>
+<span id="cb18-179"><a href="#cb18-179" aria-hidden="true" tabindex="-1"></a><span class="in">  x = colnames(Hitters), format = "html", bold = TRUE)</span></span>
+<span id="cb18-180"><a href="#cb18-180" aria-hidden="true" tabindex="-1"></a><span class="in">identity_values &lt;- c("Number of times at bat in 1986", "Number of hits in 1986", "Number of home runs in 1986", "Number of runs in 1986", "Number of runs batted in in 1986", "Number of walks in 1986", "Number of years in the major leagues", "Number of times at bat during his career", "Number of hits during his career", "Number of home runs during his career", "Number of runs during his career", "Number of runs batted in during his career", "Number of walks during his career", "A factor with levels A and N indicating player's league at the end of 1986", "A factor with levels E and W indicating player's division at the end of 1986", "Number of put outs in 1986", "Number of assists in 1986", "Number of errors in 1986", "1987 annual salary on opening day in thousands of dollars", "A factor with levels A and N indicating player's league at the beginning of 1987")</span></span>
+<span id="cb18-181"><a href="#cb18-181" aria-hidden="true" tabindex="-1"></a><span class="in">tibble(</span></span>
+<span id="cb18-182"><a href="#cb18-182" aria-hidden="true" tabindex="-1"></a><span class="in">  keys = identity_keys, </span></span>
+<span id="cb18-183"><a href="#cb18-183" aria-hidden="true" tabindex="-1"></a><span class="in">  values = identity_values, </span></span>
+<span id="cb18-184"><a href="#cb18-184" aria-hidden="true" tabindex="-1"></a><span class="in">) %&gt;% </span></span>
+<span id="cb18-185"><a href="#cb18-185" aria-hidden="true" tabindex="-1"></a><span class="in">  kbl(</span></span>
+<span id="cb18-186"><a href="#cb18-186" aria-hidden="true" tabindex="-1"></a><span class="in">    format = "html", </span></span>
+<span id="cb18-187"><a href="#cb18-187" aria-hidden="true" tabindex="-1"></a><span class="in">    booktabs = TRUE, </span></span>
+<span id="cb18-188"><a href="#cb18-188" aria-hidden="true" tabindex="-1"></a><span class="in">    escape = FALSE, </span></span>
+<span id="cb18-189"><a href="#cb18-189" aria-hidden="true" tabindex="-1"></a><span class="in">    col.names = NULL</span></span>
+<span id="cb18-190"><a href="#cb18-190" aria-hidden="true" tabindex="-1"></a><span class="in">  ) %&gt;% </span></span>
+<span id="cb18-191"><a href="#cb18-191" aria-hidden="true" tabindex="-1"></a><span class="in">  kable_styling(bootstrap_options = c("hover", "condensed"))</span></span>
 <span id="cb18-192"><a href="#cb18-192" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb18-193"><a href="#cb18-193" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-194"><a href="#cb18-194" aria-hidden="true" tabindex="-1"></a>Comme pour l'<span class="co">[</span><span class="ot">Exercice 1</span><span class="co">](../posts/Exercice_01.qmd)</span>, on va commencer par se débarasser des variables manquantes.</span>
@@ -1459,17 +1717,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb18-260"><a href="#cb18-260" aria-hidden="true" tabindex="-1"></a><span class="fu">## PCR</span></span>
 <span id="cb18-261"><a href="#cb18-261" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-262"><a href="#cb18-262" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=8, fig.width=18}</span></span>
-<span id="cb18-263"><a href="#cb18-263" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(<span class="fu">my_validationplot</span>(mod_pcr, Hitters_train)<span class="sc">$</span>RMSEP,</span>
-<span id="cb18-264"><a href="#cb18-264" aria-hidden="true" tabindex="-1"></a>             <span class="fu">my_validationplot</span>(mod_pcr, Hitters_train)<span class="sc">$</span>Exp_Var,</span>
-<span id="cb18-265"><a href="#cb18-265" aria-hidden="true" tabindex="-1"></a>             <span class="at">ncol=</span><span class="dv">2</span>)</span>
+<span id="cb18-263"><a href="#cb18-263" aria-hidden="true" tabindex="-1"></a><span class="in">grid.arrange(my_validationplot(mod_pcr, Hitters_train)$RMSEP,</span></span>
+<span id="cb18-264"><a href="#cb18-264" aria-hidden="true" tabindex="-1"></a><span class="in">             my_validationplot(mod_pcr, Hitters_train)$Exp_Var,</span></span>
+<span id="cb18-265"><a href="#cb18-265" aria-hidden="true" tabindex="-1"></a><span class="in">             ncol=2)</span></span>
 <span id="cb18-266"><a href="#cb18-266" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb18-267"><a href="#cb18-267" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-268"><a href="#cb18-268" aria-hidden="true" tabindex="-1"></a><span class="fu">## PLS</span></span>
 <span id="cb18-269"><a href="#cb18-269" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-270"><a href="#cb18-270" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=8, fig.width=18}</span></span>
-<span id="cb18-271"><a href="#cb18-271" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(<span class="fu">my_validationplot</span>(mod_pls, Hitters_train)<span class="sc">$</span>RMSEP,</span>
-<span id="cb18-272"><a href="#cb18-272" aria-hidden="true" tabindex="-1"></a>             <span class="fu">my_validationplot</span>(mod_pls, Hitters_train)<span class="sc">$</span>Exp_Var,</span>
-<span id="cb18-273"><a href="#cb18-273" aria-hidden="true" tabindex="-1"></a>             <span class="at">ncol=</span><span class="dv">2</span>)</span>
+<span id="cb18-271"><a href="#cb18-271" aria-hidden="true" tabindex="-1"></a><span class="in">grid.arrange(my_validationplot(mod_pls, Hitters_train)$RMSEP,</span></span>
+<span id="cb18-272"><a href="#cb18-272" aria-hidden="true" tabindex="-1"></a><span class="in">             my_validationplot(mod_pls, Hitters_train)$Exp_Var,</span></span>
+<span id="cb18-273"><a href="#cb18-273" aria-hidden="true" tabindex="-1"></a><span class="in">             ncol=2)</span></span>
 <span id="cb18-274"><a href="#cb18-274" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb18-275"><a href="#cb18-275" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb18-276"><a href="#cb18-276" aria-hidden="true" tabindex="-1"></a></span>
@@ -1540,18 +1798,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb18-349"><a href="#cb18-349" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb18-350"><a href="#cb18-350" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">pkgs =</span> <span class="st">"attached"</span>)</span>
 <span id="cb18-351"><a href="#cb18-351" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
-    <div class="nav-footer-left">Copyright 2025, Clément Poupelin</div>   
+    <div class="nav-footer-left">
+<p>Copyright 2025, Clément Poupelin</p>
+</div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
-    <div class="nav-footer-right">This blog is built with <a href="https://quarto.org/">Quarto</a></div>
+    <div class="nav-footer-right">
+<p>This blog is built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
   </div>
 </footer>
+
 
 
 
