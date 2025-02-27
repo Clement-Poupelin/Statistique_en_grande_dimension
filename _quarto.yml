@@ -19,7 +19,7 @@ website:
         
     right:
       - href: https://clement-poupelin.github.io/Statistique_en_grande_dimension/
-        text: Front page
+        text: Home
       - about.qmd
       - icon: github
         menu: 
