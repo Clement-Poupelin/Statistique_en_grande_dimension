@@ -70,7 +70,7 @@ my_interactive_boxplot <- function(data) {
               )) +
     geom_boxplot() +
     scale_fill_viridis_d() +
-    labs(title = "Distribution des Variables (Intercative Boxplot)", x = "Variables", y = "Valeurs") +
+    labs(title = "Erreurs de prédictions pour nos différentes méthodes \n(Intercative Boxplot)", x = "Méthode", y = "RMSEP") +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
@@ -92,7 +92,7 @@ set.seed(140400)
 
 # Données
 
-Cette exercice est la suite direct de l'[Exercice 06](../posts/Exercice_06.qmd) où l'on a pu utiliser les méthodes de regressions avec reduction de dimension **PCR** et **PLSR**.
+Cette exercice est la suite direct de l'[Exercice 06](../posts/Exercice_06.qmd) où l'on a pu utiliser les méthodes de régression avec réduction de dimension **PCR** et **PLSR**.
 
 On va donc reprendre les mêmes données avec le même découpage en *train* et *test*.
 
@@ -106,7 +106,7 @@ Hitters_train <- Hitters_Without_NA[index_train, ]
 Hitters_test <- Hitters_Without_NA[-index_train, ]
 ```
 
-Notre objectif ici sera donc de compléter l'analyse de l'[Exercice 06](../posts/Exercice_06.qmd) en utilisant cette fois ci les méthodes de regression pénalisée **Ridge** et **Lasso** (méthodes détaillées dans l'[Exercice 06 Bonus : Ridge vs Lasso](../posts/Exercice_06Bonus.qmd)).
+Notre objectif ici sera donc de compléter l'analyse de l'[Exercice 06](../posts/Exercice_06.qmd) en utilisant cette fois ci les méthodes de régression pénalisée **Ridge** et **Lasso** (méthodes introduites dans l'[Exercice 06 Bonus : Ridge vs Lasso](../posts/Exercice_06Bonus.qmd)).
 
 # Analyse inférentielle
 
@@ -139,10 +139,6 @@ plot(mod.R, xvar = "lambda", label = TRUE)
 ```
 
 
-Ici on voit l'évolution de nos coefficients $\beta$ en fonction des diffrentes valeurs de $\lambda$.\
-Ainsi, sur la gauche on se retrouve dans la situation où il n'y a pas de pénalisation et donc nos coefficients sont les $\beta$ de l'estimation par moindres carrés. Et donc plus $\lambda$ va augmenter, plus on se retrouvera dans une situation où les coefficients vont tendrent vers 0.
-
-
 ## Lasso
 
 ```{r}
@@ -156,32 +152,41 @@ plot(mod.L, xvar = "lambda", label = TRUE)
 ```
 
 
-Ici on voit l'évolution de nos coefficients $\beta$ en fonction des diffrentes valeurs de $\lambda$.\
-Ainsi, sur la gauche on se retrouve dans la situation où il n'y a pas de pénalisation et donc nos coefficients sont les $\beta$ de l'estimation par moindres carrés. Et donc plus $\lambda$ va augmenter, plus on se retrouvera dans une situation où les coefficients vont tendrent vers 0.
-
 :::::::::
 
-# Selection des paramètres de régularisation
+Ici on voit l'évolution de nos coefficients $\beta$ en fonction des diffrentes valeurs de $\lambda$.\
+
+Ainsi, sur la gauche on se retrouve dans la situation où il n'y a pas de pénalisation et donc nos coefficients sont les $\beta$ de l'estimation par moindres carrés.\
+Et donc plus $\lambda$ va augmenter, plus on se retrouvera dans une situation où les coefficients vont tendrent vers 0.
+
+
+## Selection des paramètres de régularisation
 
 Maintenant que les modèles sont estimés avec plusieurs valeurs de $\lambda$ possibles, il se pose la question du choix du bon paramètre.\
-Pour cela, on utilise la fonction *`cv.glmnet`* qui, comme son nom le laisse suggérer, permet d'effectuer une validation croisée pour notre modèle avec par défaut *`nfolds=10`* (le nombre de pli pour le découpage de sous ensembles). Puis on peut faire un *`plot`* de l’objet.
-
-::: panel-tabset
-## Ridge
+Pour cela, on utilise la fonction *`cv.glmnet`* qui, comme son nom le laisse suggérer, permet d'effectuer une validation croisée pour notre modèle avec par défaut *`nfolds=10`* (le nombre de pli pour le découpage de sous ensembles).\
 
 ```{r}
 ridgeCV <- cv.glmnet(X_train, Y_train, alpha = 0) 
-plot(ridgeCV)
+lassoCV <- cv.glmnet(X_train, Y_train, alpha = 1)
 ```
 
-On visualise ici les erreurs quadratiques calculées par validation croisée 10 blocs en fonction de $\lambda$ (échelle logarithmique). Deux traits verticaux sont représentés :
+On peut ensuite faire un *`plot`* de l’objet. Cela permet de visualiser les erreurs quadratiques calculées par validation croisée en fonction de $\lambda$ (échelle logarithmique).\
+Deux traits verticaux sont représentés :
 
 -   celui de gauche correspond à la valeur de $\lambda$ qui minimise l’erreur quadratique
 
 -   celui de droite correspond à la plus grande valeur de $\lambda$ telle que l’erreur ne dépasse pas l’erreur minimale + 1 écart-type estimé de cette erreur
 
-D’un point de vu pratique, cela signifie que l’utilisateur peut choisir n’importe quelle valeur de lambda entre les deux traits verticaux.\
-A savoir que si l'on veut diminuer la complexité du modèle on choisira la valeur de droite.
+D’un point de vu pratique, cela signifie que l’utilisateur peut choisir n’importe quelle valeur de $\lambda$ entre les deux traits verticaux. A savoir que si l'on veut diminuer la complexité du modèle on choisira la valeur de droite.
+
+::: panel-tabset
+### Ridge
+
+```{r}
+plot(ridgeCV)
+```
+
+
 
 ::: callout-warning
 Attention, on peut remarquer ici que l'axe verticale de gauche semble toucher le bord du plot. Dans ces cas là, il convient de parametrer les $\lambda$ de telle sorte à "explorer" des valeurs de $\lambda$ plus petite.
@@ -191,7 +196,7 @@ Attention, on peut remarquer ici que l'axe verticale de gauche semble toucher le
 ridgeCV2 <- cv.glmnet(X_train, Y_train, alpha = 0, lambda = seq(exp(-1), exp(9), by = 1)) 
 plot(ridgeCV2)
 ```
-Cette fois ci, nos deux axes verticaux sont éloignés du bord du graphe et on voit bien qu'on a pu baisser ma valeur minimal de $\lambda$.
+Cette fois ci, nos deux axes verticaux sont éloignés du bord du graphe et on voit bien qu'on a pu baisser la valeur du $\lambda$ qui minimise l’erreur quadratique.
 
 :::: success-header
 ::: success-icon
@@ -204,21 +209,11 @@ Résultats
 Ici on on obtient $\lambda_{min} =$ `r round(ridgeCV2$lambda.min, 3)` et $\lambda_{1se} =$ `r round(ridgeCV2$lambda.1se, 3)` 
 :::
 
-## Lasso
+### Lasso
 
 ```{r}
-lassoCV <- cv.glmnet(X_train, Y_train, alpha = 1)
 plot(lassoCV)
 ```
-
-On visualise ici les erreurs quadratiques calculées par validation croisée 10 blocs en fonction de $\lambda$ (échelle logarithmique). Deux traits verticaux sont représentés :
-
--   celui de gauche correspond à la valeur de $\lambda$ qui minimise l’erreur quadratique
-
--   celui de droite correspond à la plus grande valeur de $\lambda$ telle que l’erreur ne dépasse pas l’erreur minimale + 1 écart-type estimé de cette erreur
-
-D’un point de vu pratique, cela signifie que l’utilisateur peut choisir n’importe quelle valeur de lambda entre les deux traits verticaux.\
-A savoir que si l'on veut diminuer la complexité du modèle on choisira la valeur de droite.
 
 :::: success-header
 ::: success-icon
@@ -249,7 +244,11 @@ rmsep_lasso <- sqrt(mean((pred.lasso_min - Y_test)^2, na.rm=T))
 ```
 
 
-Ainsi on peut obtenir l'erreur de prédiction via le RMSEP pour les 2 modèles et les comparer avec les valeurs obtenues pour les méthodes précédemment testées : **Sélection automatique both** ([Exercice 01](../posts/Exercice_01.qmd)), **PCR** ([Exercice 06](../posts/Exercice_06.qmd)), **PLSR** ([Exercice 06](../posts/Exercice_06.qmd).
+Ainsi on peut obtenir l'erreur de prédiction via le RMSEP pour les 2 modèles et les comparer avec les valeurs obtenues pour les méthodes précédemment testées : 
+
+- **Sélection automatique both** ([Exercice 01](../posts/Exercice_01.qmd))
+
+- **PCR** et **PLSR** ([Exercice 06](../posts/Exercice_06.qmd)).
 
 ```{r}
 ## Sélection automatique
@@ -308,11 +307,11 @@ rmsep_mod_pls <- sqrt(mean((
 ```
 
 ```{r, fig.height=6, fig.width=8}
-methods <- c("Err_mod_step",
-             "Err_PCR",
-             "Err_PLS",
-             "Err_Ridge",
-             "Err_Lasso_glmnet")
+methods <- c("Selection automatique",
+             "PCR",
+             "PLS",
+             "Ridge",
+             "Lasso (glmnet)")
 errors <- c(rmsep_mod_step,
             rmsep_mod_pcr,
             rmsep_mod_pls,
@@ -328,7 +327,7 @@ p <- ggplot(rmsep_pred_df, aes(x = Method, y = Error, fill = Method)) +
   scale_fill_viridis_d() +
   ylim(0, 450) +
   theme_minimal() +
-  labs(title = "Erreur pour les différentes méthodes", x = "Méthode", y = "Erreur") +
+  labs(title = "Erreur pour les différentes méthodes", x = "Méthode", y = "RMSEP") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 p
 ```
@@ -351,7 +350,7 @@ On peut voir ici que c'est la méthode **Ridge** qui minimise l'erreur de prédi
 
 \
 
-Pour confirmer ou contredire nos résultats, il convient maintenant de tester les méthodes $K$ fois pour btenir $K$ erreurs de prédictions et ainsi regarder la méthode qui, en moyenne, va minimiser cette erreur tout en prenant en compte la variance des erreurs.
+Pour que nos résultats et conclusions ne se réduisent pas à être vrai seulement pour un seul cas, il convient de tester les méthodes $K$ fois pour obtenir $K$ erreurs de prédictions et ainsi regarder la méthode qui, en moyenne, va minimiser cette erreur tout en prenant en compte la variance des erreurs.
 ```{r}
 K <- 10
 n <- nrow(Hitters_Without_NA)
@@ -431,7 +430,7 @@ for (i in 1:K) {
 }
 
 err_pred_df <- cbind(err_step, err_pcr, err_pls, err_ridge, err_lasso) %>% as.data.frame()
-colnames(err_pred_df) <- c("Err_mod_step", "Err_PCR", "Err_PLS", "Err_Ridge", "Err_Lasso_glmnet")
+colnames(err_pred_df) <- methods
 ```
 
 
@@ -440,11 +439,6 @@ my_interactive_boxplot(err_pred_df)
 ```
 
 ```{r}
-methods <- c("Err_mod_step",
-             "Err_PCR",
-             "Err_PLS",
-             "Err_Ridge",
-             "Err_Lasso_glmnet")
 errors.mean <- sapply(list(err_step, err_pcr, err_pls, err_ridge, err_lasso), function(x) mean(x))
 errors.median <- sapply(list(err_step, err_pcr, err_pls, err_ridge, err_lasso), function(x) median(x))
 q1_values <- sapply(list(err_step, err_pcr, err_pls, err_ridge, err_lasso), function(x) quantile(x, 0.25))
@@ -478,7 +472,7 @@ Pour les curieux, il pourra être intéressant de faire varier la valeur de $K$ 
 
 # Conclusion
 
-En conclusion, nous avons pu observer l'efficacité des méthodes **Ridge** et **Lasso** par rapport à **PCR**, **PLSR** et la **sélection forward**. Ces deux dernières méthodes se distinguent par une capacité à minimiser les erreurs moyennes tout en offrant une stabilité dans les prédictions.\
+En conclusion, nous avons pu observer l'efficacité des méthodes **Ridge** et **Lasso** par rapport à **PCR**, **PLSR** et la **sélection forward**. Ces deux méthodes se distinguent par une capacité à minimiser les erreurs moyennes tout en offrant une stabilité dans les prédictions.\
 
 Cependant, il est important de noter que **PCR**, **PLSR** et la **sélection forward** présentent aussi de bonnes performances et restent donc des méthodes pertinentes qui peuvent être particulièrement utiles dans certains contextes, en fonction des caractéristiques spécifiques des données et des objectifs de modélisation.\
 Ainsi, le choix de la méthode dépendra du compromis souhaité entre précision et variabilité des résultats.
