@@ -193,7 +193,7 @@ Attention, on peut remarquer ici que l'axe verticale de gauche semble toucher le
 :::
 
 ```{r}
-ridgeCV2 <- cv.glmnet(X_train, Y_train, alpha = 0, lambda = seq(exp(-1), exp(9), by = 1)) 
+ridgeCV2 <- cv.glmnet(X_train, Y_train, alpha = 0, lambda = exp(seq(-1, 9, length=100))) 
 plot(ridgeCV2)
 ```
 Cette fois ci, nos deux axes verticaux sont éloignés du bord du graphe et on voit bien qu'on a pu baisser la valeur du $\lambda$ qui minimise l’erreur quadratique.
