@@ -18,7 +18,7 @@ number-sections: false
 editor: visual
 categories: ["Régression linéaire", "Validation croisée"]
 image: "/img/validation2.png"
-description: "Première essais de techniques de validations croisées sur des données générées manuellement"
+description: "Premiers essais de techniques de validations croisées sur des données générées manuellement"
 ---
 
 # Setup
@@ -28,16 +28,13 @@ description: "Première essais de techniques de validations croisées sur des do
 
 ```{r, message=FALSE, warning=FALSE}
 # Données
-library(dplyr)        # manipulation des données
+library(dplyr)        ## Manipulation des données
 
-library(boot) ## CV
+# Inférence
+library(boot)         ## CV
 
-
-# Plots
-## ggplot
-library(ggplot2)
-library(gridExtra)
-
+# Esthétique
+library(ggplot2)     ## ggplot
 ```
 
 ## Fonctions
@@ -157,7 +154,7 @@ Simu_data <- data.frame(y = y, x = x)
 ```
 
 ::: callout-note
-pour des raisons de repouctibilité, une graine ou seed a été défini dans le setup afin que la génération aléatoire reste identique.
+pour des raisons de repouctibilité, une graine ou *seed* a été défini dans la partie **Setup** afin que la génération aléatoire reste identique.
 :::
 
 On va ainsi supposer avoir observé les deux vecteurs $x$ et $y$ précédents, sans connaître le lien théorique précédent qui lie $x$ et $y$.\
@@ -235,15 +232,50 @@ mod3 <- lm(y ~ x1 + x2 + x3, Simu_data_complete)
 mod4 <- lm(y ~ x1 + x2 + x3 + x4, Simu_data_complete)
 ```
 
+::: panel-tabset 
+
+## Texte 
+
 ::: callout-note
-Théoriquement, on est dans une situation où le $R^2$ pour le modèle 1 est égale à la corrélation de pearson au carré de $x$ et $y$.
+Théoriquement, on est dans une situation où le coefficient de détermination $R^2$ pour le modèle 1 est égale à la corrélation de pearson au carré de $x$ et $y$. On peut le constater en récupérant les différentes valeurs obtenues à partir du *`summary`* du modèle 1 et la fonction *`cor`* : 
 
 -   $R^2 =$ `r round(summary(mod1)$r.squared, 3)`
 
 -   $\rho^2 =$ `r round(cor(x,y)^2, 3)`
 :::
 
-Ensuite, partir du *summary()* et de différentes fonctions *R*, on est capable capable d'obtenir différents critères permettant de comparer la qualité de nos modèles.
+## Preuve 
+
+On commence par poser quelques notations usuelles : 
+
+- $S_{XY} = \sum_i (x_i - \bar{x})(y_i - \bar{y})$
+
+- $S_{XX} = \sum_i (x_i - \bar{x})^2 \quad \text{et} \quad S_{YY} = \sum_i (y_i - \bar{y})^2$
+
+
+Ainsi on peut définir avec ces notations le coefficient de détermination et la corrélation de pearson.
+
+$$R^2 =  1 - \frac{\sum_i (y_i - \hat{y_i})^2}{S_{YY}}\quad \text{et} \quad \rho = \frac{S_{XY}}{\sqrt{S_{XX}S_{YY}}}$$
+
+On rappel aussi que pour le modèle simple de resgression linéaire $y=\beta_0 + \beta_1x + \varepsilon$, l'estimation de nos coefficients de régression nous donne que $\hat{\beta_0} = \bar{y} - \hat{\beta_1}\bar{x}$ et $\hat{\beta_1} = \frac{S_{XY}}{S_{XX}}$.\
+On peut alors commencer à jouer avec ces formules pour retrouver l'égalité dans le cas du modèle 1. 
+\begin{align*}
+\sum_i (y_i - \hat{y_i})^2 &= \sum_i (y_i - (\hat{\beta_0} + \hat{\beta_1}x))^2\\
+&= \sum_i (y_i - (\bar{y} - \hat{\beta_1}\bar{x} + \hat{\beta_1}x_i))^2\\
+&= \sum_i ((y_i - \bar{y}) - \hat{\beta_1}(x_i - \bar{x}))^2\\
+&= \sum_i (y_i - \bar{y})^2 + \hat{\beta_1}^2\sum_i(x_i - \bar{x})^2 - 2\hat{\beta_1}\sum_i(y_i - \bar{y})(x_i - \bar{x})\\
+&= S_{YY} + \hat{\beta_1}^2S_{XX} - 2\hat{\beta_1}S_{XY}\\
+&= S_{YY} + \left(\frac{S_{XY}}{S_{XX}}\right)^2S_{XX} - 2\frac{S_{XY}}{S_{XX}}S_{XY}\\
+&= S_{YY} + \frac{S_{XY}^2}{S_{XX}} - 2\frac{S_{XY}^2}{S_{XX}}\\
+&= S_{YY} - \frac{S_{XY}^2}{S_{XX}}\\
+&= S_{YY} \left( 1 - \frac{S_{XY}^2}{S_{YY}S_{XX}} \right)\\
+&= S_{YY}(1 - \rho^2)\\
+\end{align*}
+
+Et donc on a la relation $R^2 =  1 - \frac{S_{YY}(1 - \rho^2)}{S_{YY}} =  1 - (1 - \rho^2) = \rho^2$
+:::
+
+Ensuite, partir du *`summary`* et de différentes fonctions *`R`*, on est capable capable d'obtenir différents critères permettant de comparer la qualité de nos modèles.
 
 ```{r}
 models <- list(mod1, mod2, mod3, mod4)
@@ -256,18 +288,16 @@ results <- data.frame(
   AIC = unlist(lapply(models, function(m) round(AIC(m), 1))),
   BIC = unlist(lapply(models, function(m) round(BIC(m), 1)))
 )
-
-
 results %>% DT::datatable()
 ```
 
-On peut voir ici que c'est *mod2* qui ressort comme étant le meilleur modèle avec de forte valeur de $R^2$ et $R^2_{adjusted}$ puis des critères AIC et BIC minimisés.
+On peut voir ici que c'est *`mod2`* qui ressort comme étant le meilleur modèle avec de forte valeur de $R^2$ et $R^2_{adjusted}$ puis des critères *AIC* et *BIC* minimisés.
 
 ```{r}
 mod2 %>% summary()
 ```
 
-On constate en plus avec le *summary()* que toutes nos variables sont significatives sauf l'*intercept*.
+On constate en plus avec le *`summary`* que toutes nos variables sont significatives sauf l'*intercept*.
 
 # Validation croisée
 
@@ -289,11 +319,11 @@ La validation croisée par K-fold est donc un outil couramment utilisé. Le choi
 
 ## Validation "manuelle"
 
-Dans un premier temps et pour bien comprendre la méthode, on va utiliser deux fonctions (construite pour l'occasion et dont le code se trouve dans la partie **fonction** du **Setup**) permettant d’estimer l’erreur test par une validation croisée *LOO* (*Leave-one-out*) pour un modèle ajusté par la fonction *lm* :
+Dans un premier temps et pour bien comprendre la méthode, on va utiliser deux fonctions (construite pour l'occasion et dont le code se trouve dans la partie **fonction** du **Setup**) permettant d’estimer l’erreur test par une validation croisée *LOO* (*Leave-one-out*) pour un modèle ajusté par la fonction *`lm`* :
 
 -   la première, *loo*, en utilisant le principe général de cette méthode qui nécessite donc l’estimation de n modèles différents
 
--   la seconde, *loo2*, en utilisant la formule adaptée à la régression linéaire donnant directement le risque LOO à partir de la seule estimation du modèle complet (on pourra utiliser la fonction *hatvalues*)
+-   la seconde, *loo2*, en utilisant la formule adaptée à la régression linéaire donnant directement le risque LOO à partir de la seule estimation du modèle complet (on pourra utiliser la fonction *`hatvalues`*)
 
 Ainsi, en testant sur nos quatre modèle, on obtient les résultats suivants :
 
@@ -323,18 +353,18 @@ Résultats
 ::: success
 On voit que les résultats donnés par nos deux fonctions coincident bien. Mais la première semble tout de même plus lente pour le calcul.
 
-Et en terme de qualité de modèle, c'est bien mod2 qui minimise l'erreur de la *cross validation* par *loo*.
+Et en terme de qualité de modèle, c'est bien *`mod2`* qui minimise l'erreur de la *cross validation* par *loo*.
 :::
 
 ## Library *boot*
 
-On va donc maintenant utiliser la fonction *cv.glm* de la library { boot } permettant d’estimer l’erreur test par validation croisée *K-fold*. Cela va nécessité de recalculer le modèle mais cette fois ci avec la fonction *glm* en spécifiant que l'on veut un modèle gaussien (ce qui nous donnera le même résultat qu'avec *lm*).
+On va donc maintenant utiliser la fonction *`cv.glm`* de la library *`{boot}`* permettant d’estimer l’erreur test par validation croisée *K-fold*. Cela va nécessité de recalculer le modèle mais cette fois ci avec la fonction *`glm`* en spécifiant que l'on veut un modèle gaussien (ce qui nous donnera le même résultat qu'avec *`lm`*).
 
 ::: callout-note
-On spécifi ici dans *glm* que le modèle est gaussien mais dans la pratique ce n'est pas nécéssaire pusiqu'il s'agit de la valeur par défaut de la fonction.
+On spécifi ici dans *`glm`* que le modèle est gaussien mais dans la pratique ce n'est pas nécéssaire pusiqu'il s'agit de la valeur par défaut de la fonction.
 :::
 
-De plus, nous utiliserons $K=10$ qui est une valeurs assez communément utilisé sachant que si on voulait reproduire la procédure *LOO* il faudrait utiliser $K=n$ (cf rappel).
+De plus, nous utiliserons $K=10$ qui est une valeurs assez communément utilisé sachant que si on voulait reproduire la procédure *LOO* il faudrait utiliser $K=n \quad$ (cf rappel).
 
 ```{r}
 mod1_glm <- glm(formula = formula(mod1) ,
@@ -374,15 +404,15 @@ Résultats
 ::::
 
 ::: success
-On voit qu'en moyenne *cv.glm* nous donne des résultats qui sont du même ordre de grandeur que notre fonction *loo2*.
+On voit qu'en moyenne *`cv.glm`* nous donne des résultats qui sont du même ordre de grandeur que notre fonction *loo2*.
 
-Et en terme de qualité de modèle, c'est bien mod2 qui minimise l'erreur de la *cross validation*.
+Et en terme de qualité de modèle, c'est bien *`mod2`* qui minimise l'erreur de la *cross validation*.
 :::
 ::::::::::
 
 # Ajustement du meilleur modèle
 
-D'après tout ce que l'on a pu voir durant cette étude, jusqu'à présent le meilleur modèle semble être mod2.
+D'après tout ce que l'on a pu voir durant cette étude, jusqu'à présent le meilleur modèle semble être *`mod2`*.
 
 ```{r}
 mod2 %>% summary()
@@ -397,7 +427,7 @@ mod2_without_intercept <- lm(y ~ 0 + x1 + x2, Simu_data_complete)
 mod2_without_intercept %>% summary()
 ```
 
-On voit un modèle avec de très bon résultats et qui à toutes ces variables significatives. Comparons le avec *mod2* :
+On voit un modèle avec de très bon résultats et qui à toutes ces variables significatives. Comparons le avec *`mod2`* :
 
 ```{r}
 models <- list(mod2, mod2_without_intercept)
