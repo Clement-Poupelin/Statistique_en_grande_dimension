@@ -18,7 +18,7 @@ number-sections: false
 editor: visual
 categories: ["Régression linéaire", "Sélection automatique"]
 image: "/img/baseball.png"
-description: "Il s'agit d'une première utilisation des méthodes de régression avec sélection automatique de variables sur des données de baseball"
+description: "Il s'agit d'une première utilisation des méthodes de régression avec **sélection automatique de variables** sur des données de baseball"
 ---
 
 # Intervenant.e.s
