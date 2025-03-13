@@ -18,7 +18,7 @@ number-sections: false
 editor: visual
 categories: ["Régression linéaire", "Sélection automatique"]
 image: "/img/baseball.png"
-description: "Il s'agit d'une première utilisation des méthodes de régression avec selection de variable via des approches stepwise sur des données de baseball"
+description: "Il s'agit d'une première utilisation des méthodes de régression avec sélection automatique de variables sur des données de baseball"
 ---
 
 # Intervenant.e.s
@@ -78,7 +78,7 @@ my_barplot <- function(data, variable1, variable2) {
     geom_bar(position = "dodge") +
     scale_fill_manual(values = c("#C41E3A", "#0033A0")) +  
     labs(
-      title = "Répartition des joueurs par League et Division",
+      title = "Répartition des joueurs par ligue et division",
       x = deparse(substitute(variable1)), 
       y = "Nombre de joueurs"
     ) +
@@ -103,8 +103,8 @@ my_League_heatmap <- function(data) {
     geom_text(aes(label = Count), color = "white", size = 5) +
     labs(
       title = "Transition des Joueurs entre les Ligues",
-      x = "League d'origine",
-      y = "Nouvelle League",
+      x = "Ligue d'origine",
+      y = "Nouvelle Ligue",
       fill = "Nombre de joueurs"
     ) +
     theme_minimal()
@@ -174,7 +174,7 @@ my_VIFplot <- function(vif) {
 
 On rappel que $SCR = \sum_i (y_i - f(x_i))^2$ et $SCT = \sum_i (y_i - \bar{y})^2$.\
 
-Ainsi, on peut aretrouver les différents critères :
+Ainsi, on peut trouver les différents critères :
 
 $$ R^2 = 1 - \frac{SCR}{SCT}$$
 
@@ -264,7 +264,7 @@ Criteria_plot <- function(Criteria, crit_name = "Critère") {
 }
 ```
 
-### Meilleur modèle après regsubset
+### Meilleur modèle après *`regsubset`*
 
 ```{r}
 Best_model <- function(model, criteria_df){
@@ -333,7 +333,8 @@ Hitters %>%
 On peut déjà remarquer la présence de 59 valeurs manquantes pour la variable *Salary*.
 :::
 
-On va donc commencer par s'en débarasser (il ne s'agit que de 59 joueurs sur les 322). Puis on va également créer un sous jeu de données ne conservant que les variables quantitatives .
+On va donc commencer par s'en débarasser (il ne s'agit que de 59 joueurs sur les 322).\
+Puis on va également créer un sous jeu de données ne conservant que les variables quantitatives et un autre conservant les variables qualitatives. Ces jeux de données seront ensuite utilisés dans les analyses descriptives
 
 ```{r}
 Hitters_Without_NA <- Hitters %>% na.omit()
@@ -343,7 +344,7 @@ Hitters_Without_NA_quali <- Hitters_Without_NA %>% subset(, select = c(League, D
 
 # Analyse descriptive
 
-Avant de se lancer dans des analyses inférentielles avec de l'estimation, prédiction, etc... Il convient toujours de commencer par quelques analyses descritpives afin de mieuxcomprendre les données sur lesquelles on travail.
+Avant de se lancer dans des analyses inférentielles avec de l'estimation, prédiction, etc... Il convient toujours de commencer par quelques analyses descritpives afin de mieux comprendre les données sur lesquelles on travail.
 
 :::::::::::::::::::::::::::: panel-tabset
 ## Variables quantitatives
@@ -351,7 +352,7 @@ Avant de se lancer dans des analyses inférentielles avec de l'estimation, préd
 ::::::::: panel-tabset
 ### Boxplot
 
-On peut regarder un peu la distribution de nos différents variables quantitatives via des boxplots.
+On peut regarder un peu la distribution de nos différentes variables quantitatives via des boxplots.
 
 ```{r, message=FALSE, fig.height=6, fig.width=8}
 my_boxplot(Hitters_Without_NA_quant)
@@ -367,10 +368,10 @@ Résultats
 ::: success
 Comme on pouvait s'y attendre, on retrouve des distributions assez variées selon les différentes statistques des joueurs.
 
-On peut tout de même remarquer que nos variables ont en général peu de valeurs outliers.
+On peut tout de même remarquer que nos variables ont en général peu de valeurs *outliers* (valeurs extrêmes par rapport aux autres).
 :::
 
-### Correlations
+### Corrélations
 
 On regarde ici la corrélation calculée entre chacune de nos variables quantitative.
 
@@ -386,7 +387,8 @@ Résultats
 ::::
 
 ::: success
-On voit la présence de plusieurs fortes corrélations qui peut déjà nous alerter si l'on veut faire des modèles de regressions linéaires car on risque d'avoir un problème de colinéarité entre les varibales explicatives. Parmi ces fortes corrélations, on arrive même à distiguer deux zones où les variables sont très corrélées entre elles (de *AtBat* à *RBI* et de *Years* à *Cwalks*)
+On voit la présence de plusieurs fortes corrélations qui peut déjà nous alerter si l'on veut faire des modèles de régressions linéaires car on risque d'avoir un problème de colinéarité entre les varibales explicatives.\
+Parmi ces fortes corrélations, on arrive même à distiguer deux zones où les variables sont très corrélées entre elles (de *AtBat* à *RBI* et de *Years* à *Cwalks*)
 
 Par contre, il n'y a aucune forte corrélation entre la variable *Salary* et les autres variables du jeu de données. Ce qui peut nous indiquer qu'il n'y aura pas une variable avec très forte influence sur *Salary*.
 :::
@@ -397,7 +399,7 @@ Par contre, il n'y a aucune forte corrélation entre la variable *Salary* et les
 ::::::::: panel-tabset
 ### Barplot
 
-Ici, regardons un peu le nombre des joeurs par ligue, selon la division.
+Ici, regardons un peu le nombre des joueurs par ligue, selon la division. Et on fera cela pour les variables *League* et *NewLeague*.
 
 ```{r, fig.height=6, fig.width=12}
 grid.arrange(my_barplot(Hitters_Without_NA_quali, League, Division),
@@ -413,14 +415,14 @@ Résultats
 ::::
 
 ::: success
-De manière globale, on peut remarque que de fin 1986 à début 1987, il ne semble pas y avoir beaucoup de changement dans la répartition des joueurs par ligue selon la division.
+De manière globale, on peut remarquer que de fin 1986 à début 1987, il ne semble pas y avoir beaucoup de changement dans la répartition des joueurs par ligue selon la division.
 
-De manière plus locale, on remarque qu'il y a un peu plus de joueur en division Ouest (*West*) que division Est (*East*). Et ça, qu'on sit en ligue Américaine (*American League*) ou ligue Nationale (*National League*)
+De manière plus locale, on remarque qu'il y a un peu plus de joueur en division Ouest (*West*) que division Est (*East*). Et ça, qu'on soit en ligue Américaine (*American League*) ou ligue Nationale (*National League*)
 :::
 
 ### Heatmap
 
-On peut regarder la Heatmap nous donnans la transition des joueurs entre les ligues, i.e on regarde la similarité des variables *League* et *NewLeague*.
+On peut regarder la *Heatmap* nous donnans la transition des joueurs entre les ligues, i.e on regarde la similarité des variables *League* et *NewLeague*.
 
 ```{r}
 my_League_heatmap(Hitters_Without_NA_quali)
@@ -440,7 +442,7 @@ On voit bien ici qu'effectivement les joueurs n'ont globalement pas changer de l
 
 ## PCA
 
-Avec une Analyse en Composantes Principales (PCA) on peut regarder un peu le comportement de nos données.
+Avec une Analyse en Composantes Principales (*PCA*) on peut regarder un peu le comportement de nos données.
 
 En effet, Cette méthode respose sur la transformation des variables d'origine en nouvelles variables non corrélées, appelées composantes principales, qui capturent successivement la plus grande variance possible des données.
 
@@ -620,7 +622,7 @@ mod1 %>% summary()
 ```
 
 ::: callout-note
-Nous sommes sur un modèle comprenant des variables quantitatives et qualitative ce qui le rapproche d'une modélisation ANOVA.
+Nous sommes sur un modèle comprenant des variables quantitatives et qualitative ce qui le rapproche d'une modélisation [**ANOVA**](https://en.wikipedia.org/wiki/Analysis_of_variance).
 :::
 
 :::: success-header
@@ -633,24 +635,37 @@ Résultats
 ::: success
 Ce qu'on peut remarquer en premier sur ce modèle c'est que beaucoup de variables ont un effet non significatif.
 
-Aussi, ce modèle offre des valeurs de $R^2$ et $R^2_{adjusted}$ autour de 0.5 ce qui témoigne d'une mauvaise qualité d'ajustament du modèle
+Aussi, ce modèle offre des valeurs de $R^2$ et $R^2_{adjusted}$ autour de 0.5 ce qui témoigne d'une mauvaise qualité d'ajustement du modèle.
 
-Et enfin, l'écart type résiduel est de 315.6 ce qui est assez important et témoigne d'un modèle peu précis
+Et enfin, l'écart type résiduel est de 315.6 ce qui est assez important et témoigne d'un modèle peu précis.
 :::
 
-Pour tenter de trouver un meilleur ajustment, il est important d'analyser d'avantage le lien entre toutes les variables explicatives. On utilise alors comunément le *VIF* (*variance inflation factor*).
 
-On obtient alors pour chacune de nos variable une valeur qui, plus elle est élevé, témoigne de la multicolinéarité entre nos variables explicatives.
+::: callout-note
+Le coefficient de détermination linéaire, noté $R^2$, est une mesure de la qualité de la prédiction d'une régression linéaire.\
+Une formulation simple serait : 
+$$R^2 = 1 - \frac{\sum_{i=1}^n(y_i - \hat{y}_i)^2}{\sum_{i=1}^n(y_i - \bar{y}_i)^2}$$
+où $n$ est le nombre de mesures, $y_i$ la valeur de la ième mesure , $\hat{y}_i$ la valeur prédite correspondante et $\bar{y}_i$ la moyenne des mesures. 
+
+Ainsi, si le coefficient est proche de 1, cela veut dire que notre prediction est proche de la réalité. Tandis qu'un modèle "de base" prédirait toujours une valeur de $y_i$ proche de la moyenne $\bar{y}_i$ ce qui nous donnerait un $R^2$ proche de 0.\
+
+Le $R^2_{adjusted}$ permet quant à lui de rendre compte du phénomène d'augmentation automatique du $R^2$ lorsque des variables explicatives supplémentaires sont ajoutées au modèle. Il est donc très utile à regarder dans les cas de grande dimension.
+:::
+
+
+Pour tenter de trouver un meilleur ajustment, il est important d'analyser d'avantage le lien entre toutes les variables explicatives. On utilise alors communément le *VIF* (*variance inflation factor*).
+
+On obtient alors pour chacune de nos variable une valeur qui, plus elle est élevée, témoigne de la multicolinéarité entre nos variables explicatives.
 
 ```{r, fig.height=12, fig.width=20}
 vif(mod1) 
 my_VIFplot(vif(mod1))
 ```
 
-On remarque ainsi que beaucoup de valeurs sont supérieur à 10 ce qui s'interprète communément comme la précence d'une forte colinéarité sur nos variables explicatives.
+On remarque ainsi que beaucoup de valeurs sont supérieurs à 10 ce qui s'interprète communément comme la précence d'une forte colinéarité sur nos variables explicatives.
 
 ::: callout-note
-Cette colinéarité se constatait déjà durant les analyses descriptive via les graphes de corrélations (d'où l'importance de ne pas se lancer trop rapidement dans les analyses inférentielles).
+Cette colinéarité se constatait déjà durant les analyses descriptives via les graphes de corrélations (d'où l'importance de ne pas se lancer trop rapidement dans les analyses inférentielles).
 :::
 
 ## Modèles parcimonieux
@@ -659,7 +674,7 @@ Maintenant, on va donc tenter de trouver le meilleur sous-modèle possible. Pour
 
 -   mettre en oeuvre une méthode de sélection automatique exhaustive et observer l’évolution des SCR (Sommes de Carrés Résiduels) pour les modèles retenus en fonction de leur taille.
 
--   déduire de ces SCR le $R^2$, $R^2_{adjusted}$, AIC, BIC et $C_p$ correspondants. Les comparer avec les valeurs fournies dans le summary de regsubsets et tracer leur évolution en fonction de la taille du modèle.
+-   déduire de ces SCR le $R^2$, $R^2_{adjusted}$, *AIC*, *BIC* et $C_p$ correspondants. Les comparer avec les valeurs fournies dans le *`summary`* de *`regsubsets`* et tracer leur évolution en fonction de la taille du modèle.
 
 Puis reproduire la même procédure avec des séléctions *backward*, *forward* et *stepwise*
 
@@ -713,7 +728,7 @@ Résultats
 ::: success
 Ici on remarque clairement que toutes nos variables ne sont pas gardés lorsque l'on cherche à optimiser nos critères.
 
-Aussi, on peut voir encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoignés d'un mauvais ajustement de modèle.
+Aussi, on peut voir encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoigner d'un mauvais ajustement de modèle.
 :::
 
 ::: callout-note
@@ -729,7 +744,7 @@ SCR <- summary(selec_auto)$rss
 Criteria_plot(SCR, crit_name = "Somme des Carrés Résiduels")
 ```
 
-Maintenant regardons les autres critères mentionné précédemment
+Maintenant regardons les autres critères mentionnés précédemment.
 
 ```{r, fig.height=18, fig.width=30}
 r2 <- r2_fun(Hitters_Without_NA$Salary, SCR)
@@ -746,7 +761,7 @@ grid.arrange(Criteria_plot(r2, crit_name = "R2"),
              ncol = 3)
 ```
 
-On peut ainsi voir que ce sont plutot des modèles entre 5 et 10 variables qui optimisent nos critères (donc pas un modèle avec toutes nos variables).
+On peut ainsi voir que ce sont plutôt des modèles entre 5 et 10 variables qui optimisent nos critères (donc pas un modèle avec toutes nos variables).
 
 #### Meilleur modèle
 
@@ -758,7 +773,7 @@ Résultats
 ::::
 
 ::: success
-Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
+Regardons donc pour chaque critère quel est le modèle qui ressort comme le meilleur
 
 ```{r}
 criteria_df <- data.frame(r2, r2a, cp, aic, bic)
@@ -800,7 +815,7 @@ Résultats
 ::: success
 On remarque à nouveau une importante sélection de variables.
 
-Mais ici aussi on a encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoignés d'un mauvais ajustement de modèle.
+Mais ici aussi on a encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoigner d'un mauvais ajustement de modèle.
 :::
 
 #### Evolution des critères
@@ -832,7 +847,7 @@ Résultats
 ::::
 
 ::: success
-Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
+Regardons donc pour chaque critère quel est le modèle qui ressort comme le meilleur
 
 ```{r}
 criteria_df <- data.frame(r2, r2a, cp, aic, bic)
@@ -953,7 +968,7 @@ Résultats
 ::: success
 On remarque à nouveau une importante sélection de variables.
 
-Mais ici aussi on a encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoignés d'un mauvais ajustement de modèle.
+Mais ici aussi on a encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoigner d'un mauvais ajustement de modèle.
 :::
 
 #### Evolution des critères
@@ -985,7 +1000,7 @@ Résultats
 ::::
 
 ::: success
-Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
+Regardons donc pour chaque critère quel est le modèle qui ressort comme le meilleur
 
 ```{r}
 criteria_df <- data.frame(r2, r2a, cp, aic, bic)
@@ -1105,7 +1120,7 @@ Résultats
 ::: success
 On remarque à nouveau une importante sélection de variables.
 
-Mais ici aussi on a encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoignés d'un mauvais ajustement de modèle.
+Mais ici aussi on a encore de faibles valeurs pour les $R^2$ et $R^2_{adjusted}$ pouvant témoigner d'un mauvais ajustement de modèle.
 :::
 
 #### Evolution des critères
@@ -1137,7 +1152,7 @@ Résultats
 ::::
 
 ::: success
-Regardons donc pour chaque critère quel est le modèle qui resort comme le meilleur
+Regardons donc pour chaque critère quel est le modèle qui ressort comme le meilleur
 
 ```{r}
 criteria_df <- data.frame(r2, r2a, cp, aic, bic)
@@ -1215,15 +1230,15 @@ De manière logique on voit donc tout de même que le modèle avec nos variable 
 
 # Comparaison des critères
 
-Avant de finir, comparons un peut les critères que nous avons calculés avec ceux que l'on peut récupérer via le summary de regsubset (pour tous sauf l'AIC qui n'est pas présent). On se contentera de faire se comparatif seulement pour le modèle *stepwise*.
+Avant de finir, comparons un peut les critères que nous avons calculés avec ceux que l'on peut récupérer via le *`summary`* de *`regsubset`* (pour tous sauf l'*AIC* qui n'est pas présent). On se contentera de faire se comparatif seulement pour le modèle *stepwise*.
 
 Pour cela regardons si nous avons régulièrement la valeur 0 (ou valeur proche) lorsque l'on fait la soustraction du critère calculé et du critère donné par regsubset :
 
 ```{r}
-cat(round(r2-summary(selec_seq)$rsq) %>% mean(), 
-    round(r2a-summary(selec_seq)$adjr2) %>% mean(), 
-    round(cp-summary(selec_seq)$cp) %>% mean(), 
-    round(bic-summary(selec_seq)$bic) %>% mean())
+cat("(valeur calculée - valeur récupérée) pour le R2 :",  round(r2-summary(selec_seq)$rsq) %>% mean(),
+    "\n(valeur calculée - valeur récupérée) pour le R2 ajusté:",  round(r2a-summary(selec_seq)$adjr2) %>% mean(),
+    "\n(valeur calculée - valeur récupérée) pour le Cp :",  round(cp-summary(selec_seq)$cp) %>% mean(),
+    "\n(valeur calculée - valeur récupérée) pour le BIC :",  round(bic-summary(selec_seq)$bic) %>% mean())
 ```
 
 on voit une grosse différence seulement pour le *BIC* donc regardons plus en détail via les représentations visuelles de l'évolution du critère.
