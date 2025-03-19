@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Clément Poupelin">
 <meta name="dcterms.date" content="2025-02-17">
-<meta name="description" content="Ici, on continu sur des données de baseball en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité">
+<meta name="description" content="On continu sur les données de baseball en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité">
 
 <title>Exercice 02 – Statistique en grande dimension</title>
 <style>
@@ -73,12 +73,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-e3b5385bf07e55da6dda6b02310f0c52.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-82eda8b86b26c4b232625dae5d6c37dc.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -241,12 +241,12 @@ window.Quarto = {
       <div class="quarto-title-block"><div><h1 class="title">Exercice 02</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
                   <div>
         <div class="description">
-          Ici, on continu sur des données de baseball en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité
+          On continu sur les données de baseball en testant cette fois ci le <strong>lien linéaire</strong> existant et en mettant en avant le <strong>fléau de la dimensionalité</strong>
         </div>
       </div>
                           <div class="quarto-categories">
-                <div class="quarto-category">regression linéaire</div>
-                <div class="quarto-category">selection de variable</div>
+                <div class="quarto-category">Régression linéaire</div>
+                <div class="quarto-category">Sélection automatique</div>
               </div>
                   </div>
   </div>
@@ -271,7 +271,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">February 21, 2025</p>
+        <p class="date-modified">March 19, 2025</p>
       </div>
     </div>
       
@@ -333,7 +333,7 @@ window.Quarto = {
 <section id="setup" class="level1">
 <h1>Setup</h1>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Packages</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Fonctions</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Seed</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Packages</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Seed</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
@@ -346,9 +346,6 @@ window.Quarto = {
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
-</div>
-<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -906,8 +903,8 @@ F-statistic: 2.787 on 8 and 254 DF,  p-value: 0.005669</code></pre>
 </section>
 <section id="conclusion" class="level1">
 <h1>Conclusion</h1>
-<p>Dans un premier temps, on a pu avoir un aperçu de ce qu’il se passe lorsque l’on se retrouve face au fléa de la dimensionalité avec un sous jeu de données où le nombre de variables était supérieur au nombre d’individus.</p>
-<p>Puis, on a aussi pu voir l’importance du lien linéaire dans la construction d’un modèle de regression. Cela renforce par l’exemple la véracité du modèle de régression linéaire (au cas où l’on en doutais encore).</p>
+<p>Dans un premier temps, on a pu avoir un aperçu de ce qu’il se passe lorsque l’on se retrouve face au <strong>fléa de la dimensionalité</strong> avec un sous jeu de données où le nombre de variables était supérieur au nombre d’individus.</p>
+<p>Puis, on a aussi pu voir l’<strong>importance du lien linéaire</strong> dans la construction d’un modèle de régression. Cela renforce par l’exemple la véracité du modèle de régression linéaire (au cas où l’on en doutais encore).</p>
 </section>
 <section id="session-info" class="level1">
 <h1>Session info</h1>
@@ -927,7 +924,7 @@ F-statistic: 2.787 on 8 and 254 DF,  p-value: 0.005669</code></pre>
  collate  fr_FR.UTF-8
  ctype    fr_FR.UTF-8
  tz       Europe/Paris
- date     2025-02-21
+ date     2025-03-19
  pandoc   3.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/x86_64/ (via rmarkdown)
 
 ─ Packages ───────────────────────────────────────────────────────────────────
@@ -938,7 +935,7 @@ F-statistic: 2.787 on 8 and 254 DF,  p-value: 0.005669</code></pre>
  ISLR       * 1.4     2021-09-15 [1] CRAN (R 4.4.2)
  kableExtra * 1.4.0   2024-01-24 [1] CRAN (R 4.4.2)
  lubridate  * 1.9.4   2024-12-08 [1] CRAN (R 4.4.2)
- purrr      * 1.0.2   2023-08-10 [2] CRAN (R 4.3.3)
+ purrr      * 1.0.4   2025-02-05 [1] CRAN (R 4.4.2)
  readr      * 2.1.5   2024-01-10 [1] CRAN (R 4.4.2)
  stringr    * 1.5.1   2023-11-14 [2] CRAN (R 4.3.3)
  tibble     * 3.2.1   2023-03-20 [2] CRAN (R 4.3.3)
@@ -1186,8 +1183,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -1349,7 +1344,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
@@ -1595,7 +1589,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> visual</span></span>
 <span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> ["Régression linéaire", "Sélection automatique"]</span></span>
 <span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> "/img/baseball.png"</span></span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "On continu sur les données de baseball en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "On continu sur les données de baseball en testant cette fois ci le **lien linéaire** existant et en mettant en avant le **fléau de la dimensionalité**"</span></span>
 <span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a><span class="fu"># Intervenant.e.s</span></span>
@@ -1870,9 +1864,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb27-317"><a href="#cb27-317" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-318"><a href="#cb27-318" aria-hidden="true" tabindex="-1"></a><span class="fu"># Conclusion</span></span>
 <span id="cb27-319"><a href="#cb27-319" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-320"><a href="#cb27-320" aria-hidden="true" tabindex="-1"></a>Dans un premier temps, on a pu avoir un aperçu de ce qu'il se passe lorsque l'on se retrouve face au fléa de la dimensionalité avec un sous jeu de données où le nombre de variables était supérieur au nombre d'individus.</span>
+<span id="cb27-320"><a href="#cb27-320" aria-hidden="true" tabindex="-1"></a>Dans un premier temps, on a pu avoir un aperçu de ce qu'il se passe lorsque l'on se retrouve face au **fléa de la dimensionalité** avec un sous jeu de données où le nombre de variables était supérieur au nombre d'individus.</span>
 <span id="cb27-321"><a href="#cb27-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-322"><a href="#cb27-322" aria-hidden="true" tabindex="-1"></a>Puis, on a aussi pu voir l'importance du lien linéaire dans la construction d'un modèle de regression. Cela renforce par l'exemple la véracité du modèle de régression linéaire (au cas où l'on en doutais encore).</span>
+<span id="cb27-322"><a href="#cb27-322" aria-hidden="true" tabindex="-1"></a>Puis, on a aussi pu voir l'**importance du lien linéaire** dans la construction d'un modèle de régression. Cela renforce par l'exemple la véracité du modèle de régression linéaire (au cas où l'on en doutais encore).</span>
 <span id="cb27-323"><a href="#cb27-323" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-324"><a href="#cb27-324" aria-hidden="true" tabindex="-1"></a><span class="fu"># Session info</span></span>
 <span id="cb27-325"><a href="#cb27-325" aria-hidden="true" tabindex="-1"></a></span>

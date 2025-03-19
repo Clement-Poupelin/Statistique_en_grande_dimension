@@ -18,7 +18,7 @@ number-sections: false
 editor: visual
 categories: ["Régression linéaire", "Sélection automatique"]
 image: "/img/baseball.png"
-description: "On continu sur les données de baseball en testant cette fois ci le lien linéaire existant et en mettant en avant le fléau de la dimensionalité"
+description: "On continu sur les données de baseball en testant cette fois ci le **lien linéaire** existant et en mettant en avant le **fléau de la dimensionalité**"
 ---
 
 # Intervenant.e.s
@@ -293,9 +293,9 @@ On constate qu'aucune méthode de sélection de variable ne permet d'avoir ne se
 
 # Conclusion
 
-Dans un premier temps, on a pu avoir un aperçu de ce qu'il se passe lorsque l'on se retrouve face au fléa de la dimensionalité avec un sous jeu de données où le nombre de variables était supérieur au nombre d'individus.
+Dans un premier temps, on a pu avoir un aperçu de ce qu'il se passe lorsque l'on se retrouve face au **fléa de la dimensionalité** avec un sous jeu de données où le nombre de variables était supérieur au nombre d'individus.
 
-Puis, on a aussi pu voir l'importance du lien linéaire dans la construction d'un modèle de regression. Cela renforce par l'exemple la véracité du modèle de régression linéaire (au cas où l'on en doutais encore).
+Puis, on a aussi pu voir l'**importance du lien linéaire** dans la construction d'un modèle de régression. Cela renforce par l'exemple la véracité du modèle de régression linéaire (au cas où l'on en doutais encore).
 
 # Session info
 
