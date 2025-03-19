@@ -1234,14 +1234,16 @@ Avant de finir, comparons un peut les critères que nous avons calculés avec ce
 
 Pour cela regardons si nous avons régulièrement la valeur 0 (ou valeur proche) lorsque l'on fait la soustraction du critère calculé et du critère donné par regsubset :
 
-```{r}
-cat("(valeur calculée - valeur récupérée) pour le R2 :",  round(r2-summary(selec_seq)$rsq) %>% mean(),
-    "\n(valeur calculée - valeur récupérée) pour le R2 ajusté:",  round(r2a-summary(selec_seq)$adjr2) %>% mean(),
-    "\n(valeur calculée - valeur récupérée) pour le Cp :",  round(cp-summary(selec_seq)$cp) %>% mean(),
-    "\n(valeur calculée - valeur récupérée) pour le BIC :",  round(bic-summary(selec_seq)$bic) %>% mean())
-```
+-  (valeur calculée - valeur récupérée) pour le $R^2$ : `r round(mean(r2-summary(selec_seq)$rsq))`
 
-on voit une grosse différence seulement pour le *BIC* donc regardons plus en détail via les représentations visuelles de l'évolution du critère.
+-  (valeur calculée - valeur récupérée) pour le $R^2_{adjusted}$ : `r round(mean(r2a-summary(selec_seq)$adjr2))`
+
+-  (valeur calculée - valeur récupérée) pour le $C_p$ : `r round(mean(cp-summary(selec_seq)$cp))`
+
+-  (valeur calculée - valeur récupérée) pour le *BIC* : `r round(mean(bic-summary(selec_seq)$bic))`
+
+
+Pour le *BIC*, on voit une valeur très éloigné de 0. Regardons plus en détail cette différence entre la valeur calculée et la valeur récupérée via les représentations visuelles de l'évolution du critère.
 
 ```{r, fig.height=14, fig.width=26}
 grid.arrange(Criteria_plot(bic, crit_name = "BIC"),
@@ -1249,17 +1251,17 @@ grid.arrange(Criteria_plot(bic, crit_name = "BIC"),
              ncol = 2)
 ```
 
-On voit que les valeurs sont différentes mais en fait le comportement est identique. Ce qui veut dire que la différence est seulement due à une constant multiplicative près.
+On voit que les valeurs sont différentes mais le comportement est identique. Ce qui veut dire que la différence est seulement due à une constant multiplicative près.
 
 # Conclusion
 
-À la lumière des résultats de notre analyse, on peut envisager le modèle *both* car bien qu'il n'ait pas montré de grandes améliorations en termes de $R^2$ et $R^2_{adjusted}$, il a une démarche plus "souple" pour permettre de réduire le nombre de variables tout en maintenant celles qui sont significatives. Ce modèle est donc plus parcimonieux tout en conservant des variables importantes. Cependant, une réflexion supplémentaire pourrait être menée sur l'éventuelle suppression de l'*intercept*, ce qui nécessiterait une validation supplémentaire.
+À la lumière des résultats de notre analyse, on peut envisager le modèle *both* car bien qu'il n'ait pas montré de grandes améliorations en termes de $R^2$ et $R^2_{adjusted}$, il a une démarche plus "souple" pour permettre de réduire le nombre de variables tout en maintenant celles qui sont significatives. Ce modèle est donc plus parcimonieux tout en conservant des variables importantes. Cependant, une réflexion supplémentaire pourrait être menée sur l'éventuelle **suppression de l'*intercept***, ce qui nécessiterait une validation supplémentaire.
 
 En ce qui concerne le choix final du modèle, on peut opter pour celui qui maximise le critère *BIC*, ce qui nous mène à un modèle avec 6 variables. Le *BIC* est particulièrement utile pour privilégier un modèle plus simple et plus parcimonieux, ce qui est un atout lorsqu'on cherche à éviter un surajustement. Toutefois, il est important de noter que la qualité de l'ajustement n'est pas optimale, ce qui suggère qu'il pourrait manquer certaines informations pour expliquer pleinement la variable cible (le salaire).
 
-Enfin, la validité interne est un aspect crucial qui n'a pas été suffisamment exploré dans cette analyse. Il aurait été pertinent de vérifier que toutes les hypothèses sous-jacentes des modèles étaient satisfaites. Cela aurait permis de renforcer la robustesse de nos résultats et de garantir que les conclusions qu'on sont fiables.
+Enfin, la **validité interne** est un aspect crucial qui n'a pas été suffisamment exploré dans cette analyse. En effet, il aurait été pertinent de vérifier que toutes les hypothèses sous-jacentes des modèles étaient satisfaites. Cela aurait permis de renforcer la robustesse de nos résultats et de garantir que les conclusions qu'on sont fiables.
 
-Donc, il serait pertinent d'examiner plus en profondeur des modèles sans *intercept* et la validité interne, notamment en testant les hypothèses de normalité, d'homoscédasticité, et d'indépendance des résidus.
+Donc, il serait pertinent d'examiner plus en profondeur des modèles sans *intercept* et la **validité interne**, notamment en testant les hypothèses de **normalité des résidus**, d'**homoscédasticité** (i.e variance identique des résidus), et d'**indépendance des résidus**.
 
 # Session info
 
